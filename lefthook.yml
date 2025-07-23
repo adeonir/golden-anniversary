@@ -1,0 +1,14 @@
+pre-commit:
+  parallel: true
+  jobs:
+    - name: lint & format
+      run: pnpm lint {staged_files}
+      glob: "*.{jsx,tsx,json,jsonc,css}"
+      stage_fixed: true
+
+pre-push:
+  parallel: true
+  jobs:
+    - name: type check
+      run: pnpm type-check
+      stage_fixed: true
