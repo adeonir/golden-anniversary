@@ -1,34 +1,153 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Site Bodas de Ouro
 
-## Getting Started
+Site comemorativo para celebrar 50 anos de casamento de Iria & Ari. Uma experiência digital elegante que permite família e amigos deixarem mensagens carinhosas, navegarem pela galeria de fotos e acompanharem a jornada do casal.
 
-First, run the development server:
+## Funcionalidades
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### Para Visitantes
+
+- **Hero Section**: Apresentação elegante com tema dourado
+- **Countdown Timer**: Contador regressivo até a festa (08/11/2025)
+- **Galeria Interativa**: Carousel de fotos ao longo dos anos
+- **Timeline do Casal**: Marcos importantes da jornada juntos
+- **Mensagens da Família**: Seção especial para filhos e netos
+- **Livro de Visitas**: Sistema para enviar mensagens carinhosas
+- **Mensagens Aprovadas**: Leitura das mensagens de outros visitantes
+
+### Para Admin
+
+- **Painel de Moderação**: Interface para aprovar/rejeitar mensagens
+- **Notificações por Email**: Digest diário de mensagens pendentes (20h)
+- **Estatísticas**: Métricas básicas de engajamento
+
+## Stack Tecnológica
+
+### Frontend
+
+- **Next.js 14** (App Router) + React 18 + TypeScript
+- **Tailwind CSS** + **Shadcn/ui** para design system
+- **Framer Motion** para animações elegantes
+- **TanStack Query** para gerenciamento de estado
+- **React Hook Form** + **Zod** para formulários
+- **Embla Carousel** para galeria de fotos
+
+### Backend & Services
+
+- **Supabase** (PostgreSQL, Auth, Storage)
+- **Nodemailer** + Gmail para envio de emails
+- **Vercel Cron Jobs** para automação
+
+### DevOps & Monitoring
+
+- **Vercel** para deploy e hospedagem
+- **PostHog** para analytics e insights
+- **Ultracite** (BiomeJS) para linting e formatação
+
+## Arquitetura
+
+O projeto segue uma arquitetura **MVVM** (Model-View-ViewModel):
+
+```
+src/
+├── actions/          # Model - Operações Supabase
+├── app/              # Next.js App Router
+├── components/       # View - Componentes UI
+├── hooks/            # ViewModel - Lógica de negócio
+└── lib/              # Utilitários e configurações
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Separação de Responsabilidades
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Actions**: CRUD operations, queries Supabase, validação de dados
+- **Hooks**: TanStack Query, business logic, side effects
+- **Components**: UI rendering, interações do usuário
 
-## Learn More
+## Desenvolvimento
 
-To learn more about Next.js, take a look at the following resources:
+### Requisitos
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Node.js 20+
+- pnpm (recomendado)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Setup Local
 
-## Deploy on Vercel
+```bash
+# Clone o repositório
+git clone <repo-url>
+cd golden-anniversary
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Instale dependências
+pnpm install
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Configure variáveis de ambiente
+cp .env.example .env.local
+# Preencha as variáveis do Supabase, Gmail, etc.
+
+# Execute o servidor de desenvolvimento
+pnpm dev
+```
+
+Acesse [http://localhost:3000](http://localhost:3000)
+
+### Scripts Disponíveis
+
+```bash
+pnpm dev          # Servidor de desenvolvimento (com Turbopack)
+pnpm build        # Build para produção
+pnpm start        # Servidor de produção
+pnpm lint         # Linting e formatação com Ultracite
+pnpm type-check   # Verificação de tipos TypeScript
+```
+
+## Analytics & Monitoring
+
+Implementação com **PostHog** para tracking de:
+
+- **Conversion Funnel**: Visita → Engajamento → Mensagem
+- **User Journey**: Scroll depth, tempo por seção, navegação
+- **Performance**: Core Web Vitals, loading times
+- **Admin Metrics**: Taxa de aprovação, tempo de moderação
+
+## Deploy
+
+O projeto está configurado para deploy automático na **Vercel**:
+
+1. **Staging**: Deploy automático de PRs
+2. **Production**: Deploy automático da branch `main`
+3. **Cron Jobs**: Configurados para digest de emails
+
+### Variáveis de Ambiente
+
+```bash
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+
+# Email
+GMAIL_USER=
+GMAIL_APP_PASSWORD=
+ADMIN_EMAIL=
+
+# Analytics
+NEXT_PUBLIC_POSTHOG_KEY=
+NEXT_PUBLIC_POSTHOG_HOST=
+```
+
+## Roadmap
+
+O projeto está sendo desenvolvido em fases, com todas as funcionalidades planejadas e organizadas.
+
+- [ ] Setup do projeto (DEV-15) - **Em progresso**
+- [ ] Configuração Supabase (DEV-16)
+- [ ] TanStack Query + Componentes Base (DEV-17)
+- [ ] Hero Section (DEV-18)
+- [ ] Galeria Estática (DEV-19)
+- [ ] Formulário GuestBook (DEV-20)
+- [ ] Sistema de Email (DEV-22)
+- [ ] Painel de Moderação (DEV-27)
+- [ ] Deploy Final (DEV-31)
+
+## Contribuição
+
+Este é um projeto pessoal para celebração familiar. Desenvolvido com muito carinho para Iria & Ari!

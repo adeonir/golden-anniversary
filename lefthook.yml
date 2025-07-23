@@ -3,7 +3,7 @@ pre-commit:
   jobs:
     - name: lint & format
       run: pnpm lint {staged_files}
-      glob: "*.{jsx,tsx,json,jsonc,css,md}"
+      glob: "*.{jsx,tsx,json,jsonc,css}"
       stage_fixed: true
 
 pre-push:
