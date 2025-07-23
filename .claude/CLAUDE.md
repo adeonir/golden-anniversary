@@ -2,6 +2,51 @@
 
 Commemorative website for Iria & Ari's 50th wedding anniversary.
 
+## Tech Stack
+
+- **Framework**: Next.js (App Router) + React + TypeScript
+- **Styling**: Tailwind CSS + Shadcn/ui
+- **Database**: Supabase PostgreSQL + Auth + Storage
+- **Email**: Nodemailer + Vercel Cron Jobs
+- **Deployment**: Vercel
+- **Code Quality**: Ultracite (BiomeJS)
+
+## Development Commands
+
+- `pnpm dev` - Start development server
+- `pnpm build` - Build for production
+- `pnpm lint` - Format and lint code
+- `pnpm type-check` - TypeScript type checking
+
+## Architecture Pattern
+
+This project follows MVVM architecture:
+
+- **Actions** (`src/actions/`) - Data layer (Supabase operations)
+- **Hooks** (`src/hooks/`) - Business logic (TanStack Query + state)
+- **Components** (`src/components/app/`) - Section components with their logic
+- **Components** (`src/components/ui/`) - Reusable UI components (Shadcn/ui)
+
+## Project-Specific Rules
+
+### Design System
+
+- Use golden theme colors (gold-50 through gold-950)
+- Typography: Inter (body), Playfair Display (headings), Dancing Script (special text)
+- Always ensure color contrast ratio ≥ 4.5:1
+
+### Database & API
+
+- Use Supabase Row Level Security (RLS) for all tables
+- Environment variables must be validated using `@t3-oss/env-nextjs`
+- All API routes require proper error handling and type safety
+
+### Image Handling
+
+- Always use Next.js Image component with optimization
+- Implement blur placeholders for better UX
+- Use lazy loading for gallery images
+
 ## Core Features
 
 1. **Header/Hero** - Couple presentation
@@ -12,26 +57,6 @@ Commemorative website for Iria & Ari's 50th wedding anniversary.
 6. **Timeline** - Important milestones in the couple's life
 7. **Footer** - Inspirational quote and credits
 8. **Admin Panel** - Moderation via Supabase Auth
-
-## GuestBook
-
-- Limit: 500 characters
-- Fields: Name (required) + Message (required)
-- Status: Pending → Approved → Visible
-- Pagination: 5 messages per page
-- Notification: Daily digest at 8 PM
-
-## Tech Stack
-
-- Next.js with TypeScript
-- Supabase (auth + database)
-- Vercel (deploy + cron jobs)
-
-## Typographic Decisions
-
-**Body Font (Inter)**: Long texts, UI elements, general legibility
-**Heading Font (Playfair Display)**: Section titles, elegant text
-**Script Font (Dancing Script)**: Couple's names, special details
 
 ## Before Writing Code
 
