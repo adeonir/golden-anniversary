@@ -138,7 +138,7 @@ NEXT_PUBLIC_POSTHOG_HOST=
 
 O projeto está sendo desenvolvido em fases, com todas as funcionalidades planejadas e organizadas.
 
-- [ ] Setup do projeto (DEV-15) - **Em progresso**
+- [x] Setup do projeto (DEV-15)
 - [ ] Configuração Supabase (DEV-16)
 - [ ] TanStack Query + Componentes Base (DEV-17)
 - [ ] Hero Section (DEV-18)
