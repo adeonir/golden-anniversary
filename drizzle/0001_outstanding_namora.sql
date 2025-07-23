@@ -1,0 +1,1 @@
+ALTER TABLE "photos" ADD COLUMN "order_position" integer DEFAULT 0 NOT NULL;
