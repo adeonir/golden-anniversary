@@ -24,7 +24,7 @@ Site comemorativo para celebrar 50 anos de casamento de Iria & Ari. Uma experiê
 
 ### Frontend
 
-- **Next.js 14** (App Router) + React 18 + TypeScript
+- **Next.js** (App Router) + React + TypeScript
 - **Tailwind CSS** + **Shadcn/ui** para design system
 - **Framer Motion** para animações elegantes
 - **TanStack Query** para gerenciamento de estado
@@ -50,24 +50,27 @@ O projeto segue uma arquitetura **MVVM** (Model-View-ViewModel):
 ```
 src/
 ├── actions/          # Model - Operações Supabase
-├── app/              # Next.js App Router
+├── app/              # View - Páginas
 ├── components/       # View - Componentes UI
-├── hooks/            # ViewModel - Lógica de negócio
+├── database/         # Model - Dados
+├── hooks/            # ViewModel - Lógica de negócio e dados
 └── lib/              # Utilitários e configurações
 ```
 
 ### Separação de Responsabilidades
 
 - **Actions**: CRUD operations, queries Supabase, validação de dados
-- **Hooks**: TanStack Query, business logic, side effects
 - **Components**: UI rendering, interações do usuário
+- **Database**: Supabase, Row Level Security, Storage
+- **Hooks**: TanStack Query, business logic, side effects
+- **Lib**: Utilitários e configurações
 
 ## Desenvolvimento
 
 ### Requisitos
 
-- Node.js 20+
-- pnpm (recomendado)
+- Node.js 22+
+- pnpm 10+
 
 ### Setup Local
 
@@ -130,8 +133,6 @@ PROJECT_ID=your_project_id
 ADMIN_EMAIL=admin@exemplo.com
 ```
 
-Para setup detalhado das configurações, consulte a [documentação técnica](docs/).
-
 ## Documentação
 
 Documentação técnica completa disponível em [`docs/`](docs/):
@@ -144,16 +145,35 @@ Documentação técnica completa disponível em [`docs/`](docs/):
 
 ## Roadmap
 
-O projeto está sendo desenvolvido em fases, com todas as funcionalidades planejadas e organizadas.
+O projeto está sendo desenvolvido em fases, com todas as funcionalidades planejadas e organizadas no Linear.
+
+### Setup
 
 - [x] Setup do projeto (DEV-15)
-- [ ] Configuração Supabase (DEV-16)
-- [ ] TanStack Query + Componentes Base (DEV-17)
-- [ ] Hero Section (DEV-18)
-- [ ] Galeria Estática (DEV-19)
-- [ ] Formulário GuestBook (DEV-20)
-- [ ] Sistema de Email (DEV-22)
-- [ ] Painel de Moderação (DEV-27)
+- [x] Configuração Supabase (DEV-16)
+- [-] TanStack Query (DEV-17) - _In Progress_
+
+### Visitantes
+
+- [ ] Hero Banner (DEV-6)
+- [ ] Countdown da festa (DEV-7)
+- [ ] Navegar na galeria (DEV-8)
+- [ ] Deixar mensagem no guestbook (DEV-9)
+- [ ] Ler mensagens aprovadas (DEV-10)
+- [ ] Mensagens da família (DEV-11)
+- [ ] Timeline do casal (DEV-12)
+
+### Admin
+
+- [ ] Moderar mensagens (DEV-13)
+- [ ] Receber notificações (DEV-14)
+- [ ] Gerenciar galeria de fotos (DEV-32)
+
+### Otimizações
+
+- [ ] Framer Motion & Animações (DEV-28)
+- [ ] Otimização de Imagens (DEV-29)
+- [ ] PostHog Analytics (DEV-30)
 - [ ] Deploy Final (DEV-31)
 
 ## Contribuição
