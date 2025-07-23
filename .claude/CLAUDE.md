@@ -27,6 +27,12 @@ Commemorative website for Iria & Ari's 50th wedding anniversary.
 - Supabase (auth + database)
 - Vercel (deploy + cron jobs)
 
+## Typographic Decisions
+
+**Body Font (Inter)**: Long texts, UI elements, general legibility
+**Heading Font (Playfair Display)**: Section titles, elegant text
+**Script Font (Dancing Script)**: Couple's names, special details
+
 ## Before Writing Code
 
 1. Analyze existing patterns in the codebase

@@ -1,5 +1,22 @@
 import type { Metadata } from 'next'
+import { Dancing_Script, Inter, Playfair_Display } from 'next/font/google'
+
 import './globals.css'
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-sans',
+})
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-serif',
+})
+
+const dancingScript = Dancing_Script({
+  subsets: ['latin'],
+  variable: '--font-script',
+})
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -12,8 +29,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html className={`${inter.variable} ${playfair.variable} ${dancingScript.variable}`} lang="pt">
+      <body className="font-sans">{children}</body>
     </html>
   )
 }
