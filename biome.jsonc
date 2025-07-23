@@ -13,6 +13,9 @@
             "functions": ["cn", "clsx", "cva"]
           }
         }
+      },
+      "performance": {
+        "noNamespaceImport": "off"
       }
     }
   },
