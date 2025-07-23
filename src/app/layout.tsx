@@ -3,6 +3,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Dancing_Script, Inter, Playfair_Display } from 'next/font/google'
 import { env } from '~/env'
+import { QueryProvider } from '~/providers/query-client'
 
 // Validate environment variables on app start
 env
@@ -34,7 +35,9 @@ export default function RootLayout({
 }>) {
   return (
     <html className={`${inter.variable} ${playfair.variable} ${dancingScript.variable}`} lang="pt">
-      <body className="font-sans">{children}</body>
+      <body className="font-sans">
+        <QueryProvider>{children}</QueryProvider>
+      </body>
     </html>
   )
 }

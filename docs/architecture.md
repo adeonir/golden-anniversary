@@ -283,10 +283,9 @@ interface Photo {
 export function PhotoCarousel({ photos }: { photos: Photo[] }) {
   return (
     <div className="space-y-4">
-      {/* Main carousel image */}
       <div className="aspect-video max-w-4xl mx-auto">
         <GalleryImage
-          src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/gallery/${photos[0]?.filename}`}
+          src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/photos/${photos[0]?.filename}`}
           alt={photos[0]?.alt_text || "Foto da galeria"}
           width={800}
           height={600}
@@ -295,12 +294,11 @@ export function PhotoCarousel({ photos }: { photos: Photo[] }) {
         />
       </div>
 
-      {/* Thumbnail grid */}
       <div className="flex gap-2 justify-center overflow-x-auto pb-2">
         {photos.map((photo, index) => (
           <GalleryImage
             key={photo.id}
-            src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/gallery/${photo.filename}`}
+            src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/photos/${photo.filename}`}
             alt={photo.alt_text || "Foto da galeria"}
             width={150}
             height={100}
@@ -489,19 +487,20 @@ pnpm add @tanstack/react-query
 pnpm add -D @tanstack/react-query-devtools
 ```
 
-**Setup**:
+**Provider Setup** (`src/providers/query-client.tsx`):
 
 ```typescript
-// components/providers/query-provider.tsx
-"use client";
+'use client'
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { type PropsWithChildren, useRef } from "react";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { useRef } from 'react'
 
-const isDevelopment = process.env.NODE_ENV === "development";
+interface QueryProviderProps {
+  children: React.ReactNode
+}
 
-export function QueryProvider({ children }: PropsWithChildren) {
+export function QueryProvider({ children }: QueryProviderProps) {
   const queryClient = useRef(
     new QueryClient({
       defaultOptions: {
@@ -513,17 +512,68 @@ export function QueryProvider({ children }: PropsWithChildren) {
           staleTime: 5 * 60 * 1000, // 5 minutes
         },
       },
-    })
-  ).current;
+    }),
+  ).current
 
   return (
     <QueryClientProvider client={queryClient}>
       {children}
-      {isDevelopment && <ReactQueryDevtools initialIsOpen={false} />}
+      {process.env.NODE_ENV === 'development' && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
-  );
+  )
 }
 ```
+
+### Data Layer Architecture
+
+**Types** (`src/types/[entity].ts`):
+```typescript
+// Centralized interfaces for data shapes
+export interface CreateEntityData { ... }
+export interface Entity { id, ...fields, createdAt }
+```
+
+**Server Actions** (`src/actions/[entity].ts`):
+```typescript
+'use server'
+// Database operations with error handling
+export async function getEntities(): Promise<Entity[]> {
+  try { return db.select()... } 
+  catch { throw new Error(...) }
+}
+export async function createEntity(data): Promise<Entity> {
+  // Insert + revalidatePath + error handling
+}
+```
+
+**Hooks** (`src/hooks/use-[entity].ts`):
+```typescript
+// Query key factories for type-safe cache management
+const entityKeys = {
+  all: ['entity'] as const,
+  lists: () => [...entityKeys.all, 'list'] as const,
+  detail: (id) => [...entityKeys.details(), id] as const,
+}
+
+// Clean hooks using server actions
+export function useEntities() {
+  return useQuery({ queryKey: entityKeys.lists(), queryFn: getEntities })
+}
+export function useCreateEntity() {
+  return useMutation({ 
+    mutationFn: createEntity,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: entityKeys.all })
+  })
+}
+```
+
+### Architecture Benefits
+
+- **Centralized Types**: Shared across actions, hooks, and components
+- **Server Actions**: Handle error handling and data validation
+- **Clean Hooks**: No direct DB calls, focus on cache management
+- **Query Key Factories**: Type-safe cache invalidation strategies
+- **MVVM Pattern**: Clear separation between Model (actions), ViewModel (hooks), View (components)
 
 ### Next.js Optimizations
 
