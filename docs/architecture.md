@@ -283,10 +283,9 @@ interface Photo {
 export function PhotoCarousel({ photos }: { photos: Photo[] }) {
   return (
     <div className="space-y-4">
-      {/* Main carousel image */}
       <div className="aspect-video max-w-4xl mx-auto">
         <GalleryImage
-          src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/gallery/${photos[0]?.filename}`}
+          src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/photos/${photos[0]?.filename}`}
           alt={photos[0]?.alt_text || "Foto da galeria"}
           width={800}
           height={600}
@@ -295,12 +294,11 @@ export function PhotoCarousel({ photos }: { photos: Photo[] }) {
         />
       </div>
 
-      {/* Thumbnail grid */}
       <div className="flex gap-2 justify-center overflow-x-auto pb-2">
         {photos.map((photo, index) => (
           <GalleryImage
             key={photo.id}
-            src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/gallery/${photo.filename}`}
+            src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/photos/${photo.filename}`}
             alt={photo.alt_text || "Foto da galeria"}
             width={150}
             height={100}
