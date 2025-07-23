@@ -1,7 +1,11 @@
+import './globals.css'
+
 import type { Metadata } from 'next'
 import { Dancing_Script, Inter, Playfair_Display } from 'next/font/google'
+import { env } from '~/env'
 
-import './globals.css'
+// Validate environment variables on app start
+env
 
 const inter = Inter({
   subsets: ['latin'],
