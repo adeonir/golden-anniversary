@@ -35,52 +35,53 @@
 
 ```
 src/
-├── actions/          # Supabase operations (Model)
-│   ├── auth.ts
-│   ├── gallery.ts
-│   └── guestbook.ts
-├── app/              # Next.js App Router
-│   ├── admin/
-│   ├── api/
-│   └── page.tsx
-├── components/       # UI Components (View)
-│   ├── app/          # Application components
-│   │   ├── countdown/
-│   │   ├── gallery/
-│   │   └── guestbook/
-│   └── ui/           # Shadcn components
-├── hooks/            # Business logic (ViewModel)
-│   ├── useCountdown.ts
-│   ├── useGallery.ts
-│   └── useGuestbook.ts
-└── lib/              # Utilities
-    ├── email.ts
-    ├── supabase.ts
-    └── utils.ts
+├── actions/             # Server Actions (Model)
+├── app/                 # Next.js App Router (Rotas)
+│   ├── admin/           # Painel administrativo
+│   ├── login/           # Autenticação
+│   ├── layout.tsx       # Layout raiz da aplicação
+│   └── page.tsx         # Homepage/landing page
+├── components/          # Componentes React (View)
+│   ├── app/             # Componentes específicos da aplicação
+│   └── ui/              # Componentes reutilizáveis (Shadcn/ui)
+├── database/            # Camada de Dados
+├── hooks/               # React Hooks (ViewModel)
+├── lib/                 # Utilitários e Configurações
+│   ├── supabase/        # Configuração Supabase
+│   └── utils.ts         # Funções utilitárias gerais
+├── env.ts               # Validação de variáveis de ambiente (T3 Env)
+└── middleware.ts        # Middleware do Next.js
 ```
 
 ### Separação de Responsabilidades
 
 **Actions (Model)**:
 
-- CRUD operations
-- Supabase queries
-- Data validation
-- Error handling
+- Server Actions do Next.js
+- Operações assíncronas server-side
+- Integração com Supabase Auth
+- Validação de dados e redirecionamentos
+
+**Database (Camada de Dados)**:
+
+- Schema do banco de dados (Drizzle)
+- Migrações e estrutura
+- Políticas de segurança (RLS)
+- Conexões e queries
 
 **Hooks (ViewModel)**:
 
-- TanStack Query integration
-- Business logic
-- State management
-- Side effects
+- Estado da aplicação
+- Side effects e integração com APIs
+- Lógica de apresentação
+- Gerenciamento de sessão
 
 **Components (View)**:
 
-- UI rendering
-- User interaction
-- Event handling
-- Loading states
+- Interface do usuário
+- Renderização e interações
+- Componentes específicos da aplicação
+- Design system reutilizável
 
 ## Database Schema
 
