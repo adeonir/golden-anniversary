@@ -120,19 +120,27 @@ O projeto está configurado para deploy automático na **Vercel**:
 
 ```bash
 # Supabase
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+DATABASE_PASSWORD=your_database_password
+PROJECT_ID=your_project_id
 
-# Email
-GMAIL_USER=
-GMAIL_APP_PASSWORD=
-ADMIN_EMAIL=
-
-# Analytics
-NEXT_PUBLIC_POSTHOG_KEY=
-NEXT_PUBLIC_POSTHOG_HOST=
+# Authentication
+ADMIN_EMAIL=admin@exemplo.com
 ```
+
+Para setup detalhado das configurações, consulte a [documentação técnica](docs/).
+
+## Documentação
+
+Documentação técnica completa disponível em [`docs/`](docs/):
+
+- **[PRD](docs/prd.md)** - Product Requirements Document
+- **[Design System](docs/design.md)** - Guia de design, cores e componentes
+- **[Arquitetura](docs/architecture.md)** - Estrutura do projeto e separação de responsabilidades
+- **[Setup RLS](docs/rls-setup.md)** - Configuração de Row Level Security no Supabase
+- **[Setup Storage](docs/storage-setup.md)** - Configuração do bucket de fotos
 
 ## Roadmap
 
