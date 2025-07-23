@@ -3,14 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
+    "dev": "op run --env-file=.env.local -- next dev --turbopack",
+    "build": "op run --env-file=.env.local -- next build",
+    "build:prod": "next build",
     "start": "next start",
     "lint": "ultracite format",
     "type-check": "tsc --noEmit",
-    "db:generate": "drizzle-kit generate",
-    "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio"
+    "db:generate": "op run --env-file=.env.local -- drizzle-kit generate",
+    "db:push": "op run --env-file=.env.local -- drizzle-kit push",
+    "db:studio": "op run --env-file=.env.local -- drizzle-kit studio"
   },
   "dependencies": {
     "@hookform/resolvers": "5.1.1",
