@@ -6,6 +6,7 @@ export const env = createEnv({
     SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
     DATABASE_PASSWORD: z.string().min(1),
     PROJECT_ID: z.string().min(1),
+    ADMIN_EMAIL: z.string().email(),
   },
   client: {
     NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
@@ -16,6 +17,7 @@ export const env = createEnv({
     SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
     DATABASE_PASSWORD: process.env.DATABASE_PASSWORD,
     PROJECT_ID: process.env.PROJECT_ID,
+    ADMIN_EMAIL: process.env.ADMIN_EMAIL,
     // Client
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
