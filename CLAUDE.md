@@ -61,27 +61,34 @@ This project follows MVVM architecture:
 ## Git & PR Conventions
 
 ### Commit Messages
+
 Follow **Conventional Commits** format:
-- `feat(scope): description` - New features
-- `fix(scope): description` - Bug fixes
-- `docs(scope): description` - Documentation
-- `chore(scope): description` - Maintenance tasks
+
+- `feat: description` - New features
+- `fix: description` - Bug fixes
+- `docs: description` - Documentation
+- `chore: description` - Maintenance tasks
 - Use Linear issue IDs as scope when applicable (e.g., `DEV-XX`)
 
 ### Pull Request Format
+
 **Title**: `type(scope): concise description`
 
 **Body template**:
+
 ```markdown
 ## Summary
+
 Brief description of changes and context.
 
 ## Changes
+
 - ✅ Feature/change 1
 - ✅ Feature/change 2
 - ✅ Feature/change 3
 
 ## Test Plan
+
 - [x] Test case 1
 - [x] Test case 2
 - [x] All configurations validated
