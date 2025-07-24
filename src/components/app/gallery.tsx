@@ -63,7 +63,7 @@ const PLACEHOLDER_IMAGES = [
 
 const content = {
   title: 'Galeria de Memórias',
-  subtitle: '50 anos de momentos inesquecíveis',
+  subtitle: '50 anos de momentos inesquecíveis.',
 }
 
 export function Gallery() {
