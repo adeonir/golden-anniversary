@@ -3,6 +3,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Inter, MonteCarlo, Playfair_Display } from 'next/font/google'
 import { env } from '~/env'
+import { cn } from '~/lib/utils'
 import { QueryProvider } from '~/providers/query-client'
 
 // Validate environment variables on app start
@@ -35,7 +36,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html className={`${inter.variable} ${playfair.variable} ${monteCarlo.variable}`} lang="pt">
+    <html className={cn(inter.variable, playfair.variable, monteCarlo.variable)} lang="pt">
       <body className="min-w-80 font-sans">
         <QueryProvider>{children}</QueryProvider>
       </body>
