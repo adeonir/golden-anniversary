@@ -16,6 +16,9 @@
       },
       "performance": {
         "noNamespaceImport": "off"
+      },
+      "style": {
+        "useBlockStatements": "off"
       }
     }
   },
