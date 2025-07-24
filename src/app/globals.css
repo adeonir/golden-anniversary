@@ -16,9 +16,9 @@
   --color-gold-900: var(--gold-900);
   --color-gold-950: var(--gold-950);
 
-  --font-family-heading: var(--font-heading);
-  --font-family-script: var(--font-script);
-  --font-family-sans: var(--font-sans);
+  --font-heading: var(--font-serif);
+  --font-script: var(--font-script);
+  --font-sans: var(--font-sans);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -49,18 +49,17 @@
 :root {
   --gold-50: oklch(98% 0.02 85);
   --gold-100: oklch(95% 0.04 85);
-  --gold-200: oklch(88% 0.08 85);
+  --gold-200: oklch(95.29% 0.043 89.11);
   --gold-300: oklch(82% 0.12 85);
-  --gold-400: oklch(75% 0.15 85);
+  --gold-400: oklch(85.88% 0.113 88.64);
   --gold-500: oklch(68% 0.18 85);
   --gold-600: oklch(60% 0.15 85);
-  --gold-700: oklch(52% 0.12 85);
+  --gold-700: oklch(59.61% 0.106 77.95);
   --gold-800: oklch(44% 0.09 85);
   --gold-900: oklch(36% 0.06 85);
   --gold-950: oklch(28% 0.04 85);
 
   --font-heading: var(--font-serif);
-  --font-script: var(--font-script);
   --font-sans: var(--font-sans);
 
   --radius: 0.625rem;
