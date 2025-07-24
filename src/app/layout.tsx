@@ -1,7 +1,7 @@
 import './globals.css'
 
 import type { Metadata } from 'next'
-import { Dancing_Script, Inter, Playfair_Display } from 'next/font/google'
+import { Inter, MonteCarlo, Playfair_Display } from 'next/font/google'
 import { env } from '~/env'
 import { QueryProvider } from '~/providers/query-client'
 
@@ -18,7 +18,8 @@ const playfair = Playfair_Display({
   variable: '--font-serif',
 })
 
-const dancingScript = Dancing_Script({
+const monteCarlo = MonteCarlo({
+  weight: '400',
   subsets: ['latin'],
   variable: '--font-script',
 })
@@ -34,8 +35,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html className={`${inter.variable} ${playfair.variable} ${dancingScript.variable}`} lang="pt">
-      <body className="font-sans">
+    <html className={`${inter.variable} ${playfair.variable} ${monteCarlo.variable}`} lang="pt">
+      <body className="min-w-80 font-sans">
         <QueryProvider>{children}</QueryProvider>
       </body>
     </html>
