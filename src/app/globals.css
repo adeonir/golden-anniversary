@@ -16,6 +16,8 @@
   --color-gold-900: var(--gold-900);
   --color-gold-950: var(--gold-950);
 
+  --text-10xl: 10rem;
+
   --font-heading: var(--font-serif);
   --font-script: var(--font-script);
   --font-sans: var(--font-sans);

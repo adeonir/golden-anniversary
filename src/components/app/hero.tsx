@@ -11,14 +11,11 @@ const content = {
 
 export function Hero() {
   return (
-    <section className="relative flex min-h-screen items-center justify-center bg-gold-200 px-4 pt-8 pb-24">
+    <section className="relative flex min-h-screen items-center justify-center bg-linear-to-b from-gold-50 to-gold-200 px-4 pt-8 pb-24">
       <div className="flex max-w-4xl flex-col items-center space-y-8 text-center">
-        <h1 className="font-script text-8xl text-gold-700 sm:text-9xl">{content.names}</h1>
-
+        <h1 className="font-script text-8xl text-gold-700 sm:text-10xl">{content.names}</h1>
         <Divider />
-
         <h2 className="font-heading font-medium text-4xl text-zinc-700 sm:text-5xl">{content.title}</h2>
-
         <p className="max-w-md font-sans text-lg text-zinc-600 leading-relaxed sm:text-xl">{content.subtitle}</p>
 
         <div className="flex flex-col items-center space-y-2 pt-4 sm:flex-row sm:space-x-8 sm:space-y-0 sm:pt-8">
