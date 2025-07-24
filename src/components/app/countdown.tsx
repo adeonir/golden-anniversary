@@ -50,7 +50,7 @@ function TimeCard({ value, label }: TimeCardProps) {
       <div className="font-heading font-semibold text-6xl text-gold-500 tabular-nums md:text-7xl">
         {value.toString().padStart(2, '0')}
       </div>
-      <div className="font-medium text-md text-slate-400 uppercase tracking-widest">{label}</div>
+      <div className="font-medium text-md text-zinc-400 uppercase tracking-widest">{label}</div>
     </Card>
   )
 }

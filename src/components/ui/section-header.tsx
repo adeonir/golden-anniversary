@@ -15,7 +15,7 @@ export function SectionHeader({ icon: Icon, title, subtitle, className = '' }: S
       <Icon className="mx-auto mb-12 size-16 text-gold-500 sm:mb-16" strokeWidth={1} />
       <h2 className="font-heading font-semibold text-4xl text-zinc-700 leading-tight sm:text-5xl">{title}</h2>
       <Divider />
-      <p className="mx-auto max-w-md text-lg text-slate-600 leading-relaxed sm:text-xl">{subtitle}</p>
+      <p className="mx-auto max-w-lg text-lg text-zinc-600 leading-relaxed sm:text-xl">{subtitle}</p>
     </div>
   )
 }
