@@ -15,9 +15,7 @@ export async function getMessages(): Promise<Message[]> {
 }
 
 export async function getMessage(id: string): Promise<Message | null> {
-  if (!id) {
-    return null
-  }
+  if (!id) return null
 
   try {
     const result = await db.select().from(messages).where(eq(messages.id, id))

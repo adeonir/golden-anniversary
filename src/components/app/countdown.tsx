@@ -2,7 +2,7 @@
 
 import { CalendarFold } from 'lucide-react'
 import { Card } from '~/components/ui/card'
-import { Divider } from '~/components/ui/divider'
+import { SectionHeader } from '~/components/ui/section-header'
 import { useCountdown } from '~/hooks/use-countdown'
 
 const TARGET_DATE = new Date('2025-11-08T18:30:00')
@@ -25,14 +25,7 @@ export function Countdown() {
     <section className="bg-gold-50 px-4 py-24">
       <div className="mx-auto px-4">
         <div className="mx-auto max-w-5xl text-center">
-          <div className="mb-16 flex flex-col items-center space-y-6 sm:space-y-8">
-            <CalendarFold className="mx-auto mb-12 size-16 text-gold-500 sm:mb-16" strokeWidth={1} />
-            <h2 className="font-heading font-semibold text-4xl text-zinc-700 leading-tight sm:text-5xl">
-              {content.title}
-            </h2>
-            <Divider />
-            <p className="mx-auto max-w-md text-lg text-slate-600 leading-relaxed sm:text-xl">{content.subtitle}</p>
-          </div>
+          <SectionHeader icon={CalendarFold} subtitle={content.subtitle} title={content.title} />
 
           <div className="mx-auto grid max-w-5xl grid-cols-2 gap-6 md:grid-cols-4 md:gap-8">
             <TimeCard label={content.labels.days} value={days} />
@@ -53,7 +46,7 @@ interface TimeCardProps {
 
 function TimeCard({ value, label }: TimeCardProps) {
   return (
-    <Card className="border border-gold-200 bg-white py-6 shadow-lg sm:py-8">
+    <Card className="rounded-3xl border border-gold-300/80 bg-white pt-4 pb-6 shadow-lg sm:pt-6 sm:pb-8">
       <div className="font-heading font-semibold text-6xl text-gold-500 tabular-nums md:text-7xl">
         {value.toString().padStart(2, '0')}
       </div>
