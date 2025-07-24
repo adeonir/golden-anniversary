@@ -5,6 +5,7 @@ import { Camera, ChevronLeft, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
 import { useCallback, useEffect, useState } from 'react'
 import { Button } from '~/components/ui/button'
+import { Section } from '~/components/ui/section'
 import { SectionHeader } from '~/components/ui/section-header'
 import { cn } from '~/lib/utils'
 
@@ -93,7 +94,7 @@ export function Gallery() {
   }, [emblaApi, onSelect])
 
   return (
-    <section className="bg-white px-4 py-24">
+    <Section className="bg-white">
       <div className="mx-auto px-4">
         <div className="mx-auto max-w-5xl">
           <SectionHeader icon={Camera} subtitle={content.subtitle} title={content.title} />
@@ -161,6 +162,6 @@ export function Gallery() {
           </div>
         </div>
       </div>
-    </section>
+    </Section>
   )
 }

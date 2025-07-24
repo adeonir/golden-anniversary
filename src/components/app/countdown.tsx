@@ -2,6 +2,7 @@
 
 import { CalendarFold } from 'lucide-react'
 import { Card } from '~/components/ui/card'
+import { Section } from '~/components/ui/section'
 import { SectionHeader } from '~/components/ui/section-header'
 import { useCountdown } from '~/hooks/use-countdown'
 
@@ -22,7 +23,7 @@ export function Countdown() {
   const { days, hours, minutes, seconds } = useCountdown(TARGET_DATE)
 
   return (
-    <section className="bg-gold-50 px-4 py-24">
+    <Section className="bg-gold-50">
       <div className="mx-auto px-4">
         <div className="mx-auto max-w-5xl text-center">
           <SectionHeader icon={CalendarFold} subtitle={content.subtitle} title={content.title} />
@@ -35,7 +36,7 @@ export function Countdown() {
           </div>
         </div>
       </div>
-    </section>
+    </Section>
   )
 }
 
@@ -46,7 +47,7 @@ interface TimeCardProps {
 
 function TimeCard({ value, label }: TimeCardProps) {
   return (
-    <Card className="rounded-3xl border border-gold-300/80 bg-white pt-4 pb-6 shadow-lg sm:pt-6 sm:pb-8">
+    <Card className="rounded-3xl border border-gold-300 bg-white pt-4 pb-6 shadow-lg sm:pt-6 sm:pb-8">
       <div className="font-heading font-semibold text-6xl text-gold-500 tabular-nums md:text-7xl">
         {value.toString().padStart(2, '0')}
       </div>
