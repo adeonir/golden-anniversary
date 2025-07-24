@@ -1,5 +1,6 @@
 import { Users } from 'lucide-react'
 import { Card, CardContent } from '~/components/ui/card'
+import { Section } from '~/components/ui/section'
 import { SectionHeader } from '~/components/ui/section-header'
 
 const content = {
@@ -21,8 +22,8 @@ const content = {
 
 export function FamilyMessages() {
   return (
-    <section className="bg-zinc-100 px-4 py-24 sm:py-32">
-      <div className="mx-auto max-w-6xl">
+    <Section className="bg-zinc-100">
+      <div className="mx-auto max-w-5xl">
         <SectionHeader icon={Users} subtitle={content.subtitle} title={content.title} />
 
         <div className="grid gap-8 md:grid-cols-2 md:gap-12">
@@ -38,13 +39,13 @@ export function FamilyMessages() {
           />
         </div>
       </div>
-    </section>
+    </Section>
   )
 }
 
 function MessageCard({ title, message, authors }: { title: string; message: string; authors: string }) {
   return (
-    <Card className="border-gold-200 bg-white/80 py-8 shadow-lg backdrop-blur-sm">
+    <Card className="border-gold-300 bg-white py-8 shadow-lg">
       <CardContent className="space-y-6 px-8">
         <h3 className="after:-translate-x-1/2 relative pb-4 text-center font-heading font-medium text-2xl text-gold-600 after:absolute after:bottom-1 after:left-1/2 after:h-0.5 after:w-20 after:bg-gold-400">
           {title}
