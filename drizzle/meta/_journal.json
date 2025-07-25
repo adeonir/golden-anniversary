@@ -15,6 +15,13 @@
       "when": 1753296568416,
       "tag": "0001_outstanding_namora",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1753403859315,
+      "tag": "0002_flashy_xavin",
+      "breakpoints": true
     }
   ]
 }

@@ -4,6 +4,9 @@ export const messages = pgTable('messages', {
   id: uuid('id').defaultRandom().primaryKey(),
   name: text('name').notNull(),
   message: text('message').notNull(),
+  status: text('status', { enum: ['pending', 'approved', 'rejected'] })
+    .default('pending')
+    .notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 })
 
