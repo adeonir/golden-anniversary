@@ -15,17 +15,20 @@ export async function getMessages(options?: {
     const { status, page = 1, limit = 5 } = options || {}
 
     const offset = (page - 1) * limit
-    const whereCondition = status ? eq(messages.status, status) : undefined
 
     const [messagesList, totalResult] = await Promise.all([
-      database
-        .select()
-        .from(messages)
-        .where(whereCondition)
-        .orderBy(desc(messages.createdAt))
-        .limit(limit)
-        .offset(offset),
-      database.select({ count: count() }).from(messages).where(whereCondition),
+      status
+        ? database
+            .select()
+            .from(messages)
+            .where(eq(messages.status, status))
+            .orderBy(desc(messages.createdAt))
+            .limit(limit)
+            .offset(offset)
+        : database.select().from(messages).orderBy(desc(messages.createdAt)).limit(limit).offset(offset),
+      status
+        ? database.select({ count: count() }).from(messages).where(eq(messages.status, status))
+        : database.select({ count: count() }).from(messages),
     ])
 
     const total = totalResult[0]?.count || 0
