@@ -1,7 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { MessageSquareText, Send } from 'lucide-react'
+import { Loader2, MessageSquareText, Send } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Button } from '~/components/ui/button'
@@ -11,6 +11,8 @@ import { Input } from '~/components/ui/input'
 import { Section } from '~/components/ui/section'
 import { SectionHeader } from '~/components/ui/section-header'
 import { Textarea } from '~/components/ui/textarea'
+import { useCreateMessage } from '~/hooks/use-messages'
+import type { CreateMessageData } from '~/types/messages'
 
 const content = {
   title: 'Livro de Visitas',
@@ -25,6 +27,8 @@ const guestbookSchema = z.object({
 type GuestbookFormData = z.infer<typeof guestbookSchema>
 
 export function Guestbook() {
+  const createMessageMutation = useCreateMessage()
+
   const form = useForm<GuestbookFormData>({
     resolver: zodResolver(guestbookSchema),
     defaultValues: {
@@ -34,8 +38,16 @@ export function Guestbook() {
   })
 
   const onSubmit = (data: GuestbookFormData) => {
-    // biome-ignore lint/suspicious/noConsole: TODO: Implement submission with react-query hook and Supabase integration
-    console.log('Form submitted:', data)
+    const messageData: CreateMessageData = {
+      name: data.name.trim(),
+      message: data.message.trim(),
+    }
+
+    createMessageMutation.mutate(messageData, {
+      onSuccess: () => {
+        form.reset()
+      },
+    })
   }
 
   return (
@@ -82,9 +94,21 @@ export function Guestbook() {
                 <div className="text-sm text-zinc-500">* Sua mensagem será analisada antes da publicação</div>
 
                 <div className="flex justify-end">
-                  <Button className="bg-gold-600 text-white hover:bg-gold-700" size="lg" type="submit">
-                    <Send className="mr-2 size-4" />
-                    Enviar mensagem
+                  <Button
+                    className="w-48"
+                    disabled={form.formState.isSubmitting}
+                    size="lg"
+                    type="submit"
+                    variant="primary"
+                  >
+                    {form.formState.isSubmitting ? (
+                      <Loader2 className="size-5 animate-spin" />
+                    ) : (
+                      <>
+                        <Send className="mr-2 size-4" />
+                        Enviar mensagem
+                      </>
+                    )}
                   </Button>
                 </div>
               </form>
