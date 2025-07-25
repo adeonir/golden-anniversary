@@ -10,15 +10,29 @@ export interface CountdownTime {
 }
 
 export function useCountdown(targetDate: Date): CountdownTime {
-  const [timeLeft, setTimeLeft] = useState<CountdownTime>(() => calculateTimeLeft(targetDate))
+  const [timeLeft, setTimeLeft] = useState<CountdownTime>({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+    isExpired: false,
+  })
+  const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
+    setIsClient(true)
+    setTimeLeft(calculateTimeLeft(targetDate))
+  }, [targetDate])
+
+  useEffect(() => {
+    if (!isClient) return
+
     const timer = setInterval(() => {
       setTimeLeft(calculateTimeLeft(targetDate))
     }, 1000)
 
     return () => clearInterval(timer)
-  }, [targetDate])
+  }, [targetDate, isClient])
 
   return timeLeft
 }

@@ -40,7 +40,7 @@ function PaginationButton({ className, isActive, size = 'icon', variant, ...prop
   )
 }
 
-function PaginationPrevious({ className, ...props }: React.ComponentProps<typeof PaginationButton>) {
+function PaginationPrevious({ className, children, ...props }: React.ComponentProps<typeof PaginationButton>) {
   return (
     <PaginationButton
       aria-label="Go to previous page"
@@ -49,12 +49,12 @@ function PaginationPrevious({ className, ...props }: React.ComponentProps<typeof
       {...props}
     >
       <ChevronLeftIcon />
-      <span className="hidden sm:block">Previous</span>
+      <span className="hidden sm:block">{children || 'Previous'}</span>
     </PaginationButton>
   )
 }
 
-function PaginationNext({ className, ...props }: React.ComponentProps<typeof PaginationButton>) {
+function PaginationNext({ className, children, ...props }: React.ComponentProps<typeof PaginationButton>) {
   return (
     <PaginationButton
       aria-label="Go to next page"
@@ -62,7 +62,7 @@ function PaginationNext({ className, ...props }: React.ComponentProps<typeof Pag
       size="default"
       {...props}
     >
-      <span className="hidden sm:block">Next</span>
+      <span className="hidden sm:block">{children || 'Next'}</span>
       <ChevronRightIcon />
     </PaginationButton>
   )
