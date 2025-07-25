@@ -13,23 +13,38 @@ export async function getMessages(options?: {
 }): Promise<{ messages: Message[]; total: number; totalPages: number }> {
   try {
     const { status, page = 1, limit = 5 } = options || {}
-
     const offset = (page - 1) * limit
 
-    const [messagesList, totalResult] = await Promise.all([
-      status
-        ? database
-            .select()
-            .from(messages)
-            .where(eq(messages.status, status))
-            .orderBy(desc(messages.createdAt))
-            .limit(limit)
-            .offset(offset)
-        : database.select().from(messages).orderBy(desc(messages.createdAt)).limit(limit).offset(offset),
-      status
-        ? database.select({ count: count() }).from(messages).where(eq(messages.status, status))
-        : database.select({ count: count() }).from(messages),
-    ])
+    let messagesList: Message[]
+    let totalResult: { count: number }[]
+
+    if (status) {
+      // Separate queries when status is provided
+      messagesList = await database
+        .select()
+        .from(messages)
+        .where(eq(messages.status, status))
+        .orderBy(desc(messages.createdAt))
+        .limit(limit)
+        .offset(offset)
+
+      totalResult = await database
+        .select({ count: count() })
+        .from(messages)
+        .where(eq(messages.status, status))
+    } else {
+      // Separate queries when no status filter
+      messagesList = await database
+        .select()
+        .from(messages)
+        .orderBy(desc(messages.createdAt))
+        .limit(limit)
+        .offset(offset)
+
+      totalResult = await database
+        .select({ count: count() })
+        .from(messages)
+    }
 
     const total = totalResult[0]?.count || 0
     const totalPages = Math.ceil(total / limit)
