@@ -2,6 +2,7 @@ import './globals.css'
 
 import type { Metadata } from 'next'
 import { Inter, MonteCarlo, Playfair_Display } from 'next/font/google'
+import type { ReactNode } from 'react'
 import { Toaster } from '~/components/ui/sonner'
 import { env } from '~/env'
 import { cn } from '~/lib/utils'
@@ -48,7 +49,7 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: ReactNode
 }>) {
   return (
     <html className={cn(inter.variable, playfair.variable, monteCarlo.variable)} lang="pt-BR">
