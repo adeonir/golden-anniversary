@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { type ReactNode, useState } from 'react'
 import { Avatar, AvatarInitials } from '~/components/ui/avatar'
 import { Card, CardContent } from '~/components/ui/card'
 import {
@@ -103,7 +103,7 @@ export function GuestbookMessages() {
   )
 }
 
-function StatusCard({ children }: { children: React.ReactNode }) {
+function StatusCard({ children }: { children: ReactNode }) {
   return (
     <div className="space-y-8">
       <h2 className="text-center font-medium font-serif text-2xl text-zinc-800">Mensagens Recebidas</h2>

@@ -2,10 +2,10 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { useRef } from 'react'
+import { type ReactNode, useRef } from 'react'
 
 interface QueryProviderProps {
-  children: React.ReactNode
+  children: ReactNode
 }
 
 export function QueryProvider({ children }: QueryProviderProps) {
