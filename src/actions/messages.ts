@@ -1,9 +1,7 @@
 'use server'
 
-import { eq, sql } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
-import { database } from '~/database'
-import { messages } from '~/database/schema'
+import { createClient } from '~/lib/supabase/server'
 import type { CreateMessageData, Message } from '~/types/messages'
 
 export async function fetchMessages(
@@ -12,23 +10,37 @@ export async function fetchMessages(
   status?: 'approved' | 'pending' | 'rejected',
 ): Promise<{ messages: Message[]; total: number; totalPages: number }> {
   try {
+    const supabase = await createClient()
     const offset = (page - 1) * limit
-    const whereClause = status ? eq(messages.status, status) : undefined
 
-    const messagesList = await database
-      .select()
-      .from(messages)
-      .where(whereClause)
-      .orderBy(messages.createdAt)
-      .limit(limit)
-      .offset(offset)
+    let query = supabase
+      .from('messages')
+      .select('*', { count: 'exact' })
+      .order('createdAt', { ascending: true })
+      .range(offset, offset + limit - 1)
 
-    const countResult = await database.select({ count: sql<number>`count(*)` }).from(messages).where(whereClause)
+    if (status) {
+      query = query.eq('status', status)
+    }
 
-    const total = countResult[0]?.count || 0
+    const { data: messagesList, count, error } = await query
+
+    if (error) {
+      throw new Error(error.message)
+    }
+
+    const total = count || 0
     const totalPages = Math.ceil(total / limit)
 
-    return { messages: messagesList, total, totalPages }
+    return {
+      messages:
+        messagesList?.map((msg) => ({
+          ...msg,
+          createdAt: new Date(msg.createdAt),
+        })) || [],
+      total,
+      totalPages,
+    }
   } catch (error) {
     throw new Error(`Failed to fetch messages: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
@@ -38,8 +50,19 @@ export async function getMessage(id: string): Promise<Message | null> {
   if (!id) return null
 
   try {
-    const result = await database.select().from(messages).where(eq(messages.id, id))
-    return result[0] || null
+    const supabase = await createClient()
+    const { data, error } = await supabase.from('messages').select('*').eq('id', id).single()
+
+    if (error) {
+      throw new Error(error.message)
+    }
+
+    if (!data) return null
+
+    return {
+      ...data,
+      createdAt: new Date(data.createdAt),
+    }
   } catch (error) {
     throw new Error(`Failed to fetch message: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
@@ -47,15 +70,22 @@ export async function getMessage(id: string): Promise<Message | null> {
 
 export async function createMessage(data: CreateMessageData): Promise<Message> {
   try {
-    const result = await database.insert(messages).values(data).returning()
-    const newMessage = result[0]
+    const supabase = await createClient()
+    const { data: newMessage, error } = await supabase.from('messages').insert(data).select().single()
+
+    if (error) {
+      throw new Error(error.message)
+    }
 
     if (!newMessage) {
       throw new Error('Failed to create message')
     }
 
     revalidatePath('/')
-    return newMessage
+    return {
+      ...newMessage,
+      createdAt: new Date(newMessage.createdAt),
+    }
   } catch (error) {
     throw new Error(`Failed to create message: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
@@ -63,7 +93,13 @@ export async function createMessage(data: CreateMessageData): Promise<Message> {
 
 export async function deleteMessage(id: string): Promise<string> {
   try {
-    await database.delete(messages).where(eq(messages.id, id))
+    const supabase = await createClient()
+    const { error } = await supabase.from('messages').delete().eq('id', id)
+
+    if (error) {
+      throw new Error(error.message)
+    }
+
     revalidatePath('/')
     return id
   } catch (error) {
