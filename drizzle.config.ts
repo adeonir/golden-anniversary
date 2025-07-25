@@ -6,6 +6,6 @@ export default defineConfig({
   schema: './src/database/schema.ts',
   out: './drizzle',
   dbCredentials: {
-    url: `postgresql://postgres:${env.DATABASE_PASSWORD}@db.${env.SUPABASE_PROJECT_ID}.supabase.co:5432/postgres`,
+    url: `postgresql://postgres:${env.DATABASE_PASSWORD}@db.${env.SUPABASE_PROJECT_ID}.supabase.co:6543/postgres?pgbouncer=true`,
   },
 })

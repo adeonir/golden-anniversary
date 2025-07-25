@@ -1,59 +1,34 @@
 'use server'
 
-import { count, desc, eq } from 'drizzle-orm'
+import { eq, sql } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { database } from '~/database'
 import { messages } from '~/database/schema'
 import type { CreateMessageData, Message } from '~/types/messages'
 
-export async function getMessages(options?: {
-  status?: 'pending' | 'approved' | 'rejected'
-  page?: number
-  limit?: number
-}): Promise<{ messages: Message[]; total: number; totalPages: number }> {
+export async function fetchMessages(
+  page = 1,
+  limit = 5,
+  status?: 'approved' | 'pending' | 'rejected',
+): Promise<{ messages: Message[]; total: number; totalPages: number }> {
   try {
-    const { status, page = 1, limit = 5 } = options || {}
     const offset = (page - 1) * limit
+    const whereClause = status ? eq(messages.status, status) : undefined
 
-    let messagesList: Message[]
-    let totalResult: { count: number }[]
+    const messagesList = await database
+      .select()
+      .from(messages)
+      .where(whereClause)
+      .orderBy(messages.createdAt)
+      .limit(limit)
+      .offset(offset)
 
-    if (status) {
-      // Separate queries when status is provided
-      messagesList = await database
-        .select()
-        .from(messages)
-        .where(eq(messages.status, status))
-        .orderBy(desc(messages.createdAt))
-        .limit(limit)
-        .offset(offset)
+    const countResult = await database.select({ count: sql<number>`count(*)` }).from(messages).where(whereClause)
 
-      totalResult = await database
-        .select({ count: count() })
-        .from(messages)
-        .where(eq(messages.status, status))
-    } else {
-      // Separate queries when no status filter
-      messagesList = await database
-        .select()
-        .from(messages)
-        .orderBy(desc(messages.createdAt))
-        .limit(limit)
-        .offset(offset)
-
-      totalResult = await database
-        .select({ count: count() })
-        .from(messages)
-    }
-
-    const total = totalResult[0]?.count || 0
+    const total = countResult[0]?.count || 0
     const totalPages = Math.ceil(total / limit)
 
-    return {
-      messages: messagesList,
-      total,
-      totalPages,
-    }
+    return { messages: messagesList, total, totalPages }
   } catch (error) {
     throw new Error(`Failed to fetch messages: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }

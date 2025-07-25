@@ -1,18 +1,21 @@
 # Row Level Security (RLS) Setup
 
-Este documento contém as instruções para configurar as políticas de Row Level Security no Supabase.
+This document contains instructions for configuring Row Level Security policies in Supabase.
 
-## Visão Geral
+## Overview
 
-O RLS garante que:
+RLS ensures that:
 
-- **Messages**: Apenas o admin pode visualizar e gerenciar mensagens
-- **Photos**: Público pode visualizar, apenas admin pode gerenciar
-- **Service Role**: Pode inserir mensagens via API (formulário público)
+- **Messages**:
+  - Public can insert via form
+  - Public can view only approved messages
+  - Admin can view and manage all messages
+- **Photos**: Public can view, only admin can manage
+- **Service Role**: Can insert messages via API (public form)
 
-## 1. Configurar RLS nas Tabelas
+## 1. Enable RLS on Tables
 
-No **SQL Editor** do Supabase, execute:
+In the **SQL Editor** of Supabase, execute:
 
 ```sql
 -- Enable RLS on tables
@@ -20,9 +23,18 @@ ALTER TABLE "messages" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "photos" ENABLE ROW LEVEL SECURITY;
 ```
 
-## 2. Políticas para Tabela `messages`
+## 2. Policies for `messages` Table
 
-### Inserção via Service Role (Formulário Público)
+### Remove old policies (if they exist)
+
+```sql
+DROP POLICY IF EXISTS "Service role can insert messages" ON "messages";
+DROP POLICY IF EXISTS "Only admin can view messages" ON "messages";
+DROP POLICY IF EXISTS "Only admin can update messages" ON "messages";
+DROP POLICY IF EXISTS "Only admin can delete messages" ON "messages";
+```
+
+### Insertion via Service Role (Public Form)
 
 ```sql
 -- Only service role can insert messages (via API route/server action only)
@@ -32,36 +44,53 @@ CREATE POLICY "Service role can insert messages" ON "messages"
   WITH CHECK (true);
 ```
 
-### Visualização pelo Admin
+### Public Viewing (Approved Messages)
 
 ```sql
--- Only admin can view messages (for moderation)
-CREATE POLICY "Only admin can view messages" ON "messages"
+-- Public can view approved messages
+CREATE POLICY "Public can view approved messages" ON "messages"
   FOR SELECT
-  TO authenticated
-  USING (auth.jwt() ->> 'email' = current_setting('app.admin_email', true));
+  TO anon, authenticated
+  USING (status = 'approved');
 ```
 
-### Gerenciamento pelo Admin
+### Complete Viewing by Admin
+
+```sql
+-- Admin can view all messages (for moderation)
+CREATE POLICY "Admin can view all messages" ON "messages"
+  FOR SELECT
+  TO authenticated
+  USING (auth.jwt() ->> 'email' = 'adeonir@gmail.com');
+```
+
+### Management by Admin
 
 ```sql
 -- Only admin can update messages
 CREATE POLICY "Only admin can update messages" ON "messages"
   FOR UPDATE
   TO authenticated
-  USING (auth.jwt() ->> 'email' = current_setting('app.admin_email', true))
-  WITH CHECK (auth.jwt() ->> 'email' = current_setting('app.admin_email', true));
+  USING (auth.jwt() ->> 'email' = 'adeonir@gmail.com')
+  WITH CHECK (auth.jwt() ->> 'email' = 'adeonir@gmail.com');
 
 -- Only admin can delete messages
 CREATE POLICY "Only admin can delete messages" ON "messages"
   FOR DELETE
   TO authenticated
-  USING (auth.jwt() ->> 'email' = current_setting('app.admin_email', true));
+  USING (auth.jwt() ->> 'email' = 'adeonir@gmail.com');
 ```
 
-## 3. Políticas para Tabela `photos`
+## 3. Policies for `photos` Table
 
-### Visualização Pública
+### Remove old policies (if they exist)
+
+```sql
+DROP POLICY IF EXISTS "Anyone can view photos" ON "photos";
+DROP POLICY IF EXISTS "Only admin can manage photos" ON "photos";
+```
+
+### Public Viewing
 
 ```sql
 -- Anyone can view photos (public gallery)
@@ -71,67 +100,93 @@ CREATE POLICY "Anyone can view photos" ON "photos"
   USING (true);
 ```
 
-### Gerenciamento pelo Admin
+### Management by Admin
 
 ```sql
 -- Only admin can manage photos
 CREATE POLICY "Only admin can manage photos" ON "photos"
   FOR ALL
   TO authenticated
-  USING (auth.jwt() ->> 'email' = current_setting('app.admin_email', true))
-  WITH CHECK (auth.jwt() ->> 'email' = current_setting('app.admin_email', true));
+  USING (auth.jwt() ->> 'email' = 'adeonir@gmail.com')
+  WITH CHECK (auth.jwt() ->> 'email' = 'adeonir@gmail.com');
 ```
 
-## 4. Configurar Admin Email
+## 4. Configure Admin Email
 
-⚠️ **Importante**: Configure o email do admin no banco:
+⚠️ **Important**: The admin email is configured in the RLS policies above as `'adeonir@gmail.com'`.
 
-```sql
--- Set the admin email setting
--- This should match the ADMIN_EMAIL environment variable
-ALTER DATABASE postgres SET app.admin_email = '[SEU_EMAIL_ADMIN_AQUI]';
+Make sure this email matches the `ADMIN_EMAIL` variable in your `.env.local` file.
+
+## 5. Workflow
+
+### Messages
+
+1. **Visitors**: Send messages via form → Server Action → Service Role inserts into database
+2. **Visitors**: View only approved messages on public page
+3. **Admin**: View all pending messages in dashboard
+4. **Admin**: Can approve, reject, or edit messages
+
+### Photos
+
+1. **Visitors**: View public gallery (read-only)
+2. **Admin**: Upload, edit, delete, and reorder photos
+3. **Storage**: Integrated with RLS for upload/download control
+
+## 6. Using Server Actions
+
+### Unified Fetch Function
+
+```typescript
+// Fetch approved messages (public)
+const { messages } = await fetchMessages(1, 10, "approved");
+
+// Fetch all messages (admin - RLS allows only if logged in as admin)
+const { messages } = await fetchMessages(1, 10);
+
+// Fetch pending messages (admin)
+const { messages } = await fetchMessages(1, 10, "pending");
 ```
 
-Substitua `[SEU_EMAIL_ADMIN_AQUI]` pelo mesmo email da variável `ADMIN_EMAIL` do `.env.local`.
+### Other Functions
 
-## 5. Fluxo de Funcionamento
+```typescript
+// Create message (public via Service Role)
+await createMessage({ name: "John", message: "Congratulations!" });
 
-### Mensagens (Messages)
+// Delete message (admin)
+await deleteMessage("message-id");
 
-1. **Visitantes**: Enviam mensagens via formulário → Server Action → Service Role insere no banco
-2. **Admin**: Visualiza todas as mensagens pendentes no painel
-3. **Admin**: Pode aprovar, rejeitar ou editar mensagens
+// Fetch specific message (admin)
+const message = await getMessage("message-id");
+```
 
-### Fotos (Photos)
+## 7. Testing Policies
 
-1. **Visitantes**: Visualizam galeria pública (leitura apenas)
-2. **Admin**: Upload, edição, exclusão e reordenação de fotos
-3. **Storage**: Integrado com RLS para controle de upload/download
+### As Admin (Logged In)
 
-## 6. Testando as Políticas
+- ✅ View all messages (pending, approved, rejected)
+- ✅ Manage messages (approve/reject/edit)
+- ✅ View all photos
+- ✅ Upload/edit/delete photos
 
-### Como Admin (Logado)
+### As Visitor (Not Logged In)
 
-- ✅ Ver todas as mensagens
-- ✅ Gerenciar mensagens (aprovar/rejeitar/editar)
-- ✅ Ver todas as fotos
-- ✅ Upload/editar/deletar fotos
-
-### Como Visitante (Não logado)
-
-- ❌ Ver mensagens (negado)
-- ✅ Enviar mensagem via formulário
-- ✅ Ver galeria de fotos
-- ❌ Upload de fotos (negado)
+- ✅ View approved messages on public page
+- ✅ Send message via form
+- ✅ View photo gallery
+- ❌ View pending/rejected messages (denied)
+- ❌ Upload photos (denied)
 
 ### Via Service Role (Server Actions)
 
-- ✅ Inserir mensagens no banco
-- ✅ Ler dados para exibição pública
+- ✅ Insert messages into database
+- ✅ Read data for public display
 
-## 7. Segurança
+## 8. Security
 
-- **Autenticação**: Baseada em JWT com email verificado
-- **Autorização**: RLS garante acesso apenas ao admin correto
-- **Inserção Segura**: Mensagens públicas passam pelo Service Role
-- **Validação**: Server Actions validam dados antes da inserção
+- **Authentication**: Based on JWT with verified email
+- **Authorization**: RLS ensures access only to correct admin
+- **Secure Insertion**: Public messages go through Service Role
+- **Validation**: Server Actions validate data before insertion
+- **Controlled Visibility**: Public sees only approved messages
+- **Unified Function**: Single `fetchMessages` function with optional filters

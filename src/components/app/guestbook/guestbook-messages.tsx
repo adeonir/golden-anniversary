@@ -17,11 +17,7 @@ import { getInitials } from '~/lib/utils'
 export function GuestbookMessages() {
   const [currentPage, setCurrentPage] = useState(1)
 
-  const { data, isLoading } = useMessages({
-    status: 'approved',
-    page: currentPage,
-    limit: 5,
-  })
+  const { data, isLoading } = useMessages(currentPage, 5, 'approved')
 
   const messages = data?.messages || []
   const totalPages = data?.totalPages || 1

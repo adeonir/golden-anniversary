@@ -1,22 +1,21 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import { createMessage, deleteMessage, getMessage, getMessages } from '~/actions/messages'
+import { createMessage, deleteMessage, fetchMessages, getMessage } from '~/actions/messages'
 import { useToast } from '~/hooks/use-toast'
 
 const messagesKeys = {
   all: ['messages'] as const,
-  lists: () => [...messagesKeys.all, 'list'] as const,
-  list: (filters: string) => [...messagesKeys.lists(), { filters }] as const,
+  list: (page: number, status?: string) => [...messagesKeys.all, 'list', page, status] as const,
   details: () => [...messagesKeys.all, 'detail'] as const,
   detail: (id: string) => [...messagesKeys.details(), id] as const,
 }
 
-export function useMessages(options?: { status?: 'pending' | 'approved' | 'rejected'; page?: number; limit?: number }) {
+export function useMessages(page = 1, limit = 5, status?: 'approved' | 'pending' | 'rejected') {
   const toast = useToast()
 
   const query = useQuery({
-    queryKey: messagesKeys.list(JSON.stringify(options || {})),
-    queryFn: () => getMessages(options),
+    queryKey: messagesKeys.list(page, status),
+    queryFn: () => fetchMessages(page, limit, status),
   })
 
   useEffect(() => {
