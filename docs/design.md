@@ -1,4 +1,4 @@
-# Design Guide - Site Bodas de Ouro
+# Guia de Design - Site Bodas de Ouro
 
 ## Sistema de Cores Tailwind + Shadcn
 
@@ -80,7 +80,7 @@
 </button>
 ```
 
-## Typography
+## Tipografia
 
 ### Font Families (next/font/google)
 
@@ -120,7 +120,7 @@ export default function RootLayout({
 
 ### Decisões Tipográficas
 
-- **Body Font (Inter)**: Textos longos, UI elements, legibilidade geral
+- **Body Font (Inter)**: Textos longos, elementos de UI, legibilidade geral
 - **Heading Font (Playfair Display)**: Títulos de seções, texto elegante
 - **Script Font (Dancing Script)**: Nomes do casal, detalhes especiais
 

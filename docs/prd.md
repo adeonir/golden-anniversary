@@ -1,126 +1,124 @@
-# PRD
+# PRD - Documento de Requisitos do Produto
 
-## Overview
+## Visão Geral
 
-**Objective**: Create a commemorative website to promote and celebrate the 50th wedding anniversary of Iria & Ari.
+**Objetivo**: Criar um site comemorativo para promover e celebrar os 50 anos de casamento de Iria & Ari.
 
-**Timeline**: Party on November 8, 2025
+**Cronograma**: Festa em 8 de novembro de 2025
 
-**Audience**: Couple's family and friends
+**Público-alvo**: Família e amigos do casal
 
-## Product Objectives
+## Objetivos do Produto
 
-### Main Objective
+### Objetivo Principal
 
-Promote Iria & Ari's 50th wedding anniversary and provide a memorable digital experience to celebrate this achievement.
+Promover os 50 anos de casamento de Iria & Ari e proporcionar uma experiência digital memorável para celebrar essa conquista.
 
 ## Personas
 
-### Guest/Visitor
+### Convidado/Visitante
 
-- Couple's family and friends
-- Ages vary (20-80 years)
-- Different levels of tech familiarity
-- Access via mobile and desktop
-- Wants to leave a heartfelt message
+- Família e amigos do casal
+- Idades variadas (20-80 anos)
+- Diferentes níveis de familiaridade com tecnologia
+- Acesso via mobile e desktop
+- Quer deixar uma mensagem carinhosa
 
-### Administrator
+### Administrador
 
-- Developer and family member responsible for the site
-- Full control over content
-- Message moderation
-- Photo gallery management
+- Desenvolvedor e familiar responsável pelo site
+- Controle total sobre o conteúdo
+- Moderação de mensagens
+- Gerenciamento da galeria de fotos
 
-## Features
+## Funcionalidades
 
-### 1. Header/Hero Section
+### 1. Header/Seção Hero
 
-- **Description**: Main section with couple's names, special date, and elegant design
-- **Content**: Static
-- **Responsibility**: Present the couple and the reason for the celebration
+- **Descrição**: Seção principal com nomes do casal, data especial e design elegante
+- **Conteúdo**: Estático
+- **Responsabilidade**: Apresentar o casal e o motivo da celebração
 
-### 2. Countdown
+### 2. Contador Regressivo
 
-- **Description**: Countdown timer to the party date
-- **Target date**: November 8, 2025, 7:00 PM
-- **Format**: Days, hours, minutes, seconds
-- **Behavior**: Real-time updates
+- **Descrição**: Contador regressivo para a data da festa
+- **Data alvo**: 8 de novembro de 2025, 18:30
+- **Formato**: Dias, horas, minutos, segundos
+- **Comportamento**: Atualizações em tempo real
 
-### 3. Photo Gallery
+### 3. Galeria de Fotos
 
-- **Control**: Initial manual upload (admin via panel in backlog)
-- **Viewing**: Main carousel + thumbnail grid
-- **Performance**: Lazy loading and image optimization
-- **Navigation**: Arrows, clickable thumbnails
-- **Responsiveness**: Adaptable to mobile and desktop
+- **Controle**: Upload inicial manual (admin via painel no backlog)
+- **Visualização**: Carousel principal + grid de miniaturas
+- **Performance**: Lazy loading e otimização de imagens
+- **Navegação**: Setas, miniaturas clicáveis
+- **Responsividade**: Adaptável para mobile e desktop
 
-### 4. GuestBook
+### 4. Mensagens da Família
 
-- **Posting**: Any visitor can send a message
-- **Moderation**: All messages require admin approval
-- **Notification**: Daily digest at 8 PM with all pending messages (via Vercel Cron)
-- **Limit**: 500 characters per message
-- **Required fields**: Name and message
-- **Display**: 5 messages per page (pagination)
-- **Status**: Pending → Approved → Visible
+- **Descrição**: Seção especial com mensagens dos filhos e netos
 
-### 5. Family Messages
+### 5. Livro de Visitas
 
-- **Description**: Special section with messages from children and grandchildren
-- **Content**: Initially static (CRUD via admin in backlog)
+- **Postagem**: Qualquer visitante pode enviar uma mensagem
+- **Moderação**: Todas as mensagens requerem aprovação do admin
+- **Notificação**: Digest diário às 20h com todas as mensagens pendentes (via Vercel Cron)
+- **Limite**: 500 caracteres por mensagem
+- **Campos obrigatórios**: Nome e mensagem
+- **Exibição**: 5 mensagens por página (paginação)
+- **Status**: Pendente → Aprovada → Visível
 
-### 6. Timeline
+### 6. Linha do Tempo
 
-- **Description**: Section dedicated to important milestones in the couple's life
-- **Content**: Initially static (CRUD via admin in backlog)
-- **Viewing**: Interactive timeline with dates and events
-- **Design**: Timeline with event cards
+- **Descrição**: Seção dedicada aos marcos importantes na vida do casal
+- **Visualização**: Timeline interativa com datas e eventos
+- **Design**: Timeline com cards de eventos
 
-### 7. Footer
+### 7. Rodapé
 
-- **Content**: Inspirational quote, credits
-- **Future links**: Developer's website
+- **Conteúdo**: Citação inspiradora, créditos
+- **Links futuros**: Website do desenvolvedor
 
-### 8. Admin Panel
+### 8. Painel Administrativo
 
-- **Access**: Authentication via Supabase Auth
-- **Notifications**:
-  - Email alias via environment variable
-  - Fixed daily digest at 8 PM
+- **Acesso**: Autenticação via Supabase Auth
+- **Notificações**:
+  - Email alias via variável de ambiente
+  - Digest diário fixo às 20h
   - Cron job via Vercel Cron + backup GitHub Actions
-- **Features**:
-  - Approve/reject guestbook messages
-  - View basic statistics
-- **Backlog**: Photo upload, CRUD family messages, CRUD timeline
+- **Funcionalidades**:
+  - Aprovar/rejeitar mensagens do livro de visitas
+  - Upload e gerenciamento de fotos da galeria
+  - Visualizar estatísticas básicas
 
-## Success Criteria
+## Critérios de Sucesso
 
-### Technical
+### Técnicos
 
-- **Performance**: Load time < 3 seconds
-- **Responsiveness**: Works on mobile (375px+) and desktop (1024px+)
-- **Scalability**: Support up to 1,000 messages
-- **Availability**: 99.9% uptime during active period
+- **Performance**: Tempo de carregamento < 3 segundos
+- **Responsividade**: Funciona em mobile (375px+) e desktop (1024px+)
+- **Escalabilidade**: Suporte até 1.000 mensagens
+- **Disponibilidade**: 99.9% uptime durante período ativo
 
 ### UX/UI
 
-- **Accessibility**: Adequate contrast, keyboard navigation
-- **Usability**: Intuitive message submission flow
-- **Design**: Elegant, thematic (gold), celebratory
+- **Acessibilidade**: Contraste adequado, navegação por teclado
+- **Usabilidade**: Fluxo intuitivo de envio de mensagens
+- **Design**: Elegante, temático (dourado), celebrativo
 
-### Functional
+### Funcionais
 
-- **GuestBook**: 100% functional moderation system
-- **Gallery**: Smooth display of optimized photos
-- **Admin**: Simple and effective moderation interface
+- **Livro de Visitas**: Sistema de moderação 100% funcional
+- **Galeria**: Exibição suave de fotos otimizadas
+- **Admin**: Interface de moderação simples e eficaz
 
-## Definition of Done
+## Definição de Pronto
 
-The product will be considered done when:
+O produto será considerado pronto quando:
 
-- All core features are implemented
-- Responsive design is working
-- Moderation system is operational
-- Performance meets criteria
-- Deployment completed and domain configured
-- Admin trained for basic use
+- Todas as funcionalidades principais estiverem implementadas
+- Design responsivo estiver funcionando
+- Sistema de moderação estiver operacional
+- Performance atender aos critérios
+- Deploy concluído e domínio configurado
+- Admin treinado para uso básico

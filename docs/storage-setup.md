@@ -1,94 +1,211 @@
-# Storage Bucket Setup Instructions
+# Configuração do Supabase Storage
 
-Este documento contém as instruções para configurar o bucket de fotos no Supabase.
+Este documento contém instruções para configurar o bucket de storage do Supabase para fotos.
 
-## 1. Criar o Bucket
+## Visão Geral
 
-No Supabase Dashboard:
+A configuração do storage garante que:
 
-1. Vá para **Storage** no menu lateral
-2. Clique em **New bucket**
+- **Visualização pública**: Qualquer pessoa pode ver fotos na galeria
+- **Gerenciamento admin**: Apenas admin pode fazer upload, editar ou deletar fotos
+- **Performance**: URLs públicas para cache otimizado
+
+## 1. Criar Bucket de Storage
+
+No **Supabase Dashboard**:
+
+1. Vá para a seção **Storage**
+2. Clique em **Create a new bucket**
 3. Configure:
    - **Name**: `photos`
-   - **Public bucket**: `Enabled`
-   - **File size limit**: `1048576` (1MB)
-   - **Allowed MIME types**: `image/jpeg`
+   - **Public bucket**: ✅ **Enabled** (para visualização pública)
+   - **File size limit**: 10MB (ajuste conforme necessário)
+   - **Allowed MIME types**: `image/*`
 
-## 2. Configurar RLS Policies
+## 2. Configuração do Storage
 
-No **SQL Editor** do Supabase, execute os seguintes comandos:
+### Configurações do Bucket
 
 ```sql
--- Enable RLS on storage.objects
-ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
+-- Sem políticas RLS necessárias - usando bucket público para simplicidade
+-- Bucket de storage é público para visualização
+-- Acesso admin controlado através da lógica da aplicação
+```
 
--- Policy: Public can view photos
-CREATE POLICY "Public can view photos"
-ON storage.objects FOR SELECT
-USING (bucket_id = 'photos');
+### Estrutura de Arquivos
 
--- Remover políticas antigas (que verificam email = NULL)
-DROP POLICY IF EXISTS "Only admin can upload photos" ON storage.objects;
-DROP POLICY IF EXISTS "Only admin can update photos" ON storage.objects;
-DROP POLICY IF EXISTS "Only admin can delete photos" ON storage.objects;
+```
+photos/
+├── photo1.jpg
+├── photo2.jpg
+├── photo3.jpg
+└── ...
+```
 
--- Criar políticas corretas com email hardcoded
-CREATE POLICY "Only admin can upload photos"
-ON storage.objects FOR INSERT
-WITH CHECK (
-  bucket_id = 'photos'
-  AND auth.jwt() ->> 'email' = 'ADMIN_EMAIL'
-);
+## 3. Configuração de Upload
 
-CREATE POLICY "Only admin can update photos"
-ON storage.objects FOR UPDATE
-USING (
-  bucket_id = 'photos'
-  AND auth.jwt() ->> 'email' = 'ADMIN_EMAIL'
-);
+### Upload Server-Side
 
-CREATE POLICY "Only admin can delete photos"
-ON storage.objects FOR DELETE
-USING (
-  bucket_id = 'photos'
-  AND auth.jwt() ->> 'email' = 'ADMIN_EMAIL'
+```typescript
+// lib/supabase/storage.ts
+import { createClient } from "~/lib/supabase/server";
+
+export async function uploadPhoto(file: File, title?: string) {
+  const supabase = await createClient();
+
+  const fileName = `${Date.now()}-${file.name}`;
+  const { data, error } = await supabase.storage
+    .from("photos")
+    .upload(fileName, file);
+
+  if (error) throw error;
+
+  return data.path;
+}
+```
+
+### Upload Client-Side (Apenas Admin)
+
+```typescript
+// components/app/admin/photo-upload.tsx
+import { createClient } from "~/lib/supabase/client";
+
+export async function uploadPhoto(file: File) {
+  const supabase = createClient();
+
+  const fileName = `${Date.now()}-${file.name}`;
+  const { data, error } = await supabase.storage
+    .from("photos")
+    .upload(fileName, file);
+
+  if (error) throw error;
+
+  return data.path;
+}
+```
+
+## 4. Geração de URLs das Fotos
+
+### URLs Públicas
+
+```typescript
+// lib/supabase/storage.ts
+export function getPhotoUrl(filePath: string): string {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  return `${supabaseUrl}/storage/v1/object/public/photos/${filePath}`;
+}
+```
+
+### Uso em Componentes
+
+```typescript
+// components/app/gallery/photo-carousel.tsx
+import { getPhotoUrl } from "~/lib/supabase/storage";
+
+export function PhotoCarousel({ photos }: { photos: Photo[] }) {
+  return (
+    <div>
+      {photos.map((photo) => (
+        <img
+          key={photo.id}
+          src={getPhotoUrl(photo.filePath)}
+          alt={photo.title || "Foto da galeria"}
+        />
+      ))}
+    </div>
+  );
+}
+```
+
+## 5. Integração com Banco de Dados
+
+### Tabela Photos
+
+```sql
+CREATE TABLE photos (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  title text,
+  filePath text NOT NULL,
+  orderPosition integer DEFAULT 0,
+  createdAt timestamptz DEFAULT now()
 );
 ```
 
-## 3. Configurar Admin Email
+### Inserir Registro de Foto
 
-⚠️ **Importante**: Certifique-se de que este email corresponde à variável `ADMIN_EMAIL` do arquivo `.env.local`.
+```typescript
+// actions/photo-actions.ts
+export async function createPhotoRecord(filePath: string, title?: string) {
+  const supabase = await createClient();
 
-## 4. Estrutura dos Arquivos
+  const { data, error } = await supabase
+    .from("photos")
+    .insert({
+      filePath,
+      title,
+      orderPosition: 0,
+    })
+    .select()
+    .single();
 
-- **Nomes dos arquivos**: Gerados automaticamente com timestamp
-- **Formato**: `{timestamp}-{nome-original}.jpg`
-- **Exemplo**: `1703123456789-foto-casamento.jpg`
-
-## 5. Integração com Database
-
-A tabela `photos` armazena:
-
-- `file_path`: Nome do arquivo no Storage (ex: `1703123456789-foto-casamento.jpg`)
-- `title`: Título opcional para a foto
-- `order_position`: Posição para ordenação (drag & drop)
+  if (error) throw error;
+  return data;
+}
+```
 
 ## 6. URLs das Fotos
 
-Para obter a URL pública de uma foto:
+### Estrutura da URL
 
-```typescript
-import { getPhotoUrl } from "~/lib/supabase/storage";
-
-const photoUrl = getPhotoUrl("1703123456789-foto-casamento.jpg");
-// Result: https://your-project.supabase.co/storage/v1/object/public/photos/1703123456789-foto-casamento.jpg
+```
+https://your-project.supabase.co/storage/v1/object/public/photos/filename.jpg
 ```
 
-## 7. Testar Configuração
+### Benefícios das URLs Públicas
 
-Após a configuração, teste:
+1. **Performance**: Cache do navegador funciona otimamente
+2. **CDN**: CDN do Supabase fornece entrega global rápida
+3. **Simplicidade**: Não precisa de URLs assinadas para visualização
+4. **SEO**: URLs diretas de imagem para melhor indexação
 
-1. **Upload (como admin)**: Deve funcionar quando logado com o email admin
-2. **Visualização pública**: URLs públicas devem funcionar com cache otimizado
-3. **Upload (não-admin)**: Deve ser rejeitado
-4. **Delete/Update (não-admin)**: Deve ser rejeitado
+### Considerações de Segurança
+
+1. **Controle de Upload**: Apenas admin pode fazer upload (controlado na app)
+2. **Validação de Arquivo**: Valide tipos e tamanhos de arquivo
+3. **Moderação de Conteúdo**: Revise conteúdo enviado
+4. **Limites de Storage**: Monitore uso do storage
+
+## 7. Testes
+
+### Teste de Upload
+
+```typescript
+// Teste de upload de foto
+const file = new File(["test"], "test.jpg", { type: "image/jpeg" });
+const filePath = await uploadPhoto(file);
+console.log("Uploaded:", filePath);
+```
+
+### Teste de URL
+
+```typescript
+// Teste de geração de URL de foto
+const url = getPhotoUrl("test.jpg");
+console.log("Photo URL:", url);
+```
+
+## 8. Manutenção
+
+### Tarefas Regulares
+
+1. **Monitoramento de Storage**: Verifique uso do storage mensalmente
+2. **Limpeza de Arquivos**: Remova fotos não utilizadas
+3. **Performance**: Monitore tempos de carregamento de imagens
+4. **Backup**: Exporte fotos importantes
+
+### Monitoramento
+
+- **Uso de Storage**: Supabase Dashboard > Storage
+- **Bandwidth**: Monitore uso do CDN
+- **Performance**: Use ferramentas de dev do navegador
+- **Erros**: Verifique logs de upload/acesso
