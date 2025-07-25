@@ -1,6 +1,7 @@
 import { Countdown } from '~/components/app/countdown'
 import { FamilyMessages } from '~/components/app/family-messages'
 import { Gallery } from '~/components/app/gallery'
+import { Guestbook } from '~/components/app/guestbook'
 import { Hero } from '~/components/app/hero'
 import { Timeline } from '~/components/app/timeline'
 
@@ -12,6 +13,7 @@ export default function Home() {
       <Gallery />
       <FamilyMessages />
       <Timeline />
+      <Guestbook />
     </main>
   )
 }

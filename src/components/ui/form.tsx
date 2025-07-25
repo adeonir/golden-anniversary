@@ -126,7 +126,7 @@ function FormMessage({ className, ...props }: React.ComponentProps<'p'>) {
   if (!body) return null
 
   return (
-    <p className={cn('text-destructive text-sm', className)} data-slot="form-message" id={formMessageId} {...props}>
+    <p className={cn('text-destructive text-xs', className)} data-slot="form-message" id={formMessageId} {...props}>
       {body}
     </p>
   )
