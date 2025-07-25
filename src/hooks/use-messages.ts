@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createMessage, deleteMessage, getMessage, getMessages } from '~/actions/messages'
+import { useToast } from '~/hooks/use-toast'
 
 const messagesKeys = {
   all: ['messages'] as const,
@@ -26,11 +27,18 @@ export function useMessage(id: string) {
 
 export function useCreateMessage() {
   const queryClient = useQueryClient()
+  const toast = useToast()
 
   return useMutation({
     mutationFn: createMessage,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: messagesKeys.all })
+      toast.success('Mensagem enviada com sucesso! Será analisada e publicada em breve.', {
+        description: 'Obrigado por compartilhar sua mensagem com a família.',
+      })
+    },
+    onError: () => {
+      toast.error('Erro ao enviar mensagem. Tente novamente.')
     },
   })
 }
