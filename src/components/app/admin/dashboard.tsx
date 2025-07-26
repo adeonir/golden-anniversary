@@ -1,3 +1,4 @@
+import { Images, MessageSquare } from 'lucide-react'
 import type { SVGProps } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { LogoutButton } from '../logout-button'
@@ -16,11 +17,17 @@ export function Dashboard() {
         </div>
       </header>
 
-      <main className="flex flex-1 rounded-lg bg-background px-8 py-6 shadow-lg shadow-zinc-700/10">
+      <main className="flex flex-1 rounded-lg bg-background px-8 py-6 shadow-lg shadow-zinc-700/15">
         <Tabs className="flex flex-1 flex-col gap-8" defaultValue="messages">
           <TabsList>
-            <TabsTrigger value="messages">Mensagens</TabsTrigger>
-            <TabsTrigger value="photos">Galeria</TabsTrigger>
+            <TabsTrigger value="messages">
+              <MessageSquare className="mr-2 size-4" />
+              Mensagens
+            </TabsTrigger>
+            <TabsTrigger value="photos">
+              <Images className="mr-2 size-4" />
+              Galeria
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="messages">
