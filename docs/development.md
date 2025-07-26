@@ -214,3 +214,41 @@ pnpm --version
 - Otimize imagens
 - Implemente lazy loading
 - Monitore Core Web Vitals
+
+### Network Resilience
+
+#### Retry Logic com Backoff Exponencial
+
+O projeto implementa retry automático com backoff exponencial para melhorar a resiliência da rede:
+
+**Configuração Global (TanStack Query Provider):**
+
+- **Queries**: 3 tentativas com delays 1s → 2s → 4s (máximo 30s)
+- **Mutations**: 2 tentativas com delays 1s → 2s (máximo 10s)
+
+**Por que Backoff Exponencial?**
+
+- **Problema do delay fixo**: Sobrecarga constante no servidor durante instabilidade
+- **Solução inteligente**: Aumenta progressivamente o tempo entre tentativas
+- **Benefícios**:
+  - Reduz carga no servidor durante picos de erro
+  - Evita "thundering herd effect" (todos tentando simultaneamente)
+  - Dá tempo para serviços se recuperarem
+  - Respeita naturalmente rate limits de APIs
+
+**Implementação:**
+
+```typescript
+// src/providers/query-client.tsx
+queries: {
+  retry: 3,
+  retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+}
+```
+
+**Cenários de uso:**
+
+- Falhas temporárias de API
+- Instabilidade de rede
+- Rate limiting do Supabase
+- Sobrecarga temporária do servidor
