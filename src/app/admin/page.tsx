@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { Dashboard } from '~/components/app/dashboard'
+import { Dashboard } from '~/components/app/admin/dashboard'
 import { env } from '~/env'
 import { createClient } from '~/lib/supabase/server'
 
