@@ -2,48 +2,24 @@
 
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import { Loader2 } from 'lucide-react'
 import { useState } from 'react'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import { Card } from '~/components/ui/card'
 import { ScrollArea } from '~/components/ui/scroll-area'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
-import type { Message } from '~/types/messages'
-
-const mockMessages: Message[] = [
-  {
-    id: '1',
-    name: 'Maria Silva',
-    message:
-      'Que alegria imensa poder celebrar os 50 anos de casamento de vocês! Vocês são um exemplo de amor verdadeiro.',
-    status: 'pending',
-    createdAt: new Date('2024-01-15T10:30:00Z'),
-  },
-  {
-    id: '2',
-    name: 'João Santos',
-    message: 'Parabéns pelos 50 anos de união! Que Deus continue abençoando essa família maravilhosa.',
-    status: 'approved',
-    createdAt: new Date('2024-01-14T15:45:00Z'),
-  },
-  {
-    id: '3',
-    name: 'Ana Costa',
-    message: 'Meio século de amor! Vocês são inspiração para todos nós. Muito obrigada por tanto carinho.',
-    status: 'rejected',
-    createdAt: new Date('2024-01-13T09:20:00Z'),
-  },
-  {
-    id: '4',
-    name: 'Pedro Oliveira',
-    message: 'Bodas de Ouro! Que bela conquista. Desejo muitos anos mais de felicidade e saúde para vocês.',
-    status: 'pending',
-    createdAt: new Date('2024-01-12T14:10:00Z'),
-  },
-]
+import { useApproveMessage, useDeleteMessage, useMessages, useRejectMessage } from '~/hooks/use-messages'
 
 export function MessagesTab() {
   const [filter, setFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all')
+
+  const { data: messagesData, isLoading, error } = useMessages(1, 100)
+  const approveMutation = useApproveMessage()
+  const rejectMutation = useRejectMessage()
+  const deleteMutation = useDeleteMessage()
+
+  const [pendingActions, setPendingActions] = useState<Record<string, 'approve' | 'reject' | 'delete'>>({})
 
   const formatDate = (date: Date) => {
     return format(date, "dd/MM/yyyy 'às' HH:mm", {
@@ -51,7 +27,45 @@ export function MessagesTab() {
     })
   }
 
-  const filteredMessages = mockMessages.filter((message) => {
+  const handleApprove = (id: string) => {
+    setPendingActions((prev) => ({ ...prev, [id]: 'approve' }))
+    approveMutation.mutate(id, {
+      onSettled: () =>
+        setPendingActions((prev) => {
+          const { [id]: _, ...rest } = prev
+          return rest
+        }),
+    })
+  }
+
+  const handleReject = (id: string) => {
+    setPendingActions((prev) => ({ ...prev, [id]: 'reject' }))
+    rejectMutation.mutate(id, {
+      onSettled: () =>
+        setPendingActions((prev) => {
+          const { [id]: _, ...rest } = prev
+          return rest
+        }),
+    })
+  }
+
+  const handleDelete = (id: string) => {
+    if (confirm('Tem certeza que deseja deletar esta mensagem? Esta ação não pode ser desfeita.')) {
+      setPendingActions((prev) => ({ ...prev, [id]: 'delete' }))
+      deleteMutation.mutate(id, {
+        onSettled: () =>
+          setPendingActions((prev) => {
+            const { [id]: _, ...rest } = prev
+            return rest
+          }),
+      })
+    }
+  }
+
+  const allMessages = messagesData?.messages || []
+  const pendingCount = allMessages.filter((msg) => msg.status === 'pending').length
+
+  const messages = allMessages.filter((message) => {
     if (filter === 'all') return true
     return message.status === filter
   })
@@ -60,7 +74,14 @@ export function MessagesTab() {
     <div className="flex flex-1 flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="font-semibold text-2xl text-foreground">Mensagens</h2>
+          <div className="flex items-center gap-3">
+            <h2 className="font-semibold text-2xl text-foreground">Mensagens</h2>
+            {pendingCount > 0 && (
+              <Badge className="bg-amber-500 text-white">
+                {pendingCount} pendente{pendingCount !== 1 ? 's' : ''}
+              </Badge>
+            )}
+          </div>
           <p className="text-muted-foreground">Gerencie as mensagens do livro de visitas</p>
         </div>
         <Select onValueChange={(value) => setFilter(value as typeof filter)} value={filter}>
@@ -77,42 +98,84 @@ export function MessagesTab() {
       </div>
 
       <ScrollArea className="flex-1">
-        <div className="space-y-4">
-          {filteredMessages.map((message) => (
-            <Card className="p-6" key={message.id}>
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1 space-y-2">
-                  <div className="flex items-center gap-3">
-                    <h3 className="font-medium text-foreground">{message.name}</h3>
-                    <StatusBadge status={message.status} />
+        {isLoading && (
+          <div className="flex items-center justify-center py-8">
+            <p className="text-muted-foreground">Carregando mensagens...</p>
+          </div>
+        )}
+
+        {error && (
+          <div className="flex items-center justify-center py-8">
+            <p className="text-destructive">Erro ao carregar mensagens. Tente novamente.</p>
+          </div>
+        )}
+
+        {!(isLoading || error) && messages.length === 0 && (
+          <div className="flex items-center justify-center py-8">
+            <p className="text-muted-foreground">Nenhuma mensagem encontrada.</p>
+          </div>
+        )}
+
+        {!(isLoading || error) && messages.length > 0 && (
+          <div className="space-y-4">
+            {messages.map((message) => (
+              <Card className="p-6" key={message.id}>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1 space-y-2">
+                    <div className="flex items-center gap-3">
+                      <h3 className="font-medium text-foreground">{message.name}</h3>
+                      <StatusBadge status={message.status} />
+                    </div>
+
+                    <p className="text-foreground leading-relaxed">{message.message}</p>
                   </div>
 
-                  <p className="text-foreground leading-relaxed">{message.message}</p>
-                </div>
-
-                <div className="flex flex-col items-end gap-2">
-                  <p className="text-muted-foreground text-xs">Enviado em {formatDate(message.createdAt)}</p>
-                  <div className="flex gap-2">
-                    <Button
-                      className="bg-green-500 text-white hover:bg-green-600 disabled:bg-green-3040"
-                      disabled={message.status === 'approved'}
-                      size="sm"
-                    >
-                      Aprovar
-                    </Button>
-                    <Button
-                      className="bg-red-500 text-white hover:bg-red-600 disabled:bg-red-3040"
-                      disabled={message.status === 'rejected'}
-                      size="sm"
-                    >
-                      Rejeitar
-                    </Button>
+                  <div className="flex flex-col items-end gap-2">
+                    <p className="text-muted-foreground text-xs">Enviado em {formatDate(message.createdAt)}</p>
+                    <div className="flex gap-2">
+                      <Button
+                        className="w-20 bg-green-500 text-white hover:bg-green-600"
+                        disabled={message.status === 'approved' || pendingActions[message.id] === 'approve'}
+                        onClick={() => handleApprove(message.id)}
+                        size="sm"
+                      >
+                        {pendingActions[message.id] === 'approve' ? (
+                          <Loader2 className="mr-2 size-4 animate-spin" />
+                        ) : (
+                          'Aprovar'
+                        )}
+                      </Button>
+                      <Button
+                        className="w-20 bg-red-500 text-white hover:bg-red-600"
+                        disabled={message.status === 'rejected' || pendingActions[message.id] === 'reject'}
+                        onClick={() => handleReject(message.id)}
+                        size="sm"
+                      >
+                        {pendingActions[message.id] === 'reject' ? (
+                          <Loader2 className="mr-2 size-4 animate-spin" />
+                        ) : (
+                          'Rejeitar'
+                        )}
+                      </Button>
+                      <Button
+                        className="w-20 bg-gray-500 text-white hover:bg-gray-600"
+                        disabled={pendingActions[message.id] === 'delete'}
+                        onClick={() => handleDelete(message.id)}
+                        size="sm"
+                      >
+                        {pendingActions[message.id] === 'delete' ? (
+                          <Loader2 className="mr-2 size-4 animate-spin" />
+                        ) : (
+                          'Deletar'
+                        )}
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Card>
-          ))}
-        </div>
+              </Card>
+            ))}
+          </div>
+        )}
       </ScrollArea>
     </div>
   )

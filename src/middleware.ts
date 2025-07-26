@@ -30,7 +30,6 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Protect admin routes
   if (request.nextUrl.pathname.startsWith('/admin') && (!user || user.email !== env.ADMIN_EMAIL)) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
