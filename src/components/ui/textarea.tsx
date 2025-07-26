@@ -9,7 +9,7 @@ const textareaVariants = cva(
     variants: {
       variant: {
         default:
-          'border-input focus-visible:border-foreground focus-visible:ring-[3px] focus-visible:ring-foreground/20',
+          'border-input focus-visible:border-foreground/50 focus-visible:ring-[3px] focus-visible:ring-foreground/20',
         primary: 'border-border focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/30',
       },
     },
