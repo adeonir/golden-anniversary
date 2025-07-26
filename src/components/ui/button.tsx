@@ -18,6 +18,11 @@ const buttonVariants = cva(
         ghost: 'hover:bg-accent hover:text-accent-foreground focus-visible:ring-accent/30',
         link: 'text-primary underline-offset-4 hover:underline focus-visible:ring-ring/30',
       },
+      intent: {
+        approve: 'bg-green-500 text-white shadow-xs hover:bg-green-600 focus-visible:ring-green-500/20',
+        reject: 'bg-red-500 text-white shadow-xs hover:bg-red-600 focus-visible:ring-red-500/20',
+        delete: 'bg-gray-500 text-white shadow-xs hover:bg-gray-600 focus-visible:ring-gray-500/20',
+      },
       size: {
         default: 'h-9 px-4 py-2 has-[>svg]:px-3',
         sm: 'h-8 gap-1.5 rounded-md px-3 has-[>svg]:px-2.5',
@@ -35,6 +40,7 @@ const buttonVariants = cva(
 function Button({
   className,
   variant,
+  intent,
   size,
   asChild = false,
   ...props
@@ -44,7 +50,7 @@ function Button({
   }) {
   const Comp = asChild ? Slot : 'button'
 
-  return <Comp className={cn(buttonVariants({ variant, size, className }))} data-slot="button" {...props} />
+  return <Comp className={cn(buttonVariants({ variant, intent, size, className }))} data-slot="button" {...props} />
 }
 
 export { Button, buttonVariants }

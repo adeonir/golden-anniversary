@@ -134,8 +134,9 @@ export function MessagesTab() {
                     <p className="text-muted-foreground text-xs">Enviado em {formatDate(message.createdAt)}</p>
                     <div className="flex gap-2">
                       <Button
-                        className="w-20 bg-green-500 text-white hover:bg-green-600"
+                        className="w-20"
                         disabled={message.status === 'approved' || pendingActions[message.id] === 'approve'}
+                        intent="approve"
                         onClick={() => handleApprove(message.id)}
                         size="sm"
                       >
@@ -146,8 +147,9 @@ export function MessagesTab() {
                         )}
                       </Button>
                       <Button
-                        className="w-20 bg-red-500 text-white hover:bg-red-600"
+                        className="w-20"
                         disabled={message.status === 'rejected' || pendingActions[message.id] === 'reject'}
+                        intent="reject"
                         onClick={() => handleReject(message.id)}
                         size="sm"
                       >
@@ -158,8 +160,9 @@ export function MessagesTab() {
                         )}
                       </Button>
                       <Button
-                        className="w-20 bg-gray-500 text-white hover:bg-gray-600"
+                        className="w-20"
                         disabled={pendingActions[message.id] === 'delete'}
+                        intent="delete"
                         onClick={() => handleDelete(message.id)}
                         size="sm"
                       >
