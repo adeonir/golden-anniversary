@@ -44,18 +44,24 @@ export function GuestbookMessages() {
     <div className="space-y-8">
       <h2 className="text-center font-medium font-serif text-2xl text-zinc-800">Mensagens Recebidas</h2>
 
-      <div className="space-y-4">
+      <div aria-label="Lista de mensagens do livro de visitas" className="space-y-4" role="feed">
         {messages.map((message) => (
-          <Card className="border-gold-200 bg-white shadow-lg" key={message.id}>
+          <Card
+            aria-labelledby={`message-${message.id}-author`}
+            className="border-gold-200 bg-white shadow-lg"
+            key={message.id}
+          >
             <CardContent className="px-8 py-4">
               <div className="flex gap-4">
-                <Avatar className="size-12 bg-gold-100">
+                <Avatar aria-hidden="true" className="size-12 bg-gold-100">
                   <AvatarInitials className="bg-gold-200 font-medium text-gold-800">
                     {getInitials(message.name)}
                   </AvatarInitials>
                 </Avatar>
                 <div className="flex-1 space-y-2">
-                  <h3 className="font-medium text-lg text-zinc-800">{message.name}</h3>
+                  <h3 className="font-medium text-lg text-zinc-800" id={`message-${message.id}-author`}>
+                    {message.name}
+                  </h3>
                   <p className="text-zinc-600">{message.message}</p>
                 </div>
               </div>
@@ -65,10 +71,11 @@ export function GuestbookMessages() {
       </div>
 
       {totalPages > 1 && (
-        <Pagination className="mt-8">
+        <Pagination aria-label="Navegação das páginas de mensagens" className="mt-8">
           <PaginationContent>
             <PaginationItem>
               <PaginationPrevious
+                aria-label="Ir para página anterior"
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
               >
@@ -78,7 +85,12 @@ export function GuestbookMessages() {
 
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
               <PaginationItem key={page}>
-                <PaginationButton isActive={currentPage === page} onClick={() => setCurrentPage(page)}>
+                <PaginationButton
+                  aria-current={currentPage === page ? 'page' : undefined}
+                  aria-label={`Ir para página ${page}`}
+                  isActive={currentPage === page}
+                  onClick={() => setCurrentPage(page)}
+                >
                   {page}
                 </PaginationButton>
               </PaginationItem>
@@ -86,6 +98,7 @@ export function GuestbookMessages() {
 
             <PaginationItem>
               <PaginationNext
+                aria-label="Ir para próxima página"
                 disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
               >
