@@ -42,7 +42,7 @@ export function LoginForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="seu-email@exemplo.com" type="email" />
+                <Input {...field} intent="admin" placeholder="seu-email@exemplo.com" type="email" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -55,13 +55,13 @@ export function LoginForm() {
             <FormItem>
               <FormLabel>Senha</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="••••••••" type="password" />
+                <Input {...field} intent="admin" placeholder="••••••••" type="password" />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button className="w-full" disabled={form.formState.isSubmitting} type="submit">
+        <Button className="w-full" disabled={form.formState.isSubmitting} intent="admin" type="submit">
           {form.formState.isSubmitting ? 'Entrando...' : 'Entrar'}
         </Button>
         <div className="mt-4 text-center">

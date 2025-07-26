@@ -55,7 +55,7 @@ export function GuestbookForm() {
                 <FormItem>
                   <FormLabel className="font-medium text-zinc-700">Seu nome ou família</FormLabel>
                   <FormControl>
-                    <Input placeholder="ex: João e Maria Souza" variant="primary" {...field} />
+                    <Input placeholder="ex: João e Maria Souza" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -72,7 +72,6 @@ export function GuestbookForm() {
                     <Textarea
                       className="min-h-40"
                       placeholder="Deixe aqui sua mensagem de carinho e felicitações..."
-                      variant="primary"
                       {...field}
                     />
                   </FormControl>
@@ -84,13 +83,7 @@ export function GuestbookForm() {
             <div className="text-sm text-zinc-500">* Sua mensagem será analisada antes da publicação</div>
 
             <div className="flex justify-end">
-              <Button
-                className="w-48"
-                disabled={createMessageMutation.isPending}
-                size="lg"
-                type="submit"
-                variant="primary"
-              >
+              <Button className="w-48" disabled={createMessageMutation.isPending} size="lg" type="submit">
                 {createMessageMutation.isPending ? (
                   <Loader2 className="size-5 animate-spin" />
                 ) : (

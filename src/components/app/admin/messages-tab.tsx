@@ -85,7 +85,7 @@ export function MessagesTab() {
           <p className="text-muted-foreground">Gerencie as mensagens do livro de visitas</p>
         </div>
         <Select onValueChange={(value) => setFilter(value as typeof filter)} value={filter}>
-          <SelectTrigger className="w-48">
+          <SelectTrigger className="w-48" intent="admin">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
