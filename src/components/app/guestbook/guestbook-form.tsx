@@ -55,7 +55,7 @@ export function GuestbookForm() {
                 <FormItem>
                   <FormLabel className="font-medium text-zinc-700">Seu nome ou família</FormLabel>
                   <FormControl>
-                    <Input placeholder="ex: João e Maria Souza" {...field} />
+                    <Input placeholder="ex: João e Maria Souza" variant="primary" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -72,6 +72,7 @@ export function GuestbookForm() {
                     <Textarea
                       className="min-h-40"
                       placeholder="Deixe aqui sua mensagem de carinho e felicitações..."
+                      variant="primary"
                       {...field}
                     />
                   </FormControl>

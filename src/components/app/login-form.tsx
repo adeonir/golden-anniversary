@@ -42,12 +42,7 @@ export function LoginForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input
-                  {...field}
-                  className="border-zinc-200 focus:border-zinc-400! focus-visible:ring-zinc-400/30"
-                  placeholder="seu-email@exemplo.com"
-                  type="email"
-                />
+                <Input {...field} placeholder="seu-email@exemplo.com" type="email" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -60,18 +55,13 @@ export function LoginForm() {
             <FormItem>
               <FormLabel>Senha</FormLabel>
               <FormControl>
-                <Input
-                  {...field}
-                  className="border-zinc-200 focus:border-zinc-400! focus-visible:ring-zinc-400/30"
-                  placeholder="••••••••"
-                  type="password"
-                />
+                <Input {...field} placeholder="••••••••" type="password" />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button className="w-full bg-zinc-600 hover:bg-zinc-700" disabled={form.formState.isSubmitting} type="submit">
+        <Button className="w-full" disabled={form.formState.isSubmitting} type="submit">
           {form.formState.isSubmitting ? 'Entrando...' : 'Entrar'}
         </Button>
         <div className="mt-4 text-center">
