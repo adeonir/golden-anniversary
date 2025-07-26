@@ -10,11 +10,16 @@ import { Card } from '~/components/ui/card'
 import { ScrollArea } from '~/components/ui/scroll-area'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
 import { useApproveMessage, useDeleteMessage, useMessages, useRejectMessage } from '~/hooks/use-messages'
+import { config } from '~/lib/config'
 
 export function MessagesTab() {
   const [filter, setFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all')
 
-  const { data: messagesData, isLoading, error } = useMessages(1, 100)
+  const {
+    data: messagesData,
+    isLoading,
+    error,
+  } = useMessages(config.pagination.defaultPage, config.pagination.adminPageSize)
   const approveMutation = useApproveMessage()
   const rejectMutation = useRejectMessage()
   const deleteMutation = useDeleteMessage()

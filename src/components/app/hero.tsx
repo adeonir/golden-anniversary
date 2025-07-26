@@ -12,7 +12,7 @@ const content = {
 export function Hero() {
   return (
     <header className="relative flex min-h-dvh items-center justify-center bg-linear-to-b from-gold-50 to-gold-200 px-4 pt-8 pb-24">
-      <div className="flex max-w-4xl flex-col items-center space-y-8 text-center">
+      <div className="hero-container">
         <h1 className="font-script text-8xl text-gold-700 sm:text-10xl">{content.names}</h1>
         <Divider />
         <h2 className="font-heading font-medium text-4xl text-zinc-700 sm:text-5xl">{content.title}</h2>

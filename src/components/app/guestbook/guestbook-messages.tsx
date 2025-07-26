@@ -12,12 +12,13 @@ import {
   PaginationPrevious,
 } from '~/components/ui/pagination'
 import { useMessages } from '~/hooks/use-messages'
+import { config } from '~/lib/config'
 import { getInitials } from '~/lib/utils'
 
 export function GuestbookMessages() {
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentPage, setCurrentPage] = useState<number>(config.pagination.defaultPage)
 
-  const { data, isLoading } = useMessages(currentPage, 5, 'approved')
+  const { data, isLoading } = useMessages(currentPage, config.pagination.frontendPageSize, 'approved')
 
   const messages = data?.messages || []
   const totalPages = data?.totalPages || 1

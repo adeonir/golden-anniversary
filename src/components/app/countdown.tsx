@@ -5,8 +5,9 @@ import { Card } from '~/components/ui/card'
 import { Section } from '~/components/ui/section'
 import { SectionHeader } from '~/components/ui/section-header'
 import { useCountdown } from '~/hooks/use-countdown'
+import { config } from '~/lib/config'
 
-const TARGET_DATE = new Date('2025-11-08T18:30:00')
+const TARGET_DATE = new Date(config.event.targetDate)
 
 const content = {
   title: 'Contagem Regressiva',
@@ -25,7 +26,7 @@ export function Countdown() {
   return (
     <Section className="bg-gold-50">
       <div className="mx-auto px-4">
-        <div className="mx-auto max-w-5xl text-center">
+        <div className="section-container text-center">
           <SectionHeader icon={CalendarFold} subtitle={content.subtitle} title={content.title} />
 
           <div

@@ -96,7 +96,7 @@ export function Gallery() {
   return (
     <Section className="bg-white">
       <div className="mx-auto px-4">
-        <div className="mx-auto max-w-5xl">
+        <div className="section-container">
           <SectionHeader icon={Camera} subtitle={content.subtitle} title={content.title} />
 
           <div className="relative mb-12">

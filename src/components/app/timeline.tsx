@@ -62,13 +62,13 @@ const content = {
 export function Timeline() {
   return (
     <Section className="bg-white">
-      <div className="mx-auto max-w-6xl">
+      <div className="timeline-container">
         <SectionHeader icon={Clock} subtitle={content.subtitle} title={content.title} />
 
         <div className="relative py-4">
           <div className="-translate-x-1/2 -inset-y-4 absolute left-1/2 w-1 transform bg-gold-300" />
 
-          <div className="space-y-8 md:space-y-12">
+          <div className="timeline-spacing">
             {content.events.map((event, index) => (
               <TimelineEvent event={event} index={index} key={event.year} />
             ))}
@@ -101,7 +101,7 @@ function TimelineEvent({ event, index }: { event: TimelineEvent; index: number }
           )}
         >
           <Card className="border-gold-300 bg-gold-50 shadow-lg">
-            <CardContent className="relative space-y-4 px-8 py-4">
+            <CardContent className="card-content-spacing relative">
               <TimelineIcon
                 className={cn('absolute top-0 flex md:hidden', isLeft ? 'right-6' : 'left-6')}
                 icon={event.icon}

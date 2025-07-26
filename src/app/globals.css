@@ -96,6 +96,28 @@
   }
 }
 
+@layer components {
+  .section-container {
+    @apply mx-auto max-w-5xl px-4;
+  }
+
+  .timeline-container {
+    @apply mx-auto max-w-6xl;
+  }
+
+  .hero-container {
+    @apply flex max-w-4xl flex-col items-center space-y-8 text-center;
+  }
+
+  .timeline-spacing {
+    @apply space-y-8 md:space-y-12;
+  }
+
+  .card-content-spacing {
+    @apply space-y-6 px-8 py-4;
+  }
+}
+
 .scrollbar-thin {
   scrollbar-width: thin;
   scrollbar-color: var(--gold-300) transparent;

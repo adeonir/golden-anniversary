@@ -23,7 +23,7 @@ const content = {
 export function FamilyMessages() {
   return (
     <Section className="bg-zinc-100">
-      <div className="mx-auto max-w-5xl">
+      <div className="section-container">
         <SectionHeader icon={Users} subtitle={content.subtitle} title={content.title} />
 
         <div className="grid gap-8 md:grid-cols-2 md:gap-12">
@@ -49,7 +49,7 @@ function MessageCard({ title, message, authors }: { title: string; message: stri
   return (
     <article>
       <Card className="border-gold-300 bg-white py-8 shadow-lg">
-        <CardContent className="space-y-6 px-8">
+        <CardContent className="card-content-spacing">
           <h3
             className="after:-translate-x-1/2 relative pb-4 text-center font-heading font-medium text-2xl text-gold-600 after:absolute after:bottom-1 after:left-1/2 after:h-0.5 after:w-20 after:bg-gold-400"
             id={`${cardId}-title`}

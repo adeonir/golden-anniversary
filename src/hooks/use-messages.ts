@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { approveMessage, createMessage, deleteMessage, fetchMessages, rejectMessage } from '~/actions/messages'
 import { useToast } from '~/hooks/use-toast'
+import { config } from '~/lib/config'
 
 const messagesKeys = {
   all: ['messages'] as const,
@@ -10,7 +11,11 @@ const messagesKeys = {
   detail: (id: string) => [...messagesKeys.details(), id] as const,
 }
 
-export function useMessages(page = 1, limit = 5, status?: 'approved' | 'pending' | 'rejected') {
+export function useMessages(
+  page: number = config.pagination.defaultPage,
+  limit: number = config.pagination.frontendPageSize,
+  status?: 'approved' | 'pending' | 'rejected',
+) {
   const toast = useToast()
 
   const query = useQuery({
