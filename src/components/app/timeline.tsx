@@ -62,13 +62,13 @@ const content = {
 export function Timeline() {
   return (
     <Section className="bg-white">
-      <div className="mx-auto max-w-6xl">
+      <div className="timeline-container">
         <SectionHeader icon={Clock} subtitle={content.subtitle} title={content.title} />
 
         <div className="relative py-4">
           <div className="-translate-x-1/2 -inset-y-4 absolute left-1/2 w-1 transform bg-gold-300" />
 
-          <div className="space-y-8 md:space-y-12">
+          <div className="timeline-spacing">
             {content.events.map((event, index) => (
               <TimelineEvent event={event} index={index} key={event.year} />
             ))}
@@ -90,7 +90,7 @@ function TimelineEvent({ event, index }: { event: TimelineEvent; index: number }
   const isLeft = index % 2 === 0
 
   return (
-    <div className="relative">
+    <article className="relative">
       <TimelineIcon className="-translate-x-1/2 absolute top-6 left-1/2 hidden md:flex" icon={event.icon} />
 
       <div className="grid grid-cols-1 items-center gap-0 md:grid-cols-2 md:gap-20">
@@ -101,7 +101,7 @@ function TimelineEvent({ event, index }: { event: TimelineEvent; index: number }
           )}
         >
           <Card className="border-gold-300 bg-gold-50 shadow-lg">
-            <CardContent className="relative space-y-4 px-8 py-4">
+            <CardContent className="card-content-spacing relative">
               <TimelineIcon
                 className={cn('absolute top-0 flex md:hidden', isLeft ? 'right-6' : 'left-6')}
                 icon={event.icon}
@@ -109,7 +109,9 @@ function TimelineEvent({ event, index }: { event: TimelineEvent; index: number }
 
               <div>
                 <span className="block text-2xl text-gold-600 md:text-3xl">{event.year}</span>
-                <h3 className="font-semibold text-xl text-zinc-700">{event.title}</h3>
+                <h3 className="font-semibold text-xl text-zinc-700" id={`timeline-${event.year}`}>
+                  {event.title}
+                </h3>
               </div>
               <p className="text-lg text-zinc-600">{event.description}</p>
             </CardContent>
@@ -117,7 +119,7 @@ function TimelineEvent({ event, index }: { event: TimelineEvent; index: number }
         </div>
         <div className={cn('order-1', isLeft ? 'md:order-2' : 'md:order-1')} />
       </div>
-    </div>
+    </article>
   )
 }
 

@@ -8,23 +8,25 @@ export function Footer() {
           <h2 className="mb-8 font-script text-5xl text-gold-700 md:text-7xl">Iria e Ari</h2>
 
           <div className="mb-12 flex items-center justify-center gap-4">
-            <div className="h-0.5 w-24 bg-gold-400" />
-            <div className="size-3 rounded-full bg-gold-400" />
+            <div aria-hidden="true" className="h-0.5 w-24 bg-gold-400" />
+            <div aria-hidden="true" className="size-3 rounded-full bg-gold-400" />
             <div className="flex items-center justify-center">
-              <svg className="size-8 text-gold-400" fill="currentColor" viewBox="0 0 24 24">
-                <title>Coração</title>
+              <svg aria-hidden="true" className="size-8 text-gold-400" fill="currentColor" viewBox="0 0 24 24">
+                <title>Coração decorativo</title>
                 <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
               </svg>
             </div>
-            <div className="size-3 rounded-full bg-gold-400" />
-            <div className="h-0.5 w-24 bg-gold-400" />
+            <div aria-hidden="true" className="size-3 rounded-full bg-gold-400" />
+            <div aria-hidden="true" className="h-0.5 w-24 bg-gold-400" />
           </div>
 
-          <blockquote className="mx-auto max-w-lg space-y-4">
+          <blockquote aria-describedby="quote-attribution" className="mx-auto max-w-lg space-y-4">
             <p className="text-lg text-zinc-600 leading-relaxed sm:text-xl">
               "O amor não consiste em olhar um para o outro, mas sim em olhar juntos na mesma direção."
             </p>
-            <cite className="text-sm text-zinc-500 sm:text-base">- Antoine de Saint-Exupéry</cite>
+            <cite className="text-sm text-zinc-500 sm:text-base" id="quote-attribution">
+              - Antoine de Saint-Exupéry
+            </cite>
           </blockquote>
         </div>
       </section>
@@ -33,7 +35,12 @@ export function Footer() {
         <div className="mx-auto max-w-4xl px-4 text-center">
           <p className="mb-2 flex items-center justify-center gap-2 text-zinc-700">
             Site feito com carinho por
-            <a href="https://adeonir.dev?ref=golden-anniversary" rel="noopener noreferrer" target="_blank">
+            <a
+              aria-label="Link externo: Site do desenvolvedor Adeonir Kohl"
+              href="https://adeonir.dev?ref=golden-anniversary"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
               <AdeonirLogo className="h-auto w-32" />
             </a>
           </p>

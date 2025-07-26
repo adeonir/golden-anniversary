@@ -23,7 +23,7 @@ const content = {
 export function FamilyMessages() {
   return (
     <Section className="bg-zinc-100">
-      <div className="mx-auto max-w-5xl">
+      <div className="section-container">
         <SectionHeader icon={Users} subtitle={content.subtitle} title={content.title} />
 
         <div className="grid gap-8 md:grid-cols-2 md:gap-12">
@@ -44,19 +44,26 @@ export function FamilyMessages() {
 }
 
 function MessageCard({ title, message, authors }: { title: string; message: string; authors: string }) {
+  const cardId = `message-${title.toLowerCase().replace(/\s+/g, '-')}`
+
   return (
-    <Card className="border-gold-300 bg-white py-8 shadow-lg">
-      <CardContent className="space-y-6 px-8">
-        <h3 className="after:-translate-x-1/2 relative pb-4 text-center font-heading font-medium text-2xl text-gold-600 after:absolute after:bottom-1 after:left-1/2 after:h-0.5 after:w-20 after:bg-gold-400">
-          {title}
-        </h3>
-        <p className="text-base text-zinc-700 leading-relaxed">{message}</p>
-        <div className="flex items-center justify-center space-x-2 pt-4">
-          <div className="size-2 rounded-full bg-gold-400" />
-          <span className="text-sm text-zinc-500">{authors}</span>
-          <div className="size-2 rounded-full bg-gold-400" />
-        </div>
-      </CardContent>
-    </Card>
+    <article>
+      <Card className="border-gold-300 bg-white py-8 shadow-lg">
+        <CardContent className="card-content-spacing">
+          <h3
+            className="after:-translate-x-1/2 relative pb-4 text-center font-heading font-medium text-2xl text-gold-600 after:absolute after:bottom-1 after:left-1/2 after:h-0.5 after:w-20 after:bg-gold-400"
+            id={`${cardId}-title`}
+          >
+            {title}
+          </h3>
+          <p className="text-base text-zinc-700 leading-relaxed">{message}</p>
+          <div className="flex items-center justify-center space-x-2 pt-4">
+            <div aria-hidden="true" className="size-2 rounded-full bg-gold-400" />
+            <span className="text-sm text-zinc-500">Com amor, {authors}</span>
+            <div aria-hidden="true" className="size-2 rounded-full bg-gold-400" />
+          </div>
+        </CardContent>
+      </Card>
+    </article>
   )
 }

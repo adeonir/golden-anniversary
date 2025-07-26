@@ -5,8 +5,9 @@ import { Card } from '~/components/ui/card'
 import { Section } from '~/components/ui/section'
 import { SectionHeader } from '~/components/ui/section-header'
 import { useCountdown } from '~/hooks/use-countdown'
+import { config } from '~/lib/config'
 
-const TARGET_DATE = new Date('2025-11-08T18:30:00')
+const TARGET_DATE = new Date(config.event.targetDate)
 
 const content = {
   title: 'Contagem Regressiva',
@@ -25,10 +26,15 @@ export function Countdown() {
   return (
     <Section className="bg-gold-50">
       <div className="mx-auto px-4">
-        <div className="mx-auto max-w-5xl text-center">
+        <div className="section-container text-center">
           <SectionHeader icon={CalendarFold} subtitle={content.subtitle} title={content.title} />
 
-          <div className="mx-auto grid max-w-5xl grid-cols-2 gap-6 md:grid-cols-4 md:gap-8">
+          <div
+            aria-label="Contagem regressiva para a celebração dos 50 anos de casamento"
+            aria-live="polite"
+            className="mx-auto grid max-w-5xl grid-cols-2 gap-6 md:grid-cols-4 md:gap-8"
+            role="timer"
+          >
             <TimeCard label={content.labels.days} value={days} />
             <TimeCard label={content.labels.hours} value={hours} />
             <TimeCard label={content.labels.minutes} value={minutes} />

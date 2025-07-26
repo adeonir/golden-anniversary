@@ -1,44 +1,32 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import { createMessage, deleteMessage, fetchMessages, getMessage } from '~/actions/messages'
+import { approveMessage, createMessage, deleteMessage, fetchMessages, rejectMessage } from '~/actions/messages'
 import { useToast } from '~/hooks/use-toast'
+import { config } from '~/lib/config'
 
 const messagesKeys = {
   all: ['messages'] as const,
-  list: (page: number, status?: string) => [...messagesKeys.all, 'list', page, status] as const,
+  list: (page: number, limit: number) => [...messagesKeys.all, 'list', page, limit] as const,
   details: () => [...messagesKeys.all, 'detail'] as const,
   detail: (id: string) => [...messagesKeys.details(), id] as const,
 }
 
-export function useMessages(page = 1, limit = 5, status?: 'approved' | 'pending' | 'rejected') {
+export function useMessages(
+  page: number = config.pagination.defaultPage,
+  limit: number = config.pagination.frontendPageSize,
+  status?: 'approved' | 'pending' | 'rejected',
+) {
   const toast = useToast()
 
   const query = useQuery({
-    queryKey: messagesKeys.list(page, status),
+    queryKey: messagesKeys.list(page, limit),
     queryFn: () => fetchMessages(page, limit, status),
+    refetchOnWindowFocus: true,
   })
 
   useEffect(() => {
     if (query.error) {
       toast.error('Erro ao carregar mensagens. Tente novamente mais tarde.')
-    }
-  }, [query.error, toast])
-
-  return query
-}
-
-export function useMessage(id: string) {
-  const toast = useToast()
-
-  const query = useQuery({
-    queryKey: messagesKeys.detail(id),
-    queryFn: () => getMessage(id),
-    enabled: !!id,
-  })
-
-  useEffect(() => {
-    if (query.error) {
-      toast.error('Erro ao carregar mensagem. Tente novamente mais tarde.')
     }
   }, [query.error, toast])
 
@@ -61,14 +49,51 @@ export function useCreateMessage() {
   })
 }
 
+export function useApproveMessage() {
+  const queryClient = useQueryClient()
+  const toast = useToast()
+
+  return useMutation({
+    mutationFn: approveMessage,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: messagesKeys.all })
+      toast.success('Mensagem aprovada com sucesso!')
+    },
+    onError: () => {
+      toast.error('Erro ao aprovar mensagem. Tente novamente.')
+    },
+  })
+}
+
+export function useRejectMessage() {
+  const queryClient = useQueryClient()
+  const toast = useToast()
+
+  return useMutation({
+    mutationFn: rejectMessage,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: messagesKeys.all })
+      toast.success('Mensagem rejeitada.')
+    },
+    onError: () => {
+      toast.error('Erro ao rejeitar mensagem. Tente novamente.')
+    },
+  })
+}
+
 export function useDeleteMessage() {
   const queryClient = useQueryClient()
+  const toast = useToast()
 
   return useMutation({
     mutationFn: deleteMessage,
     onSuccess: (deletedId) => {
       queryClient.invalidateQueries({ queryKey: messagesKeys.all })
       queryClient.removeQueries({ queryKey: messagesKeys.detail(deletedId) })
+      toast.success('Mensagem deletada com sucesso!')
+    },
+    onError: () => {
+      toast.error('Erro ao deletar mensagem. Tente novamente.')
     },
   })
 }

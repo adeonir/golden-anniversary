@@ -47,7 +47,11 @@ export function GuestbookForm() {
     <Card className="border-gold-200 bg-white shadow-lg">
       <CardContent className="px-12 py-6">
         <Form {...form}>
-          <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
+          <form
+            aria-label="Formulário para enviar mensagem no livro de visitas"
+            className="space-y-6"
+            onSubmit={form.handleSubmit(onSubmit)}
+          >
             <FormField
               control={form.control}
               name="name"
@@ -83,13 +87,7 @@ export function GuestbookForm() {
             <div className="text-sm text-zinc-500">* Sua mensagem será analisada antes da publicação</div>
 
             <div className="flex justify-end">
-              <Button
-                className="w-48"
-                disabled={createMessageMutation.isPending}
-                size="lg"
-                type="submit"
-                variant="primary"
-              >
+              <Button className="w-48" disabled={createMessageMutation.isPending} size="lg" type="submit">
                 {createMessageMutation.isPending ? (
                   <Loader2 className="size-5 animate-spin" />
                 ) : (

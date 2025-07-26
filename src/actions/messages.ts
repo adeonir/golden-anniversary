@@ -46,28 +46,6 @@ export async function fetchMessages(
   }
 }
 
-export async function getMessage(id: string): Promise<Message | null> {
-  if (!id) return null
-
-  try {
-    const supabase = await createClient()
-    const { data, error } = await supabase.from('messages').select('*').eq('id', id).single()
-
-    if (error) {
-      throw new Error(error.message)
-    }
-
-    if (!data) return null
-
-    return {
-      ...data,
-      createdAt: new Date(data.createdAt),
-    }
-  } catch (error) {
-    throw new Error(`Failed to fetch message: ${error instanceof Error ? error.message : 'Unknown error'}`)
-  }
-}
-
 export async function createMessage(data: CreateMessageData): Promise<Message> {
   try {
     const supabase = await createClient()
@@ -88,6 +66,62 @@ export async function createMessage(data: CreateMessageData): Promise<Message> {
     }
   } catch (error) {
     throw new Error(`Failed to create message: ${error instanceof Error ? error.message : 'Unknown error'}`)
+  }
+}
+
+export async function approveMessage(id: string): Promise<Message> {
+  try {
+    const supabase = await createClient()
+    const { data: updatedMessage, error } = await supabase
+      .from('messages')
+      .update({ status: 'approved' })
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) {
+      throw new Error(error.message)
+    }
+
+    if (!updatedMessage) {
+      throw new Error('Failed to approve message')
+    }
+
+    revalidatePath('/admin')
+    return {
+      ...updatedMessage,
+      createdAt: new Date(updatedMessage.createdAt),
+    }
+  } catch (error) {
+    throw new Error(`Failed to approve message: ${error instanceof Error ? error.message : 'Unknown error'}`)
+  }
+}
+
+export async function rejectMessage(id: string): Promise<Message> {
+  try {
+    const supabase = await createClient()
+    const { data: updatedMessage, error } = await supabase
+      .from('messages')
+      .update({ status: 'rejected' })
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) {
+      throw new Error(error.message)
+    }
+
+    if (!updatedMessage) {
+      throw new Error('Failed to reject message')
+    }
+
+    revalidatePath('/admin')
+    return {
+      ...updatedMessage,
+      createdAt: new Date(updatedMessage.createdAt),
+    }
+  } catch (error) {
+    throw new Error(`Failed to reject message: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
 }
 
