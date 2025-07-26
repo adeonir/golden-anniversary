@@ -100,7 +100,7 @@ export function Gallery() {
           <SectionHeader icon={Camera} subtitle={content.subtitle} title={content.title} />
 
           <div className="relative mb-12">
-            <div className="overflow-hidden rounded-3xl" ref={emblaRef}>
+            <div aria-live="polite" className="overflow-hidden rounded-3xl" ref={emblaRef}>
               <div className="flex">
                 {PLACEHOLDER_IMAGES.map((image) => (
                   <div className="relative min-w-0 flex-[0_0_100%]" key={image.id}>
@@ -142,9 +142,15 @@ export function Gallery() {
             </Button>
           </div>
 
-          <div className="scrollbar-thin flex gap-2 overflow-x-auto px-2 py-4 sm:gap-4">
+          <div
+            aria-label="Miniaturas das fotos da galeria"
+            className="scrollbar-thin flex gap-2 overflow-x-auto px-2 py-4 sm:gap-4"
+            role="tablist"
+          >
             {PLACEHOLDER_IMAGES.map((image, index) => (
               <button
+                aria-label={`Ver foto ${index + 1}: ${image.alt}`}
+                aria-selected={index === selectedIndex}
                 className={cn(
                   'relative aspect-square min-w-0 flex-shrink-0 cursor-pointer rounded-xl transition-all duration-200',
                   index === selectedIndex
@@ -153,6 +159,7 @@ export function Gallery() {
                 )}
                 key={image.id}
                 onClick={() => scrollTo(index)}
+                role="tab"
                 style={{ width: '80px', height: '80px' }}
                 type="button"
               >

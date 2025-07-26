@@ -28,7 +28,12 @@ export function Countdown() {
         <div className="mx-auto max-w-5xl text-center">
           <SectionHeader icon={CalendarFold} subtitle={content.subtitle} title={content.title} />
 
-          <div className="mx-auto grid max-w-5xl grid-cols-2 gap-6 md:grid-cols-4 md:gap-8">
+          <div
+            aria-label="Contagem regressiva para a celebração dos 50 anos de casamento"
+            aria-live="polite"
+            className="mx-auto grid max-w-5xl grid-cols-2 gap-6 md:grid-cols-4 md:gap-8"
+            role="timer"
+          >
             <TimeCard label={content.labels.days} value={days} />
             <TimeCard label={content.labels.hours} value={hours} />
             <TimeCard label={content.labels.minutes} value={minutes} />

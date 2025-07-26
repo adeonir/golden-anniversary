@@ -11,7 +11,7 @@ const content = {
 
 export function Hero() {
   return (
-    <section className="relative flex min-h-dvh items-center justify-center bg-linear-to-b from-gold-50 to-gold-200 px-4 pt-8 pb-24">
+    <header className="relative flex min-h-dvh items-center justify-center bg-linear-to-b from-gold-50 to-gold-200 px-4 pt-8 pb-24">
       <div className="flex max-w-4xl flex-col items-center space-y-8 text-center">
         <h1 className="font-script text-8xl text-gold-700 sm:text-10xl">{content.names}</h1>
         <Divider />
@@ -22,18 +22,18 @@ export function Hero() {
           {content.dates.map((date, index) => (
             <Fragment key={date}>
               <div className="flex items-center space-x-2">
-                <div className="size-2 rounded-full bg-gold-400" />
+                <div aria-hidden="true" className="size-2 rounded-full bg-gold-400" />
                 <span className="font-normal font-sans text-sm text-zinc-600 uppercase tracking-wide">{date}</span>
               </div>
-              {index === 0 && <div className="hidden h-0.5 w-12 bg-zinc-300 sm:block" />}
+              {index === 0 && <div aria-hidden="true" className="hidden h-0.5 w-12 bg-zinc-300 sm:block" />}
             </Fragment>
           ))}
         </div>
       </div>
 
       <div className="-translate-x-1/2 absolute bottom-8 left-1/2 transform">
-        <MoveDown className="size-8 animate-bounce text-gold-500" strokeWidth={1.5} />
+        <MoveDown aria-hidden="true" className="size-8 animate-bounce text-gold-500" strokeWidth={1.5} />
       </div>
-    </section>
+    </header>
   )
 }
