@@ -9,6 +9,7 @@ import { Button } from '~/components/ui/button'
 import { Card } from '~/components/ui/card'
 import { ScrollArea } from '~/components/ui/scroll-area'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
+import { useMessageActions } from '~/hooks/use-message-actions'
 import { useApproveMessage, useDeleteMessage, useMessages, useRejectMessage } from '~/hooks/use-messages'
 import { config } from '~/lib/config'
 
@@ -20,11 +21,12 @@ export function MessagesTab() {
     isLoading,
     error,
   } = useMessages(config.pagination.defaultPage, config.pagination.adminPageSize)
+
   const approveMutation = useApproveMessage()
   const rejectMutation = useRejectMessage()
   const deleteMutation = useDeleteMessage()
 
-  const [pendingActions, setPendingActions] = useState<Record<string, 'approve' | 'reject' | 'delete'>>({})
+  const { pendingActions, createHandler } = useMessageActions()
 
   const formatDate = (date: Date) => {
     return format(date, "dd/MM/yyyy 'às' HH:mm", {
@@ -32,40 +34,9 @@ export function MessagesTab() {
     })
   }
 
-  const handleApprove = (id: string) => {
-    setPendingActions((prev) => ({ ...prev, [id]: 'approve' }))
-    approveMutation.mutate(id, {
-      onSettled: () =>
-        setPendingActions((prev) => {
-          const { [id]: _, ...rest } = prev
-          return rest
-        }),
-    })
-  }
-
-  const handleReject = (id: string) => {
-    setPendingActions((prev) => ({ ...prev, [id]: 'reject' }))
-    rejectMutation.mutate(id, {
-      onSettled: () =>
-        setPendingActions((prev) => {
-          const { [id]: _, ...rest } = prev
-          return rest
-        }),
-    })
-  }
-
-  const handleDelete = (id: string) => {
-    if (confirm('Tem certeza que deseja deletar esta mensagem? Esta ação não pode ser desfeita.')) {
-      setPendingActions((prev) => ({ ...prev, [id]: 'delete' }))
-      deleteMutation.mutate(id, {
-        onSettled: () =>
-          setPendingActions((prev) => {
-            const { [id]: _, ...rest } = prev
-            return rest
-          }),
-      })
-    }
-  }
+  const handleApprove = createHandler('approve', approveMutation)
+  const handleReject = createHandler('reject', rejectMutation)
+  const handleDelete = createHandler('delete', deleteMutation)
 
   const allMessages = messagesData?.messages || []
   const pendingCount = allMessages.filter((msg) => msg.status === 'pending').length
