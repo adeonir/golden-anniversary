@@ -1,7 +1,7 @@
 export interface Photo {
   id: string
   filename: string
-  originalName: string
+  title?: string
   url: string
   size: number
   order: number
@@ -10,7 +10,7 @@ export interface Photo {
 
 export interface CreatePhotoData {
   filename: string
-  originalName: string
+  title?: string
   url: string
   size: number
 }

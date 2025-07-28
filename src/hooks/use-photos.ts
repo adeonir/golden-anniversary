@@ -47,7 +47,7 @@ export function useUpdatePhoto() {
   const toast = useToast()
 
   return useMutation({
-    mutationFn: ({ id, originalName }: { id: string; originalName: string }) => updatePhoto(id, originalName),
+    mutationFn: ({ id, title }: { id: string; title: string }) => updatePhoto(id, title),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: photosKeys.all })
       toast.success('Foto atualizada com sucesso!')
