@@ -1,6 +1,6 @@
 'use client'
 
-import { AlertCircle, CheckCircle, Image as ImageIcon, Loader2, Upload, X } from 'lucide-react'
+import { AlertCircle, CheckCircle, Image as ImageIcon, Upload, X } from 'lucide-react'
 import Image from 'next/image'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
@@ -189,11 +189,12 @@ export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
               Cancelar
             </Button>
             <Button
-              disabled={uploadMutation.isPending || files.every((f) => f.status !== 'pending')}
+              disabled={files.every((f) => f.status !== 'pending')}
               intent="admin"
+              loading={uploadMutation.isPending}
               onClick={handleUpload}
             >
-              {uploadMutation.isPending ? <Loader2 className="size-5 animate-spin" /> : 'Fazer Upload'}
+              {files.every((f) => f.status === 'success' || f.status === 'error') ? 'Fechar' : 'Fazer Upload'}
             </Button>
           </DialogFooter>
         )}

@@ -252,10 +252,10 @@ function PhotoCard({
 
         <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/20" />
         <div className="absolute top-2 right-2 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-          <Button intent="default" onClick={onEditStart} size="icon" variant="solid">
+          <Button intent="default" loading={isSaving} onClick={onEditStart} size="icon" variant="solid">
             <Edit2 />
           </Button>
-          <Button disabled={isDeleting} intent="danger" onClick={onDelete} size="icon" variant="solid">
+          <Button intent="danger" loading={isDeleting} onClick={onDelete} size="icon" variant="solid">
             <Trash2 />
           </Button>
         </div>
@@ -276,10 +276,10 @@ function PhotoCard({
               placeholder="Nome da foto"
               value={editTitle}
             />
-            <Button className="size-7" disabled={isSaving} intent="success" onClick={onEditSave} variant="solid">
+            <Button className="size-7" intent="success" loading={isSaving} onClick={onEditSave} variant="solid">
               <Check />
             </Button>
-            <Button className="size-7" intent="neutral" onClick={onEditCancel} variant="solid">
+            <Button className="size-7" disabled={isSaving} intent="neutral" onClick={onEditCancel} variant="solid">
               <X />
             </Button>
           </div>

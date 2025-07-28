@@ -2,7 +2,7 @@
 
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { Loader2 } from 'lucide-react'
+
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import { Card } from '~/components/ui/card'
@@ -98,42 +98,32 @@ export function MessagesTab() {
                     <div className="flex gap-2">
                       <Button
                         className="w-20"
-                        disabled={message.status === 'approved' || pendingActions[message.id] === 'approve'}
+                        disabled={message.status === 'approved'}
                         intent="success"
+                        loading={pendingActions[message.id] === 'approve'}
                         onClick={() => handleApprove(message.id)}
                         size="sm"
                       >
-                        {pendingActions[message.id] === 'approve' ? (
-                          <Loader2 className="mr-2 size-4 animate-spin" />
-                        ) : (
-                          'Aprovar'
-                        )}
+                        Aprovar
                       </Button>
                       <Button
                         className="w-20"
-                        disabled={message.status === 'rejected' || pendingActions[message.id] === 'reject'}
+                        disabled={message.status === 'rejected'}
                         intent="danger"
+                        loading={pendingActions[message.id] === 'reject'}
                         onClick={() => handleReject(message.id)}
                         size="sm"
                       >
-                        {pendingActions[message.id] === 'reject' ? (
-                          <Loader2 className="mr-2 size-4 animate-spin" />
-                        ) : (
-                          'Rejeitar'
-                        )}
+                        Rejeitar
                       </Button>
                       <Button
                         className="w-20"
-                        disabled={pendingActions[message.id] === 'delete'}
                         intent="neutral"
+                        loading={pendingActions[message.id] === 'delete'}
                         onClick={() => handleDelete(message.id)}
                         size="sm"
                       >
-                        {pendingActions[message.id] === 'delete' ? (
-                          <Loader2 className="mr-2 size-4 animate-spin" />
-                        ) : (
-                          'Deletar'
-                        )}
+                        Deletar
                       </Button>
                     </div>
                   </div>
