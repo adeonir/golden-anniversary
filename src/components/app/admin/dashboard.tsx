@@ -13,7 +13,7 @@ export function Dashboard() {
           <h1 className="flex items-center gap-2 font-bold text-foreground text-lg">
             <BrandLogo className="h-auto w-8" /> Painel Administrativo
           </h1>
-          <LogoutButton className="w-24" />
+          <LogoutButton className="w-fit" />
         </div>
       </header>
 

@@ -13,3 +13,13 @@ export function getInitials(name: string): string {
     .toUpperCase()
     .slice(0, 2)
 }
+
+export function validateFile(file: File): string | null {
+  if (!file.type.includes('jpeg')) {
+    return 'Apenas arquivos JPEG são permitidos'
+  }
+  if (file.size > 1024 * 1024) {
+    return 'Arquivo deve ter no máximo 1MB'
+  }
+  return null
+}
