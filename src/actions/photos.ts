@@ -7,10 +7,7 @@ import type { CreatePhotoData, Photo } from '~/types/photos'
 export async function fetchPhotos(): Promise<Photo[]> {
   try {
     const supabase = await createClient()
-    const { data: photosList, error } = await supabase
-      .from('photos')
-      .select('*')
-      .order('createdAt', { ascending: false })
+    const { data: photosList, error } = await supabase.from('photos').select('*').order('order', { ascending: true })
 
     if (error) {
       throw new Error(error.message)
@@ -47,7 +44,7 @@ export async function uploadPhoto(file: File): Promise<Photo> {
 
     const photoData: CreatePhotoData = {
       filename,
-      originalName: file.name,
+      title: file.name,
       url: urlData.publicUrl,
       size: file.size,
     }
@@ -74,13 +71,13 @@ export async function uploadPhoto(file: File): Promise<Photo> {
   }
 }
 
-export async function updatePhoto(id: string, originalName: string): Promise<Photo> {
+export async function updatePhoto(id: string, title: string): Promise<Photo> {
   try {
     const supabase = await createClient()
 
     const { data: updatedPhoto, error: updateError } = await supabase
       .from('photos')
-      .update({ originalName })
+      .update({ title })
       .eq('id', id)
       .select()
       .single()
@@ -107,18 +104,19 @@ export async function reorderPhotos(photoIds: string[]): Promise<void> {
   try {
     const supabase = await createClient()
 
-    const updates = photoIds.map((id, index) => ({
-      id,
-      order: index,
-    }))
+    const updatePromises = photoIds.map((id, index) =>
+      supabase
+        .from('photos')
+        .update({ order: index })
+        .eq('id', id)
+        .then(({ error }) => {
+          if (error) {
+            throw new Error(`Failed to update photo ${id}: ${error.message}`)
+          }
+        }),
+    )
 
-    const { error } = await supabase.from('photos').upsert(updates, {
-      onConflict: 'id',
-    })
-
-    if (error) {
-      throw new Error(`Failed to reorder photos: ${error.message}`)
-    }
+    await Promise.all(updatePromises)
 
     revalidatePath('/admin')
   } catch (error) {

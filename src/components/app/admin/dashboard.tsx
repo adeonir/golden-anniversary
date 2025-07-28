@@ -17,7 +17,7 @@ export function Dashboard() {
         </div>
       </header>
 
-      <main className="flex flex-1 rounded-lg bg-white px-8 py-6 shadow-lg shadow-zinc-700/15">
+      <main className="flex flex-1 rounded-lg bg-white p-8 shadow-lg shadow-zinc-700/15">
         <Tabs className="flex flex-1 flex-col gap-8" defaultValue="messages">
           <TabsList>
             <TabsTrigger value="messages">

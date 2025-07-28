@@ -1,11 +1,12 @@
 import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
+import { Loader2 } from 'lucide-react'
 import type * as React from 'react'
 
 import { cn } from '~/lib/utils'
 
 const buttonVariants = cva(
-  "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium text-sm outline-none transition-all focus-visible:border-gold-600 focus-visible:ring-[3px] focus-visible:ring-gold-600/20 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-red-500 aria-invalid:ring-red-600/20 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium text-sm outline-none transition-all focus-visible:border-gold-600 focus-visible:ring-[3px] focus-visible:ring-gold-600/20 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-red-500 aria-invalid:ring-red-600/20 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -23,7 +24,7 @@ const buttonVariants = cva(
         default: 'h-9 px-4 py-2 has-[>svg]:px-3',
         sm: 'h-8 gap-1.5 rounded-md px-3 has-[>svg]:px-2.5',
         lg: 'h-10 rounded-md px-6 has-[>svg]:px-4',
-        icon: 'size-9',
+        icon: 'size-9 has-[>svg]:px-3',
       },
     },
     compoundVariants: [
@@ -79,14 +80,32 @@ function Button({
   intent,
   size,
   asChild = false,
+  loading = false,
+  children,
+  disabled,
   ...props
 }: React.ComponentProps<'button'> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
+    loading?: boolean
   }) {
   const Comp = asChild ? Slot : 'button'
 
-  return <Comp className={cn(buttonVariants({ variant, intent, size, className }))} data-slot="button" {...props} />
+  return (
+    <Comp
+      className={cn(buttonVariants({ variant, intent, size, className }))}
+      data-slot="button"
+      disabled={disabled || loading}
+      {...props}
+    >
+      <span className={cn('inline-flex items-center justify-center gap-2', loading && 'invisible')}>{children}</span>
+      {loading && (
+        <span className="absolute inset-0 flex items-center justify-center">
+          <Loader2 className="size-4 animate-spin" />
+        </span>
+      )}
+    </Comp>
+  )
 }
 
 export { Button, buttonVariants }

@@ -51,7 +51,8 @@ src/
 - [Design](docs/design.md)
 - [Arquitetura](docs/architecture.md)
 - [Desenvolvimento](docs/development.md)
-- [Setup Storage](docs/storage-setup.md)
+- [Setup Database](docs/setup-database.sql)
+- [Setup Storage](docs/setup-storage.sql)
 - [Deploy](docs/deployment.md)
 
 ## Licença

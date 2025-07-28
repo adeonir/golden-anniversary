@@ -85,9 +85,40 @@ src/
 
 ## Database Schema
 
+### Tabelas
+
+**Messages** - Mensagens do livro de visitas:
+
+- `id` (UUID) - Identificador único
+- `name` (TEXT) - Nome do autor
+- `message` (TEXT) - Conteúdo da mensagem
+- `status` (TEXT) - Status: 'pending', 'approved', 'rejected'
+- `createdAt` (TIMESTAMPTZ) - Data de criação
+
+**Photos** - Fotos da galeria:
+
+- `id` (UUID) - Identificador único
+- `filename` (TEXT) - Nome do arquivo no storage
+- `title` (TEXT, nullable) - Título opcional da foto
+- `url` (TEXT) - URL pública da imagem
+- `size` (INTEGER) - Tamanho em bytes
+- `order` (INTEGER) - Posição na galeria (para reordenação)
+- `createdAt` (TIMESTAMPTZ) - Data de upload
+
+### Storage
+
+**Bucket `photos`** - Armazenamento de imagens:
+
+- Configurado como público para acesso direto
+- Estrutura: `gallery/{uuid}.{ext}`
+- Políticas de acesso configuradas via SQL
+
+### Scripts de Setup
+
 Execute os scripts SQL no Supabase:
 
-- `docs/create-tables.sql` - Criação das tabelas
+- `docs/setup-database.sql` - Criação das tabelas (messages e photos)
+- `docs/setup-storage.sql` - Configuração do bucket de fotos
 - `docs/seed-messages.sql` - Dados de exemplo (opcional)
 
 ## Environment Variables
