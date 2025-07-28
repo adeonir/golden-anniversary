@@ -10,7 +10,7 @@ import { config } from '~/lib/config'
 import { cn } from '~/lib/utils'
 
 const buttonVariants = cva(
-  "hover:-translate-y-px relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium text-sm outline-none transition-all hover:shadow-md focus-visible:border-gold-600 focus-visible:ring-[3px] focus-visible:ring-gold-600/20 active:translate-y-0 active:shadow-sm disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-red-500 aria-invalid:ring-red-600/20 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium text-sm outline-none transition-all hover:shadow-md focus-visible:border-gold-600 focus-visible:ring-[3px] focus-visible:ring-gold-600/20 active:shadow-sm disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-red-500 aria-invalid:ring-red-600/20 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {
