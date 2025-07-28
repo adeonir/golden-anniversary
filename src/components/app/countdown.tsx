@@ -1,10 +1,12 @@
 'use client'
 
+import { AnimatePresence, m as motion } from 'framer-motion'
 import { CalendarFold } from 'lucide-react'
 import { Card } from '~/components/ui/card'
 import { Section } from '~/components/ui/section'
 import { SectionHeader } from '~/components/ui/section-header'
 import { useCountdown } from '~/hooks/use-countdown'
+import { useReducedMotion } from '~/hooks/use-reduced-motion'
 import { config } from '~/lib/config'
 
 const targetDate = new Date(config.event.targetDate)
@@ -52,10 +54,27 @@ interface TimeCardProps {
 }
 
 function TimeCard({ value, label }: TimeCardProps) {
+  const prefersReducedMotion = useReducedMotion()
+
+  const animationConfig = prefersReducedMotion
+    ? { duration: config.animation.duration.fast, ease: 'easeOut' as const }
+    : { duration: config.animation.duration.fast, ease: config.animation.easing.natural }
+
   return (
     <Card className="rounded-3xl pt-4 pb-6 sm:pt-6 sm:pb-8">
       <div className="font-heading font-semibold text-6xl text-gold-500 tabular-nums md:text-7xl">
-        {value.toString().padStart(2, '0')}
+        <AnimatePresence mode="wait">
+          <motion.span
+            animate={{ opacity: 1, y: 0 }}
+            className="inline-block"
+            exit={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, y: 20 }}
+            key={value}
+            transition={animationConfig}
+          >
+            {value.toString().padStart(2, '0')}
+          </motion.span>
+        </AnimatePresence>
       </div>
       <div className="font-medium text-md text-zinc-400 uppercase tracking-widest">{label}</div>
     </Card>
