@@ -24,7 +24,7 @@ const buttonVariants = cva(
         default: 'h-9 px-4 py-2 has-[>svg]:px-3',
         sm: 'h-8 gap-1.5 rounded-md px-3 has-[>svg]:px-2.5',
         lg: 'h-10 rounded-md px-6 has-[>svg]:px-4',
-        icon: 'size-9',
+        icon: 'size-9 has-[>svg]:px-3',
       },
     },
     compoundVariants: [
@@ -98,7 +98,7 @@ function Button({
       disabled={disabled || loading}
       {...props}
     >
-      <span className={cn(loading && 'invisible')}>{children}</span>
+      <span className={cn('inline-flex items-center justify-center gap-2', loading && 'invisible')}>{children}</span>
       {loading && (
         <span className="absolute inset-0 flex items-center justify-center">
           <Loader2 className="size-4 animate-spin" />
