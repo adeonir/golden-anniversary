@@ -1,7 +1,13 @@
+'use client'
+
+import { m as motion, type Variants } from 'framer-motion'
 import { Baby, Clock, Crown, Heart, type LucideIcon, Sparkles, Users } from 'lucide-react'
+import { useState } from 'react'
 import { Card, CardContent } from '~/components/ui/card'
 import { Section } from '~/components/ui/section'
 import { SectionHeader } from '~/components/ui/section-header'
+import { useReducedMotion } from '~/hooks/use-reduced-motion'
+import { config } from '~/lib/config'
 import { cn } from '~/lib/utils'
 
 const content = {
@@ -60,6 +66,21 @@ const content = {
 }
 
 export function Timeline() {
+  const prefersReducedMotion = useReducedMotion()
+
+  const animationConfig = prefersReducedMotion
+    ? { duration: config.animation.duration.fast, ease: 'easeOut' as const }
+    : { duration: config.animation.duration.slow, ease: config.animation.easing.natural }
+
+  const itemVariants: Variants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: animationConfig,
+    },
+  }
+
   return (
     <Section className="bg-white">
       <div className="timeline-container">
@@ -70,7 +91,7 @@ export function Timeline() {
 
           <div className="timeline-spacing">
             {content.events.map((event, index) => (
-              <TimelineEvent event={event} index={index} key={event.year} />
+              <TimelineEvent event={event} index={index} key={event.year} variants={itemVariants} />
             ))}
           </div>
         </div>
@@ -86,12 +107,21 @@ interface TimelineEvent {
   icon: LucideIcon
 }
 
-function TimelineEvent({ event, index }: { event: TimelineEvent; index: number }) {
+function TimelineEvent({ event, index, variants }: { event: TimelineEvent; index: number; variants?: Variants }) {
   const isLeft = index % 2 === 0
+  const [isHovered, setIsHovered] = useState(false)
 
   return (
-    <article className="relative">
-      <TimelineIcon className="-translate-x-1/2 absolute top-6 left-1/2 hidden md:flex" icon={event.icon} />
+    <motion.article
+      className="relative"
+      initial="hidden"
+      variants={variants}
+      viewport={{ once: true, margin: '-150px' }}
+      whileInView="visible"
+    >
+      <div className="-translate-x-1/2 absolute top-6 left-1/2 hidden md:block">
+        <TimelineIcon icon={event.icon} isHovered={isHovered} />
+      </div>
 
       <div className="grid grid-cols-1 items-center gap-0 md:grid-cols-2 md:gap-20">
         <div
@@ -100,7 +130,11 @@ function TimelineEvent({ event, index }: { event: TimelineEvent; index: number }
             isLeft ? 'order-1 pr-16 text-left md:pr-0 md:text-right' : 'order-2 pl-16 text-right md:pl-0 md:text-left',
           )}
         >
-          <Card className="bg-gold-50">
+          <Card
+            className="bg-gold-50 transition-all duration-300 hover:border-gold-600 hover:shadow-2xl"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
             <CardContent className="card-content-spacing relative">
               <TimelineIcon
                 className={cn('absolute top-0 flex md:hidden', isLeft ? 'right-6' : 'left-6')}
@@ -119,20 +153,22 @@ function TimelineEvent({ event, index }: { event: TimelineEvent; index: number }
         </div>
         <div className={cn('order-1', isLeft ? 'md:order-2' : 'md:order-1')} />
       </div>
-    </article>
+    </motion.article>
   )
 }
 
 interface TimelineIconProps {
   icon: LucideIcon
   className?: string
+  isHovered?: boolean
 }
 
-function TimelineIcon({ icon: Icon, className }: TimelineIconProps) {
+function TimelineIcon({ icon: Icon, className, isHovered }: TimelineIconProps) {
   return (
     <div
       className={cn(
-        'z-10 size-12 transform items-center justify-center rounded-full bg-gold-500 text-white shadow-lg',
+        'z-10 flex size-12 transform items-center justify-center rounded-full border border-gold-500 bg-gold-500 text-white shadow-lg transition-all duration-300',
+        isHovered && 'border-gold-600 shadow-xl',
         className,
       )}
     >
