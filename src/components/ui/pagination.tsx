@@ -34,7 +34,7 @@ function PaginationButton({ className, isActive, size = 'icon', variant, ...prop
       data-active={isActive}
       data-slot="pagination-button"
       size={size}
-      variant={variant || (isActive ? 'outline' : 'ghost')}
+      variant={variant || (isActive ? 'solid' : 'outline')}
       {...props}
     />
   )

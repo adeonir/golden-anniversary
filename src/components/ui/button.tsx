@@ -9,18 +9,15 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground shadow-xs hover:bg-primary/90',
-        secondary: 'bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80',
-        destructive: 'bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20',
-        outline: 'border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground',
-        ghost: 'hover:bg-accent hover:text-accent-foreground',
-        link: 'text-primary underline-offset-4 hover:underline',
+        solid: 'shadow-xs',
+        outline: 'border bg-background shadow-xs',
       },
       intent: {
-        admin: 'bg-foreground text-background shadow-xs hover:bg-foreground/90 focus-visible:ring-foreground/20',
-        approve: 'bg-green-500 text-white shadow-xs hover:bg-green-600 focus-visible:ring-foreground/20',
-        reject: 'bg-red-500 text-white shadow-xs hover:bg-red-600 focus-visible:ring-foreground/20',
-        delete: 'bg-gray-500 text-white shadow-xs hover:bg-gray-600 focus-visible:ring-foreground/20',
+        default: '',
+        admin: '',
+        success: '',
+        danger: '',
+        neutral: '',
       },
       size: {
         default: 'h-9 px-4 py-2 has-[>svg]:px-3',
@@ -29,8 +26,48 @@ const buttonVariants = cva(
         icon: 'size-9',
       },
     },
+    compoundVariants: [
+      // Solid variants
+      {
+        variant: 'solid',
+        intent: 'default',
+        class: 'bg-primary text-primary-foreground hover:bg-primary/90',
+      },
+      {
+        variant: 'solid',
+        intent: 'admin',
+        class: 'bg-foreground text-background hover:bg-foreground/90 focus-visible:ring-foreground/20',
+      },
+      {
+        variant: 'solid',
+        intent: 'success',
+        class: 'bg-green-500 text-white hover:bg-green-600 focus-visible:ring-green-500/20',
+      },
+      {
+        variant: 'solid',
+        intent: 'danger',
+        class: 'bg-red-500 text-white hover:bg-red-600 focus-visible:ring-red-500/20',
+      },
+      {
+        variant: 'solid',
+        intent: 'neutral',
+        class: 'bg-zinc-500 text-white hover:bg-zinc-600 focus-visible:ring-zinc-500/20',
+      },
+      // Outline variants
+      {
+        variant: 'outline',
+        intent: 'default',
+        class: 'hover:bg-accent hover:text-accent-foreground',
+      },
+      {
+        variant: 'outline',
+        intent: 'admin',
+        class: 'border-foreground text-foreground hover:bg-foreground hover:text-background',
+      },
+    ],
     defaultVariants: {
-      variant: 'default',
+      variant: 'solid',
+      intent: 'default',
       size: 'default',
     },
   },

@@ -259,7 +259,7 @@ function FileListItem({ file, onRemove }: FileListItemProps) {
         {file.status === 'success' && <p className="text-green-600 text-xs">Upload realizado com sucesso!</p>}
       </div>
 
-      <Button className="size-6 flex-shrink-0 p-0" intent="reject" onClick={onRemove} size="sm">
+      <Button className="size-6 flex-shrink-0 p-0" intent="danger" onClick={onRemove} size="sm">
         <X className="size-4" />
       </Button>
     </div>

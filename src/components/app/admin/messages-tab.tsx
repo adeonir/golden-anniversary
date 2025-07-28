@@ -112,7 +112,7 @@ export function MessagesTab() {
                       <Button
                         className="w-20"
                         disabled={message.status === 'approved' || pendingActions[message.id] === 'approve'}
-                        intent="approve"
+                        intent="success"
                         onClick={() => handleApprove(message.id)}
                         size="sm"
                       >
@@ -125,7 +125,7 @@ export function MessagesTab() {
                       <Button
                         className="w-20"
                         disabled={message.status === 'rejected' || pendingActions[message.id] === 'reject'}
-                        intent="reject"
+                        intent="danger"
                         onClick={() => handleReject(message.id)}
                         size="sm"
                       >
@@ -138,7 +138,7 @@ export function MessagesTab() {
                       <Button
                         className="w-20"
                         disabled={pendingActions[message.id] === 'delete'}
-                        intent="delete"
+                        intent="neutral"
                         onClick={() => handleDelete(message.id)}
                         size="sm"
                       >
