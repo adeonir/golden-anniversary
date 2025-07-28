@@ -3,24 +3,26 @@
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { Loader2 } from 'lucide-react'
-import { useState } from 'react'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import { Card } from '~/components/ui/card'
 import { ScrollArea } from '~/components/ui/scroll-area'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
+import { useDataState } from '~/hooks/use-data-state'
 import { useMessageActions } from '~/hooks/use-message-actions'
 import { useApproveMessage, useDeleteMessage, useMessages, useRejectMessage } from '~/hooks/use-messages'
+import { useMessagesFilter } from '~/hooks/use-messages-filter'
 import { config } from '~/lib/config'
 
 export function MessagesTab() {
-  const [filter, setFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all')
-
   const {
     data: messagesData,
     isLoading,
     error,
   } = useMessages(config.pagination.defaultPage, config.pagination.adminPageSize)
+
+  const allMessages = messagesData?.messages || []
+  const { filter, setFilter, filteredMessages, pendingCount } = useMessagesFilter({ messages: allMessages })
 
   const approveMutation = useApproveMessage()
   const rejectMutation = useRejectMessage()
@@ -38,12 +40,13 @@ export function MessagesTab() {
   const handleReject = createHandler('reject', rejectMutation)
   const handleDelete = createHandler('delete', deleteMutation)
 
-  const allMessages = messagesData?.messages || []
-  const pendingCount = allMessages.filter((msg) => msg.status === 'pending').length
-
-  const messages = allMessages.filter((message) => {
-    if (filter === 'all') return true
-    return message.status === filter
+  const dataStateAlert = useDataState({
+    data: filteredMessages,
+    isLoading,
+    error,
+    loadingText: 'Carregando mensagens...',
+    errorText: 'Erro ao carregar mensagens. Tente novamente.',
+    emptyText: 'Nenhuma mensagem encontrada.',
   })
 
   return (
@@ -74,27 +77,11 @@ export function MessagesTab() {
       </div>
 
       <ScrollArea className="flex-1">
-        {isLoading && (
-          <div className="flex items-center justify-center py-8">
-            <p className="text-muted-foreground">Carregando mensagens...</p>
-          </div>
-        )}
+        {dataStateAlert && <div className="flex items-center justify-center py-8">{dataStateAlert}</div>}
 
-        {error && (
-          <div className="flex items-center justify-center py-8">
-            <p className="text-destructive">Erro ao carregar mensagens. Tente novamente.</p>
-          </div>
-        )}
-
-        {!(isLoading || error) && messages.length === 0 && (
-          <div className="flex items-center justify-center py-8">
-            <p className="text-muted-foreground">Nenhuma mensagem encontrada.</p>
-          </div>
-        )}
-
-        {!(isLoading || error) && messages.length > 0 && (
+        {!dataStateAlert && (
           <div className="space-y-4">
-            {messages.map((message) => (
+            {filteredMessages.map((message) => (
               <Card className="p-6" key={message.id}>
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 space-y-2">
@@ -112,7 +99,7 @@ export function MessagesTab() {
                       <Button
                         className="w-20"
                         disabled={message.status === 'approved' || pendingActions[message.id] === 'approve'}
-                        intent="approve"
+                        intent="success"
                         onClick={() => handleApprove(message.id)}
                         size="sm"
                       >
@@ -125,7 +112,7 @@ export function MessagesTab() {
                       <Button
                         className="w-20"
                         disabled={message.status === 'rejected' || pendingActions[message.id] === 'reject'}
-                        intent="reject"
+                        intent="danger"
                         onClick={() => handleReject(message.id)}
                         size="sm"
                       >
@@ -138,7 +125,7 @@ export function MessagesTab() {
                       <Button
                         className="w-20"
                         disabled={pendingActions[message.id] === 'delete'}
-                        intent="delete"
+                        intent="neutral"
                         onClick={() => handleDelete(message.id)}
                         size="sm"
                       >
