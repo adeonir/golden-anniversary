@@ -1,5 +1,6 @@
 'use client'
 
+import { m as motion } from 'framer-motion'
 import { type ReactNode, useState } from 'react'
 import { Avatar, AvatarInitials } from '~/components/ui/avatar'
 import { Card, CardContent } from '~/components/ui/card'
@@ -12,11 +13,13 @@ import {
   PaginationPrevious,
 } from '~/components/ui/pagination'
 import { useMessages } from '~/hooks/use-messages'
+import { useReducedMotion } from '~/hooks/use-reduced-motion'
 import { config } from '~/lib/config'
 import { getInitials } from '~/lib/utils'
 
 export function GuestbookMessages() {
   const [currentPage, setCurrentPage] = useState<number>(config.pagination.defaultPage)
+  const prefersReducedMotion = useReducedMotion()
 
   const { data, isLoading } = useMessages(currentPage, config.pagination.frontendPageSize, 'approved')
 
@@ -24,6 +27,30 @@ export function GuestbookMessages() {
   const totalPages = data?.totalPages || 1
 
   const isEmpty = messages.length === 0
+
+  const animationConfig = prefersReducedMotion
+    ? { duration: config.animation.duration.fast, ease: 'easeOut' as const }
+    : { duration: config.animation.duration.normal, ease: config.animation.easing.natural }
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: prefersReducedMotion ? 0 : 0.05,
+        delayChildren: prefersReducedMotion ? 0 : 0.05,
+      },
+    },
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: animationConfig,
+    },
+  }
 
   if (isLoading) {
     return <GuestbookSkeleton />
@@ -41,27 +68,37 @@ export function GuestbookMessages() {
     <div className="space-y-8">
       <h2 className="text-center font-medium font-serif text-2xl text-zinc-800">Mensagens Recebidas</h2>
 
-      <div aria-label="Lista de mensagens do livro de visitas" className="space-y-4" role="feed">
+      <motion.div
+        animate="visible"
+        aria-label="Lista de mensagens do livro de visitas"
+        className="space-y-4"
+        initial="hidden"
+        key={currentPage}
+        role="feed"
+        variants={containerVariants}
+      >
         {messages.map((message) => (
-          <Card aria-labelledby={`message-${message.id}-author`} className="shadow-md" key={message.id}>
-            <CardContent className="px-8 py-4">
-              <div className="flex gap-4">
-                <Avatar aria-hidden="true" className="size-12 bg-gold-100">
-                  <AvatarInitials className="bg-gold-200 font-medium text-gold-800">
-                    {getInitials(message.name)}
-                  </AvatarInitials>
-                </Avatar>
-                <div className="flex-1 space-y-2">
-                  <h3 className="font-medium text-lg text-zinc-800" id={`message-${message.id}-author`}>
-                    {message.name}
-                  </h3>
-                  <p className="text-zinc-600">{message.message}</p>
+          <motion.div key={message.id} variants={itemVariants}>
+            <Card aria-labelledby={`message-${message.id}-author`} className="shadow-md">
+              <CardContent className="px-8 py-4">
+                <div className="flex gap-4">
+                  <Avatar aria-hidden="true" className="size-12 bg-gold-100">
+                    <AvatarInitials className="bg-gold-200 font-medium text-gold-800">
+                      {getInitials(message.name)}
+                    </AvatarInitials>
+                  </Avatar>
+                  <div className="flex-1 space-y-2">
+                    <h3 className="font-medium text-lg text-zinc-800" id={`message-${message.id}-author`}>
+                      {message.name}
+                    </h3>
+                    <p className="text-zinc-600">{message.message}</p>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
 
       {totalPages > 1 && (
         <Pagination aria-label="Navegação das páginas de mensagens" className="mt-8">
@@ -137,7 +174,7 @@ function GuestbookSkeleton() {
     <div className="space-y-8">
       <h2 className="text-center font-medium font-serif text-2xl text-zinc-800">Mensagens Recebidas</h2>
       <div className="space-y-4">
-        {Array.from({ length: 3 }, () => (
+        {Array.from({ length: 5 }, () => (
           <MessageSkeleton key={crypto.randomUUID()} />
         ))}
       </div>
