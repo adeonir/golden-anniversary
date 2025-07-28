@@ -13,7 +13,7 @@ import {
 } from '@dnd-kit/core'
 import { arrayMove, rectSortingStrategy, SortableContext, useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { Check, Edit2, Grip, Trash2, Upload, X } from 'lucide-react'
+import { Check, Edit2, GripVertical, Trash2, Upload, X } from 'lucide-react'
 import Image from 'next/image'
 import { useEffect, useMemo, useState } from 'react'
 import { Button } from '~/components/ui/button'
@@ -30,6 +30,7 @@ export function PhotosTab() {
   const [editTitle, setEditTitle] = useState('')
   const [activeId, setActiveId] = useState<string | null>(null)
   const [localPhotos, setLocalPhotos] = useState<Photo[]>([])
+  const [reorderingPhotoId, setReorderingPhotoId] = useState<string | null>(null)
   const { data: photos = [], isLoading, error } = usePhotos()
   const updatePhotoMutation = useUpdatePhoto()
   const deletePhotoMutation = useDeletePhoto()
@@ -44,27 +45,19 @@ export function PhotosTab() {
   // Debounced reorder function to avoid excessive API calls during drag operations
   const debouncedReorder = useMemo(() => {
     let timeoutId: NodeJS.Timeout
-    return (photoIds: string[]) => {
+    return (photoIds: string[], movedPhotoId: string) => {
       clearTimeout(timeoutId)
       timeoutId = setTimeout(() => {
-        reorderPhotosMutation.mutate(photoIds)
+        setReorderingPhotoId(movedPhotoId)
+        reorderPhotosMutation.mutate(photoIds, {
+          onSuccess: () => setReorderingPhotoId(null),
+          onError: () => setReorderingPhotoId(null),
+        })
       }, 300)
     }
   }, [reorderPhotosMutation])
 
-  const sensors = useSensors(
-    useSensor(MouseSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    }),
-    useSensor(TouchSensor, {
-      activationConstraint: {
-        delay: 200,
-        tolerance: 5,
-      },
-    }),
-  )
+  const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor))
 
   const dataStateAlert = useDataState({
     data: localPhotos,
@@ -77,13 +70,13 @@ export function PhotosTab() {
 
   const handleEditStart = (photo: Photo) => {
     setEditingId(photo.id)
-    setEditTitle(photo.originalName)
+    setEditTitle(photo.title || '')
   }
 
   const handleEditSave = () => {
     if (editingId && editTitle.trim()) {
       updatePhotoMutation.mutate(
-        { id: editingId, originalName: editTitle.trim() },
+        { id: editingId, title: editTitle.trim() },
         {
           onSuccess: () => {
             setEditingId(null)
@@ -119,7 +112,7 @@ export function PhotosTab() {
       setLocalPhotos(reorderedPhotos)
 
       const photoIds = reorderedPhotos.map((photo) => photo.id)
-      debouncedReorder(photoIds)
+      debouncedReorder(photoIds, active.id as string)
     }
 
     setActiveId(null)
@@ -133,7 +126,7 @@ export function PhotosTab() {
           <p className="text-zinc-600">Gerencie as fotos da galeria de aniversário</p>
         </div>
         <Button className="flex items-center gap-2" intent="admin" onClick={() => setUploadModalOpen(true)}>
-          <Upload className="size-4" />
+          <Upload />
           Fazer Upload
         </Button>
       </div>
@@ -149,12 +142,13 @@ export function PhotosTab() {
             sensors={sensors}
           >
             <SortableContext items={localPhotos.map((p) => p.id)} strategy={rectSortingStrategy}>
-              <div className="grid gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+              <div className="space-y-2">
                 {localPhotos.map((photo) => (
-                  <SortablePhotoCard
+                  <SortablePhotoRow
                     editTitle={editTitle}
-                    isDeleting={deletePhotoMutation.isPending}
+                    isDeleting={deletePhotoMutation.isPending && deletePhotoMutation.variables === photo.id}
                     isEditing={editingId === photo.id}
+                    isReordering={reorderingPhotoId === photo.id}
                     isSaving={updatePhotoMutation.isPending && editingId === photo.id}
                     key={photo.id}
                     onDelete={() => handleDelete(photo.id)}
@@ -170,7 +164,21 @@ export function PhotosTab() {
 
             <DragOverlay>
               {activeId ? (
-                <PhotoCardPreview photo={localPhotos.find((p) => p.id === activeId) || localPhotos[0]} />
+                <div className="flex items-center gap-4 rounded-lg border border-zinc-200 bg-white p-4 shadow-lg">
+                  <div className="relative size-16 flex-shrink-0 overflow-hidden rounded-lg border border-zinc-300 bg-zinc-100">
+                    <Image
+                      alt="Foto"
+                      className="size-full object-cover"
+                      fill
+                      src={localPhotos.find((p) => p.id === activeId)?.url || ''}
+                    />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm text-zinc-900">
+                      {localPhotos.find((p) => p.id === activeId)?.title || 'Sem título'}
+                    </p>
+                  </div>
+                </div>
               ) : null}
             </DragOverlay>
           </DndContext>
@@ -182,12 +190,14 @@ export function PhotosTab() {
   )
 }
 
-interface SortablePhotoCardProps extends PhotoCardProps {
+interface SortablePhotoRowProps extends PhotoRowProps {
   photo: Photo
 }
 
-function SortablePhotoCard(props: SortablePhotoCardProps) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: props.photo.id })
+function SortablePhotoRow(props: SortablePhotoRowProps) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: props.photo.id,
+  })
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -196,16 +206,17 @@ function SortablePhotoCard(props: SortablePhotoCardProps) {
 
   return (
     <div className={isDragging ? 'opacity-50' : ''} ref={setNodeRef} style={style}>
-      <PhotoCard {...props} dragHandleProps={{ ...attributes, ...listeners }} />
+      <PhotoRow {...props} dragHandleProps={{ ...attributes, ...listeners }} />
     </div>
   )
 }
 
-interface PhotoCardProps {
+interface PhotoRowProps {
   photo: Photo
   isEditing: boolean
   editTitle: string
   isDeleting: boolean
+  isReordering: boolean
   isSaving: boolean
   onEditStart: () => void
   onEditSave: () => void
@@ -215,11 +226,12 @@ interface PhotoCardProps {
   dragHandleProps?: Record<string, unknown>
 }
 
-function PhotoCard({
+function PhotoRow({
   photo,
   isEditing,
   editTitle,
   isDeleting,
+  isReordering,
   isSaving,
   onEditStart,
   onEditSave,
@@ -227,65 +239,57 @@ function PhotoCard({
   onEditTitleChange,
   onDelete,
   dragHandleProps,
-}: PhotoCardProps) {
+}: PhotoRowProps) {
+  const formatDate = (date: Date) => {
+    return new Intl.DateTimeFormat('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(date)
+  }
+
+  const formatSize = (bytes: number) => {
+    return `${(bytes / 1024).toFixed(0)} KB`
+  }
+
   return (
-    <div className="group relative flex flex-col space-y-2">
-      <div className="absolute top-2 left-2 z-10 opacity-0 transition-opacity group-hover:opacity-100">
+    <div className="group flex items-center gap-4 rounded-lg border border-zinc-200 p-4 hover:bg-zinc-50">
+      <div className="flex-shrink-0">
         <Button
           className="cursor-grab active:cursor-grabbing"
-          intent="admin"
+          disabled={isReordering}
+          loading={isReordering}
           size="icon"
           variant="outline"
           {...dragHandleProps}
         >
-          <Grip />
+          <GripVertical />
         </Button>
       </div>
 
-      <div className="relative aspect-square overflow-hidden rounded-lg border border-zinc-400 bg-zinc-100">
-        <Image
-          alt={photo.originalName}
-          className="size-full object-cover transition-transform group-hover:scale-105"
-          fill
-          src={photo.url}
-        />
-
-        <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/20" />
-        <div className="absolute top-2 right-2 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-          <Button intent="default" loading={isSaving} onClick={onEditStart} size="icon" variant="solid">
-            <Edit2 />
-          </Button>
-          <Button intent="danger" loading={isDeleting} onClick={onDelete} size="icon" variant="solid">
-            <Trash2 />
-          </Button>
-        </div>
+      <div className="relative size-16 flex-shrink-0 overflow-hidden rounded-lg border border-zinc-300 bg-zinc-100">
+        <Image alt={photo.title || 'Foto'} className="size-full object-cover" fill src={photo.url} />
       </div>
 
-      <div className="space-y-1">
+      <div className="min-w-0 flex-1">
         {isEditing ? (
-          <div className="flex gap-1">
-            <Input
-              autoFocus
-              className="h-7 text-xs"
-              intent="admin"
-              onChange={(e) => onEditTitleChange(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') onEditSave()
-                if (e.key === 'Escape') onEditCancel()
-              }}
-              placeholder="Nome da foto"
-              value={editTitle}
-            />
-            <Button className="size-7" intent="success" loading={isSaving} onClick={onEditSave} variant="solid">
-              <Check />
-            </Button>
-            <Button className="size-7" disabled={isSaving} intent="neutral" onClick={onEditCancel} variant="solid">
-              <X />
-            </Button>
-          </div>
+          <Input
+            autoFocus
+            className="h-8 text-sm"
+            intent="admin"
+            onChange={(e) => onEditTitleChange(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') onEditSave()
+              if (e.key === 'Escape') onEditCancel()
+            }}
+            placeholder="Nome da foto"
+            value={editTitle}
+          />
         ) : (
           <button
-            className="w-full cursor-pointer truncate text-left text-xs text-zinc-600 hover:text-zinc-900"
+            className="w-full cursor-pointer truncate text-left text-sm text-zinc-900 hover:text-zinc-700"
             onClick={onEditStart}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
@@ -293,27 +297,36 @@ function PhotoCard({
                 onEditStart()
               }
             }}
-            title={photo.originalName}
+            title={photo.title || 'Sem título'}
             type="button"
           >
-            {photo.originalName}
+            {photo.title || 'Sem título'}
           </button>
         )}
-        <p className="text-xs text-zinc-600">{(photo.size / (1024 * 1024)).toFixed(1)} MB</p>
       </div>
-    </div>
-  )
-}
-
-function PhotoCardPreview({ photo }: { photo: Photo }) {
-  return (
-    <div className="flex flex-col space-y-2">
-      <div className="relative aspect-square overflow-hidden rounded-lg border border-zinc-400 bg-zinc-100">
-        <Image alt={photo.originalName} className="size-full object-cover" fill src={photo.url} />
-      </div>
-      <div className="space-y-1">
-        <p className="truncate text-xs text-zinc-600">{photo.originalName}</p>
-        <p className="text-xs text-zinc-600">{(photo.size / (1024 * 1024)).toFixed(1)} MB</p>
+      <div className="flex-shrink-0 px-4 text-sm text-zinc-600">{formatSize(photo.size)}</div>
+      <div className="flex-shrink-0 px-4 text-sm text-zinc-600">{formatDate(photo.createdAt)}</div>
+      <div className="flex flex-shrink-0 gap-2">
+        {!isEditing && (
+          <>
+            <Button loading={isSaving} onClick={onEditStart} size="icon" variant="outline">
+              <Edit2 />
+            </Button>
+            <Button loading={isDeleting} onClick={onDelete} size="icon" variant="outline">
+              <Trash2 />
+            </Button>
+          </>
+        )}
+        {isEditing && (
+          <>
+            <Button loading={isSaving} onClick={onEditSave} size="icon" variant="outline">
+              <Check />
+            </Button>
+            <Button disabled={isSaving} onClick={onEditCancel} size="icon" variant="outline">
+              <X />
+            </Button>
+          </>
+        )}
       </div>
     </div>
   )

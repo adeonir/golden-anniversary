@@ -112,8 +112,8 @@ export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
   }
 
   const { scrollAreaHeight } = useMemo(() => {
-    const minHeight = 76
-    const itemHeight = 76
+    const minHeight = 88
+    const itemHeight = 88
     const gap = 12
 
     const maxViewportHeight = viewportHeight * 0.9
@@ -137,7 +137,7 @@ export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
   return (
     <Dialog onOpenChange={handleClose} open={open}>
       <DialogContent
-        className={cn('flex max-h-[90vh] max-w-4xl flex-col', files.length > 0 && 'min-h-[518px]')}
+        className={cn('flex max-h-[90vh] max-w-4xl flex-col', files.length > 0 && 'min-h-[534px]')}
         ref={modalRef}
       >
         <DialogHeader>
@@ -189,7 +189,11 @@ export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
               Cancelar
             </Button>
             <Button
-              disabled={files.every((f) => f.status !== 'pending')}
+              className="w-32"
+              disabled={
+                files.every((f) => f.status !== 'pending') &&
+                !files.every((f) => f.status === 'success' || f.status === 'error')
+              }
               intent="admin"
               loading={uploadMutation.isPending}
               onClick={handleUpload}
