@@ -5,12 +5,22 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { Button } from '~/components/ui/button'
 import { ScrollArea } from '~/components/ui/scroll-area'
+import { useDataState } from '~/hooks/use-data-state'
 import { usePhotos } from '~/hooks/use-photos'
 import { UploadsModal } from './uploads-modal'
 
 export function PhotosTab() {
   const [uploadModalOpen, setUploadModalOpen] = useState(false)
   const { data: photos = [], isLoading, error } = usePhotos()
+
+  const dataStateAlert = useDataState({
+    data: photos,
+    isLoading,
+    error,
+    loadingText: 'Carregando fotos...',
+    errorText: 'Erro ao carregar fotos. Tente novamente.',
+    emptyText: 'Nenhuma foto encontrada.',
+  })
 
   return (
     <div className="flex flex-1 flex-col gap-6">
@@ -26,25 +36,9 @@ export function PhotosTab() {
       </div>
 
       <ScrollArea className="flex-1">
-        {isLoading && (
-          <div className="flex items-center justify-center py-8">
-            <p className="text-muted-foreground">Carregando fotos...</p>
-          </div>
-        )}
+        {dataStateAlert && <div className="flex items-center justify-center py-8">{dataStateAlert}</div>}
 
-        {error && (
-          <div className="flex items-center justify-center py-8">
-            <p className="text-destructive">Erro ao carregar fotos. Tente novamente.</p>
-          </div>
-        )}
-
-        {!(isLoading || error) && photos.length === 0 && (
-          <div className="flex items-center justify-center py-8">
-            <p className="text-muted-foreground">Nenhuma foto encontrada.</p>
-          </div>
-        )}
-
-        {!(isLoading || error) && photos.length > 0 && (
+        {!dataStateAlert && (
           <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {photos.map((photo) => (
               <div className="group relative aspect-square overflow-hidden rounded-lg border bg-muted" key={photo.id}>

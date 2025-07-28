@@ -13,4 +13,3 @@ export interface CreatePhotoData {
   url: string
   size: number
 }
-

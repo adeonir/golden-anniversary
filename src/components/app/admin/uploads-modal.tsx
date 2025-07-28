@@ -2,7 +2,7 @@
 
 import { AlertCircle, CheckCircle, Image as ImageIcon, Loader2, Upload, X } from 'lucide-react'
 import Image from 'next/image'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Button } from '~/components/ui/button'
 import {
@@ -16,6 +16,7 @@ import {
 import { Progress } from '~/components/ui/progress'
 import { ScrollArea } from '~/components/ui/scroll-area'
 import { useUploadPhoto } from '~/hooks/use-photos'
+import { useViewportHeight } from '~/hooks/use-viewport-height'
 import { cn, validateFile } from '~/lib/utils'
 
 interface UploadFile {
@@ -34,7 +35,7 @@ interface UploadsModalProps {
 
 export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
   const [files, setFiles] = useState<UploadFile[]>([])
-  const [viewportHeight, setViewportHeight] = useState(0)
+  const viewportHeight = useViewportHeight()
   const modalRef = useRef<HTMLDivElement>(null)
   const uploadMutation = useUploadPhoto()
 
@@ -109,17 +110,6 @@ export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
     clearAllFiles()
     onOpenChange(false)
   }
-
-  useEffect(() => {
-    const updateViewportHeight = () => {
-      setViewportHeight(window.innerHeight)
-    }
-
-    updateViewportHeight()
-    window.addEventListener('resize', updateViewportHeight)
-
-    return () => window.removeEventListener('resize', updateViewportHeight)
-  }, [])
 
   const { scrollAreaHeight } = useMemo(() => {
     const minHeight = 76
