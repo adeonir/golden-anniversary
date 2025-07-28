@@ -1,11 +1,17 @@
--- Script to recreate tables in Supabase with camelCase
+-- Database tables setup script
 -- Execute this script in Supabase SQL Editor
 
--- 1. Remove existing tables (if they exist)
+-- ========================================
+-- 1. DROP EXISTING TABLES
+-- ========================================
 DROP TABLE IF EXISTS "messages" CASCADE;
 DROP TABLE IF EXISTS "photos" CASCADE;
 
--- 2. Create messages table
+-- ========================================
+-- 2. CREATE TABLES
+-- ========================================
+
+-- Messages table
 CREATE TABLE "messages" (
   "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   "name" TEXT NOT NULL,
@@ -14,21 +20,29 @@ CREATE TABLE "messages" (
   "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- 3. Create photos table
+-- Photos table
 CREATE TABLE "photos" (
   "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  "filename" TEXT NOT NULL,
   "title" TEXT,
-  "filePath" TEXT NOT NULL,
+  "url" TEXT NOT NULL,
+  "size" INTEGER NOT NULL,
   "order" INTEGER NOT NULL DEFAULT 0,
   "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- 4. Create indexes for performance
+-- ========================================
+-- 3. CREATE INDEXES
+-- ========================================
 CREATE INDEX "messages_status_idx" ON "messages" ("status");
 CREATE INDEX "messages_createdAt_idx" ON "messages" ("createdAt");
 CREATE INDEX "photos_order_idx" ON "photos" ("order");
 
--- 5. Verify created tables
+-- ========================================
+-- 4. VERIFICATION
+-- ========================================
+
+-- Verify tables
 SELECT
   table_name,
   column_name,

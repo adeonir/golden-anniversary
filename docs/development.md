@@ -54,7 +54,8 @@ op run --env-file=.env.local -- pnpm dev
 
 Execute no SQL Editor do Supabase:
 
-- `docs/create-tables.sql` - Criação das tabelas
+- `docs/setup-database.sql` - Criação das tabelas (messages e photos)
+- `docs/setup-storage.sql` - Configuração do bucket de fotos
 - `docs/seed-messages.sql` - Dados de exemplo (opcional)
 
 ## Scripts de Desenvolvimento
