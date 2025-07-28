@@ -7,7 +7,7 @@ import { SectionHeader } from '~/components/ui/section-header'
 import { useCountdown } from '~/hooks/use-countdown'
 import { config } from '~/lib/config'
 
-const TARGET_DATE = new Date(config.event.targetDate)
+const targetDate = new Date(config.event.targetDate)
 
 const content = {
   title: 'Contagem Regressiva',
@@ -21,7 +21,7 @@ const content = {
 }
 
 export function Countdown() {
-  const { days, hours, minutes, seconds } = useCountdown(TARGET_DATE)
+  const { days, hours, minutes, seconds } = useCountdown(targetDate)
 
   return (
     <Section className="bg-gold-50">
