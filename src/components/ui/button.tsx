@@ -1,12 +1,15 @@
+'use client'
+
 import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
+import { m as motion } from 'framer-motion'
 import { Loader2 } from 'lucide-react'
 import type * as React from 'react'
-
+import { useReducedMotion } from '~/hooks/use-reduced-motion'
 import { cn } from '~/lib/utils'
 
 const buttonVariants = cva(
-  "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium text-sm outline-none transition-all focus-visible:border-gold-600 focus-visible:ring-[3px] focus-visible:ring-gold-600/20 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-red-500 aria-invalid:ring-red-600/20 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "hover:-translate-y-px relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium text-sm outline-none transition-all hover:shadow-md focus-visible:border-gold-600 focus-visible:ring-[3px] focus-visible:ring-gold-600/20 active:translate-y-0 active:shadow-sm disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-red-500 aria-invalid:ring-red-600/20 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -58,7 +61,7 @@ const buttonVariants = cva(
       {
         variant: 'outline',
         intent: 'default',
-        class: 'border-zinc-300 hover:bg-zinc-100 hover:text-zinc-900',
+        class: 'border-zinc-300 hover:text-zinc-900',
       },
       {
         variant: 'outline',
@@ -90,6 +93,11 @@ function Button({
     loading?: boolean
   }) {
   const Comp = asChild ? Slot : 'button'
+  const prefersReducedMotion = useReducedMotion()
+
+  const animationConfig = prefersReducedMotion
+    ? { duration: 0.1, ease: 'easeOut' as const }
+    : { duration: 0.3, ease: [0.4, 0, 0.2, 1] as const }
 
   return (
     <Comp
@@ -100,9 +108,15 @@ function Button({
     >
       <span className={cn('inline-flex items-center justify-center gap-2', loading && 'invisible')}>{children}</span>
       {loading && (
-        <span className="absolute inset-0 flex items-center justify-center">
+        <motion.span
+          animate={{ opacity: 1 }}
+          className="absolute inset-0 flex items-center justify-center"
+          exit={{ opacity: 0 }}
+          initial={{ opacity: 0 }}
+          transition={animationConfig}
+        >
           <Loader2 className="size-4 animate-spin" />
-        </span>
+        </motion.span>
       )}
     </Comp>
   )
