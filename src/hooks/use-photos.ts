@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import { deletePhoto, fetchPhotos, uploadPhoto } from '~/actions/photos'
+import { deletePhoto, fetchPhotos, reorderPhotos, updatePhoto, uploadPhoto } from '~/actions/photos'
 import { useToast } from '~/hooks/use-toast'
 
 const photosKeys = {
@@ -42,6 +42,22 @@ export function useUploadPhoto() {
   })
 }
 
+export function useUpdatePhoto() {
+  const queryClient = useQueryClient()
+  const toast = useToast()
+
+  return useMutation({
+    mutationFn: ({ id, originalName }: { id: string; originalName: string }) => updatePhoto(id, originalName),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: photosKeys.all })
+      toast.success('Foto atualizada com sucesso!')
+    },
+    onError: () => {
+      toast.error('Erro ao atualizar foto. Tente novamente.')
+    },
+  })
+}
+
 export function useDeletePhoto() {
   const queryClient = useQueryClient()
   const toast = useToast()
@@ -54,6 +70,22 @@ export function useDeletePhoto() {
     },
     onError: () => {
       toast.error('Erro ao deletar foto. Tente novamente.')
+    },
+  })
+}
+
+export function useReorderPhotos() {
+  const queryClient = useQueryClient()
+  const toast = useToast()
+
+  return useMutation({
+    mutationFn: reorderPhotos,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: photosKeys.all })
+      toast.success('Fotos reordenadas com sucesso!')
+    },
+    onError: () => {
+      toast.error('Erro ao reordenar fotos. Tente novamente.')
     },
   })
 }

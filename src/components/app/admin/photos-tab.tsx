@@ -11,16 +11,16 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core'
-import { rectSortingStrategy, SortableContext, useSortable } from '@dnd-kit/sortable'
+import { arrayMove, rectSortingStrategy, SortableContext, useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { Check, Edit2, Grip, Trash2, Upload, X } from 'lucide-react'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { ScrollArea } from '~/components/ui/scroll-area'
 import { useDataState } from '~/hooks/use-data-state'
-import { usePhotos } from '~/hooks/use-photos'
+import { useDeletePhoto, usePhotos, useReorderPhotos, useUpdatePhoto } from '~/hooks/use-photos'
 import type { Photo } from '~/types/photos'
 import { UploadsModal } from './uploads-modal'
 
@@ -29,7 +29,28 @@ export function PhotosTab() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editTitle, setEditTitle] = useState('')
   const [activeId, setActiveId] = useState<string | null>(null)
+  const [localPhotos, setLocalPhotos] = useState<Photo[]>([])
   const { data: photos = [], isLoading, error } = usePhotos()
+  const updatePhotoMutation = useUpdatePhoto()
+  const deletePhotoMutation = useDeletePhoto()
+  const reorderPhotosMutation = useReorderPhotos()
+
+  useEffect(() => {
+    if (photos.length > 0) {
+      setLocalPhotos(photos)
+    }
+  }, [photos])
+
+  // Debounced reorder function to avoid excessive API calls during drag operations
+  const debouncedReorder = useMemo(() => {
+    let timeoutId: NodeJS.Timeout
+    return (photoIds: string[]) => {
+      clearTimeout(timeoutId)
+      timeoutId = setTimeout(() => {
+        reorderPhotosMutation.mutate(photoIds)
+      }, 300)
+    }
+  }, [reorderPhotosMutation])
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -46,7 +67,7 @@ export function PhotosTab() {
   )
 
   const dataStateAlert = useDataState({
-    data: photos,
+    data: localPhotos,
     isLoading,
     error,
     loadingText: 'Carregando fotos...',
@@ -60,9 +81,17 @@ export function PhotosTab() {
   }
 
   const handleEditSave = () => {
-    // TODO: Implementar lógica de save
-    setEditingId(null)
-    setEditTitle('')
+    if (editingId && editTitle.trim()) {
+      updatePhotoMutation.mutate(
+        { id: editingId, originalName: editTitle.trim() },
+        {
+          onSuccess: () => {
+            setEditingId(null)
+            setEditTitle('')
+          },
+        },
+      )
+    }
   }
 
   const handleEditCancel = () => {
@@ -70,8 +99,8 @@ export function PhotosTab() {
     setEditTitle('')
   }
 
-  const handleDelete = (_photoId: string) => {
-    // TODO: Implementar lógica de delete
+  const handleDelete = (photoId: string) => {
+    deletePhotoMutation.mutate(photoId)
   }
 
   const handleDragStart = (event: DragStartEvent) => {
@@ -82,10 +111,15 @@ export function PhotosTab() {
     const { active, over } = event
 
     if (over && active.id !== over.id) {
-      // TODO: Implementar lógica de reordenação
-      // const oldIndex = photos.findIndex((photo) => photo.id === active.id)
-      // const newIndex = photos.findIndex((photo) => photo.id === over.id)
-      // const newPhotos = arrayMove(photos, oldIndex, newIndex)
+      const newPhotos = [...localPhotos]
+      const oldIndex = newPhotos.findIndex((photo) => photo.id === active.id)
+      const newIndex = newPhotos.findIndex((photo) => photo.id === over.id)
+
+      const reorderedPhotos = arrayMove(newPhotos, oldIndex, newIndex)
+      setLocalPhotos(reorderedPhotos)
+
+      const photoIds = reorderedPhotos.map((photo) => photo.id)
+      debouncedReorder(photoIds)
     }
 
     setActiveId(null)
@@ -114,12 +148,14 @@ export function PhotosTab() {
             onDragStart={handleDragStart}
             sensors={sensors}
           >
-            <SortableContext items={photos.map((p) => p.id)} strategy={rectSortingStrategy}>
+            <SortableContext items={localPhotos.map((p) => p.id)} strategy={rectSortingStrategy}>
               <div className="grid gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-                {photos.map((photo) => (
-                  <SortablePhotoGridItem
+                {localPhotos.map((photo) => (
+                  <SortablePhotoCard
                     editTitle={editTitle}
+                    isDeleting={deletePhotoMutation.isPending}
                     isEditing={editingId === photo.id}
+                    isSaving={updatePhotoMutation.isPending && editingId === photo.id}
                     key={photo.id}
                     onDelete={() => handleDelete(photo.id)}
                     onEditCancel={handleEditCancel}
@@ -134,26 +170,7 @@ export function PhotosTab() {
 
             <DragOverlay>
               {activeId ? (
-                <PhotoGridItem
-                  editTitle=""
-                  isEditing={false}
-                  onDelete={() => {
-                    /* noop for drag overlay */
-                  }}
-                  onEditCancel={() => {
-                    /* noop for drag overlay */
-                  }}
-                  onEditSave={() => {
-                    /* noop for drag overlay */
-                  }}
-                  onEditStart={() => {
-                    /* noop for drag overlay */
-                  }}
-                  onEditTitleChange={() => {
-                    /* noop for drag overlay */
-                  }}
-                  photo={photos.find((p) => p.id === activeId) || photos[0]}
-                />
+                <PhotoCardPreview photo={localPhotos.find((p) => p.id === activeId) || localPhotos[0]} />
               ) : null}
             </DragOverlay>
           </DndContext>
@@ -165,11 +182,11 @@ export function PhotosTab() {
   )
 }
 
-interface SortablePhotoGridItemProps extends PhotoGridItemProps {
+interface SortablePhotoCardProps extends PhotoCardProps {
   photo: Photo
 }
 
-function SortablePhotoGridItem(props: SortablePhotoGridItemProps) {
+function SortablePhotoCard(props: SortablePhotoCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: props.photo.id })
 
   const style = {
@@ -179,15 +196,17 @@ function SortablePhotoGridItem(props: SortablePhotoGridItemProps) {
 
   return (
     <div className={isDragging ? 'opacity-50' : ''} ref={setNodeRef} style={style}>
-      <PhotoGridItem {...props} dragHandleProps={{ ...attributes, ...listeners }} />
+      <PhotoCard {...props} dragHandleProps={{ ...attributes, ...listeners }} />
     </div>
   )
 }
 
-interface PhotoGridItemProps {
+interface PhotoCardProps {
   photo: Photo
   isEditing: boolean
   editTitle: string
+  isDeleting: boolean
+  isSaving: boolean
   onEditStart: () => void
   onEditSave: () => void
   onEditCancel: () => void
@@ -196,17 +215,19 @@ interface PhotoGridItemProps {
   dragHandleProps?: Record<string, unknown>
 }
 
-function PhotoGridItem({
+function PhotoCard({
   photo,
   isEditing,
   editTitle,
+  isDeleting,
+  isSaving,
   onEditStart,
   onEditSave,
   onEditCancel,
   onEditTitleChange,
   onDelete,
   dragHandleProps,
-}: PhotoGridItemProps) {
+}: PhotoCardProps) {
   return (
     <div className="group relative flex flex-col space-y-2">
       <div className="absolute top-2 left-2 z-10 opacity-0 transition-opacity group-hover:opacity-100">
@@ -234,7 +255,7 @@ function PhotoGridItem({
           <Button intent="default" onClick={onEditStart} size="icon" variant="solid">
             <Edit2 />
           </Button>
-          <Button intent="danger" onClick={onDelete} size="icon" variant="solid">
+          <Button disabled={isDeleting} intent="danger" onClick={onDelete} size="icon" variant="solid">
             <Trash2 />
           </Button>
         </div>
@@ -255,7 +276,7 @@ function PhotoGridItem({
               placeholder="Nome da foto"
               value={editTitle}
             />
-            <Button className="size-7" intent="success" onClick={onEditSave} variant="solid">
+            <Button className="size-7" disabled={isSaving} intent="success" onClick={onEditSave} variant="solid">
               <Check />
             </Button>
             <Button className="size-7" intent="neutral" onClick={onEditCancel} variant="solid">
@@ -278,6 +299,20 @@ function PhotoGridItem({
             {photo.originalName}
           </button>
         )}
+        <p className="text-xs text-zinc-600">{(photo.size / (1024 * 1024)).toFixed(1)} MB</p>
+      </div>
+    </div>
+  )
+}
+
+function PhotoCardPreview({ photo }: { photo: Photo }) {
+  return (
+    <div className="flex flex-col space-y-2">
+      <div className="relative aspect-square overflow-hidden rounded-lg border border-zinc-400 bg-zinc-100">
+        <Image alt={photo.originalName} className="size-full object-cover" fill src={photo.url} />
+      </div>
+      <div className="space-y-1">
+        <p className="truncate text-xs text-zinc-600">{photo.originalName}</p>
         <p className="text-xs text-zinc-600">{(photo.size / (1024 * 1024)).toFixed(1)} MB</p>
       </div>
     </div>

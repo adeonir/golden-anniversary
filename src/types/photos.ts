@@ -4,6 +4,7 @@ export interface Photo {
   originalName: string
   url: string
   size: number
+  order: number
   createdAt: Date
 }
 
