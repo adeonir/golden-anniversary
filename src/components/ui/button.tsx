@@ -6,6 +6,7 @@ import { m as motion } from 'framer-motion'
 import { Loader2 } from 'lucide-react'
 import type * as React from 'react'
 import { useReducedMotion } from '~/hooks/use-reduced-motion'
+import { config } from '~/lib/config'
 import { cn } from '~/lib/utils'
 
 const buttonVariants = cva(
@@ -96,8 +97,8 @@ function Button({
   const prefersReducedMotion = useReducedMotion()
 
   const animationConfig = prefersReducedMotion
-    ? { duration: 0.1, ease: 'easeOut' as const }
-    : { duration: 0.3, ease: [0.4, 0, 0.2, 1] as const }
+    ? { duration: config.animation.duration.fast, ease: 'easeOut' as const }
+    : { duration: config.animation.duration.normal, ease: config.animation.easing.natural }
 
   return (
     <Comp
