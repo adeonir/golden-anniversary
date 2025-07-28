@@ -26,11 +26,7 @@ export function GuestbookMessages() {
   const isEmpty = messages.length === 0
 
   if (isLoading) {
-    return (
-      <StatusCard>
-        <p className="text-zinc-600">Carregando mensagens...</p>
-      </StatusCard>
-    )
+    return <GuestbookSkeleton />
   }
 
   if (isEmpty) {
@@ -116,6 +112,35 @@ function StatusCard({ children }: { children: ReactNode }) {
       <Card className="border-gold-200 bg-white shadow-lg">
         <CardContent className="px-8 py-4 text-center">{children}</CardContent>
       </Card>
+    </div>
+  )
+}
+
+function MessageSkeleton() {
+  return (
+    <Card className="shadow-md">
+      <CardContent className="px-8 py-4">
+        <div className="flex gap-4">
+          <div className="size-12 animate-pulse rounded-full bg-zinc-200" />
+          <div className="flex-1 space-y-4">
+            <div className="h-7 w-32 animate-pulse rounded bg-zinc-200" />
+            <div className="h-4 w-4/5 animate-pulse rounded bg-zinc-200" />
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+function GuestbookSkeleton() {
+  return (
+    <div className="space-y-8">
+      <h2 className="text-center font-medium font-serif text-2xl text-zinc-800">Mensagens Recebidas</h2>
+      <div className="space-y-4">
+        {Array.from({ length: 3 }, () => (
+          <MessageSkeleton key={crypto.randomUUID()} />
+        ))}
+      </div>
     </div>
   )
 }
