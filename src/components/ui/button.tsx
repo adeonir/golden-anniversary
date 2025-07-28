@@ -5,12 +5,12 @@ import type * as React from 'react'
 import { cn } from '~/lib/utils'
 
 const buttonVariants = cva(
-  "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium text-sm outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/20 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium text-sm outline-none transition-all focus-visible:border-gold-600 focus-visible:ring-[3px] focus-visible:ring-gold-600/20 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-red-500 aria-invalid:ring-red-600/20 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         solid: 'shadow-xs',
-        outline: 'border bg-background shadow-xs',
+        outline: 'border bg-white shadow-xs',
       },
       intent: {
         default: '',
@@ -31,12 +31,12 @@ const buttonVariants = cva(
       {
         variant: 'solid',
         intent: 'default',
-        class: 'bg-primary text-primary-foreground hover:bg-primary/90',
+        class: 'bg-gold-600 text-gold-50 hover:bg-gold-600/90',
       },
       {
         variant: 'solid',
         intent: 'admin',
-        class: 'bg-foreground text-background hover:bg-foreground/90 focus-visible:ring-foreground/20',
+        class: 'bg-zinc-700 text-white hover:bg-zinc-800 focus-visible:ring-zinc-800/20',
       },
       {
         variant: 'solid',
@@ -57,12 +57,12 @@ const buttonVariants = cva(
       {
         variant: 'outline',
         intent: 'default',
-        class: 'hover:bg-accent hover:text-accent-foreground',
+        class: 'border-zinc-300 hover:bg-zinc-100 hover:text-zinc-900',
       },
       {
         variant: 'outline',
         intent: 'admin',
-        class: 'border-foreground text-foreground hover:bg-foreground hover:text-background',
+        class: 'border-zinc-500 text-zinc-700 hover:bg-zinc-100',
       },
     ],
     defaultVariants: {

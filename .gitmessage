@@ -1,0 +1,22 @@
+# <type>: <subject>
+#
+# <body>
+#
+# <footer>
+
+# Types:
+# feat: A new feature
+# fix: A bug fix
+# docs: Documentation only changes
+# style: Changes that do not affect the meaning of the code
+# refactor: A code change that neither fixes a bug nor adds a feature
+# perf: A code change that improves performance
+# test: Adding missing tests or correcting existing tests
+# chore: Changes to the build process or auxiliary tools
+
+# Example:
+# feat: implement drag and drop photo gallery
+#
+# - Add @dnd-kit/core for drag functionality
+# - Implement sortable photo grid items
+# - Add inline editing capabilities

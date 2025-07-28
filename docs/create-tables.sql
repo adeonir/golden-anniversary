@@ -19,14 +19,14 @@ CREATE TABLE "photos" (
   "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   "title" TEXT,
   "filePath" TEXT NOT NULL,
-  "orderPosition" INTEGER NOT NULL DEFAULT 0,
+  "order" INTEGER NOT NULL DEFAULT 0,
   "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 -- 4. Create indexes for performance
 CREATE INDEX "messages_status_idx" ON "messages" ("status");
 CREATE INDEX "messages_createdAt_idx" ON "messages" ("createdAt");
-CREATE INDEX "photos_orderPosition_idx" ON "photos" ("orderPosition");
+CREATE INDEX "photos_order_idx" ON "photos" ("order");
 
 -- 5. Verify created tables
 SELECT

@@ -18,7 +18,7 @@ function Avatar({ className, ...props }: React.ComponentProps<typeof AvatarPrimi
 function AvatarInitials({ className, ...props }: React.ComponentProps<typeof AvatarPrimitive.Fallback>) {
   return (
     <AvatarPrimitive.Fallback
-      className={cn('flex size-full items-center justify-center rounded-full bg-muted', className)}
+      className={cn('flex size-full items-center justify-center rounded-full bg-zinc-100', className)}
       data-slot="avatar-initials"
       {...props}
     />

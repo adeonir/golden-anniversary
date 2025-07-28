@@ -100,7 +100,7 @@ function TimelineEvent({ event, index }: { event: TimelineEvent; index: number }
             isLeft ? 'order-1 pr-16 text-left md:pr-0 md:text-right' : 'order-2 pl-16 text-right md:pl-0 md:text-left',
           )}
         >
-          <Card className="border-gold-300 bg-gold-50 shadow-lg">
+          <Card className="bg-gold-50">
             <CardContent className="card-content-spacing relative">
               <TimelineIcon
                 className={cn('absolute top-0 flex md:hidden', isLeft ? 'right-6' : 'left-6')}

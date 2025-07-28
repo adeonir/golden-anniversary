@@ -31,7 +31,7 @@ export function Footer() {
         </div>
       </section>
 
-      <section className="bg-gold-300 py-8 sm:py-16">
+      <section className="bg-gold-300 py-8 sm:py-12">
         <div className="mx-auto max-w-4xl px-4 text-center">
           <p className="mb-2 flex items-center justify-center gap-2 text-zinc-700">
             Site feito com carinho por

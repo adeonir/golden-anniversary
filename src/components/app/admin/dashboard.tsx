@@ -1,23 +1,23 @@
 import { Images, MessageSquare } from 'lucide-react'
 import type { SVGProps } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
-import { LogoutButton } from '../logout-button'
+import { LogoutButton } from './logout-button'
 import { MessagesTab } from './messages-tab'
 import { PhotosTab } from './photos-tab'
 
 export function Dashboard() {
   return (
-    <div className="flex min-h-screen flex-col gap-8 bg-muted p-8">
-      <header className="rounded-lg bg-background px-8 py-6 shadow-lg shadow-zinc-700/10">
+    <div className="admin-theme flex min-h-screen flex-col gap-8 bg-zinc-100 p-8">
+      <header className="rounded-lg bg-white px-8 py-6 shadow-lg shadow-zinc-700/10">
         <div className="flex items-center justify-between">
-          <h1 className="flex items-center gap-2 font-bold text-foreground text-lg">
+          <h1 className="flex items-center gap-2 font-bold text-lg text-zinc-900">
             <BrandLogo className="h-auto w-8" /> Painel Administrativo
           </h1>
           <LogoutButton className="w-fit" />
         </div>
       </header>
 
-      <main className="flex flex-1 rounded-lg bg-background px-8 py-6 shadow-lg shadow-zinc-700/15">
+      <main className="flex flex-1 rounded-lg bg-white px-8 py-6 shadow-lg shadow-zinc-700/15">
         <Tabs className="flex flex-1 flex-col gap-8" defaultValue="messages">
           <TabsList>
             <TabsTrigger value="messages">

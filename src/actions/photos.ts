@@ -74,6 +74,58 @@ export async function uploadPhoto(file: File): Promise<Photo> {
   }
 }
 
+export async function updatePhoto(id: string, originalName: string): Promise<Photo> {
+  try {
+    const supabase = await createClient()
+
+    const { data: updatedPhoto, error: updateError } = await supabase
+      .from('photos')
+      .update({ originalName })
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (updateError) {
+      throw new Error(`Failed to update photo: ${updateError.message}`)
+    }
+
+    if (!updatedPhoto) {
+      throw new Error('Photo not found')
+    }
+
+    revalidatePath('/admin')
+    return {
+      ...updatedPhoto,
+      createdAt: new Date(updatedPhoto.createdAt),
+    }
+  } catch (error) {
+    throw new Error(`Failed to update photo: ${error instanceof Error ? error.message : 'Unknown error'}`)
+  }
+}
+
+export async function reorderPhotos(photoIds: string[]): Promise<void> {
+  try {
+    const supabase = await createClient()
+
+    const updates = photoIds.map((id, index) => ({
+      id,
+      order: index,
+    }))
+
+    const { error } = await supabase.from('photos').upsert(updates, {
+      onConflict: 'id',
+    })
+
+    if (error) {
+      throw new Error(`Failed to reorder photos: ${error.message}`)
+    }
+
+    revalidatePath('/admin')
+  } catch (error) {
+    throw new Error(`Failed to reorder photos: ${error instanceof Error ? error.message : 'Unknown error'}`)
+  }
+}
+
 export async function deletePhoto(id: string): Promise<string> {
   try {
     const supabase = await createClient()

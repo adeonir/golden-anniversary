@@ -47,11 +47,7 @@ export function GuestbookMessages() {
 
       <div aria-label="Lista de mensagens do livro de visitas" className="space-y-4" role="feed">
         {messages.map((message) => (
-          <Card
-            aria-labelledby={`message-${message.id}-author`}
-            className="border-gold-200 bg-white shadow-lg"
-            key={message.id}
-          >
+          <Card aria-labelledby={`message-${message.id}-author`} className="shadow-md" key={message.id}>
             <CardContent className="px-8 py-4">
               <div className="flex gap-4">
                 <Avatar aria-hidden="true" className="size-12 bg-gold-100">
