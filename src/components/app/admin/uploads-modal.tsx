@@ -1,8 +1,8 @@
 'use client'
 
-import { AlertCircle, CheckCircle, Image as ImageIcon, Upload, X } from 'lucide-react'
+import { AlertCircle, CheckCircle, Image as ImageIcon, Loader2, Upload, X } from 'lucide-react'
 import Image from 'next/image'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Button } from '~/components/ui/button'
 import {
@@ -15,6 +15,7 @@ import {
 } from '~/components/ui/dialog'
 import { Progress } from '~/components/ui/progress'
 import { ScrollArea } from '~/components/ui/scroll-area'
+import { useUploadPhoto } from '~/hooks/use-photos'
 import { cn, validateFile } from '~/lib/utils'
 
 interface UploadFile {
@@ -35,6 +36,7 @@ export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
   const [files, setFiles] = useState<UploadFile[]>([])
   const [viewportHeight, setViewportHeight] = useState(0)
   const modalRef = useRef<HTMLDivElement>(null)
+  const uploadMutation = useUploadPhoto()
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: {
@@ -54,7 +56,13 @@ export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
   })
 
   const removeFile = (id: string) => {
-    setFiles((prev) => prev.filter((file) => file.id !== id))
+    setFiles((prev) => {
+      const fileToRemove = prev.find((f) => f.id === id)
+      if (fileToRemove?.preview) {
+        URL.revokeObjectURL(fileToRemove.preview)
+      }
+      return prev.filter((file) => file.id !== id)
+    })
   }
 
   const clearAllFiles = () => {
@@ -65,6 +73,37 @@ export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
     }
     setFiles([])
   }
+
+  const updateFileStatus = useCallback(
+    (id: string, status: UploadFile['status'], progress?: number, error?: string) => {
+      setFiles((prev) =>
+        prev.map((file) => (file.id === id ? { ...file, status, progress: progress ?? file.progress, error } : file)),
+      )
+    },
+    [],
+  )
+
+  const handleUpload = useCallback(async () => {
+    const pendingFiles = files.filter((f) => f.status === 'pending')
+
+    for (const file of pendingFiles) {
+      const validation = validateFile(file.file)
+      if (validation) {
+        updateFileStatus(file.id, 'error', 0, validation)
+        continue
+      }
+
+      updateFileStatus(file.id, 'uploading', 0)
+
+      try {
+        // biome-ignore lint/nursery/noAwaitInLoop: Sequential upload is intentional for better UX and server performance
+        await uploadMutation.mutateAsync(file.file)
+        updateFileStatus(file.id, 'success', 100)
+      } catch (_error) {
+        updateFileStatus(file.id, 'error', 0, 'Erro no upload')
+      }
+    }
+  }, [files, uploadMutation, updateFileStatus])
 
   const handleClose = () => {
     clearAllFiles()
@@ -138,7 +177,7 @@ export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
             <div className="flex min-h-0 flex-1 flex-col space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-medium text-lg">Arquivos Selecionados ({files.length})</h3>
-                <Button intent="admin" onClick={clearAllFiles} size="sm" variant="outline">
+                <Button intent="admin" onClick={clearAllFiles} size="sm">
                   Limpar Tudo
                 </Button>
               </div>
@@ -156,12 +195,15 @@ export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
 
         {files.length > 0 && (
           <DialogFooter>
-            <Button intent="admin" onClick={handleClose} variant="outline">
+            <Button intent="admin" onClick={handleClose}>
               Cancelar
             </Button>
-            {/** biome-ignore lint/suspicious/noEmptyBlockStatements: TODO: Implement upload logic on next task*/}
-            <Button className="flex-1" intent="admin" onClick={() => {}}>
-              Fazer Upload ({files.filter((f) => f.status === 'pending').length} arquivos)
+            <Button
+              disabled={uploadMutation.isPending || files.every((f) => f.status !== 'pending')}
+              intent="admin"
+              onClick={handleUpload}
+            >
+              {uploadMutation.isPending ? <Loader2 className="size-5 animate-spin" /> : 'Fazer Upload'}
             </Button>
           </DialogFooter>
         )}
