@@ -53,7 +53,7 @@ interface TimeCardProps {
 
 function TimeCard({ value, label }: TimeCardProps) {
   return (
-    <Card className="rounded-3xl border border-gold-300 bg-white pt-4 pb-6 shadow-lg sm:pt-6 sm:pb-8">
+    <Card className="rounded-3xl pt-4 pb-6 sm:pt-6 sm:pb-8">
       <div className="font-heading font-semibold text-6xl text-gold-500 tabular-nums md:text-7xl">
         {value.toString().padStart(2, '0')}
       </div>

@@ -54,14 +54,14 @@ export function MessagesTab() {
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-3">
-            <h2 className="font-semibold text-2xl text-foreground">Mensagens</h2>
+            <h2 className="font-semibold text-2xl text-zinc-900">Mensagens</h2>
             {pendingCount > 0 && (
               <Badge className="bg-amber-500 text-white">
                 {pendingCount} pendente{pendingCount !== 1 ? 's' : ''}
               </Badge>
             )}
           </div>
-          <p className="text-muted-foreground">Gerencie as mensagens do livro de visitas</p>
+          <p className="text-zinc-600">Gerencie as mensagens do livro de visitas</p>
         </div>
         <Select onValueChange={(value) => setFilter(value as typeof filter)} value={filter}>
           <SelectTrigger className="w-48" intent="admin">
@@ -82,19 +82,19 @@ export function MessagesTab() {
         {!dataStateAlert && (
           <div className="space-y-4">
             {filteredMessages.map((message) => (
-              <Card className="p-6" key={message.id}>
+              <Card className="border-zinc-300 p-6" key={message.id}>
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 space-y-2">
                     <div className="flex items-center gap-3">
-                      <h3 className="font-medium text-foreground">{message.name}</h3>
+                      <h3 className="font-medium text-zinc-900">{message.name}</h3>
                       <StatusBadge status={message.status} />
                     </div>
 
-                    <p className="text-foreground leading-relaxed">{message.message}</p>
+                    <p className="text-zinc-900 leading-relaxed">{message.message}</p>
                   </div>
 
                   <div className="flex flex-col items-end gap-2">
-                    <p className="text-muted-foreground text-xs">Enviado em {formatDate(message.createdAt)}</p>
+                    <p className="text-xs text-zinc-600">Enviado em {formatDate(message.createdAt)}</p>
                     <div className="flex gap-2">
                       <Button
                         className="w-20"

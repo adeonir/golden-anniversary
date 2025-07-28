@@ -152,22 +152,22 @@ export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
             {...getRootProps()}
             className={cn(
               'cursor-pointer rounded-lg border-2 border-dashed p-8 text-center transition-colors',
-              isDragActive ? 'border-primary bg-primary/5' : 'border-muted-foreground/25 hover:border-primary/50',
+              isDragActive ? 'border-zinc-500 bg-zinc-50' : 'border-zinc-300 hover:border-zinc-400',
             )}
           >
             <input {...getInputProps()} />
-            <Upload className="mx-auto mb-4 size-12 text-muted-foreground" />
+            <Upload className="mx-auto mb-4 size-12 text-zinc-500" />
             <p className="mb-2 font-medium text-lg">
               {isDragActive ? 'Solte as fotos aqui...' : 'Arraste fotos aqui ou clique para selecionar'}
             </p>
-            <p className="text-muted-foreground text-sm">Apenas arquivos JPEG, máximo 1MB por arquivo</p>
+            <p className="text-sm text-zinc-600">Apenas arquivos JPEG, máximo 1MB por arquivo</p>
           </div>
 
           {files.length > 0 && (
             <div className="flex min-h-0 flex-1 flex-col space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-medium text-lg">Arquivos Selecionados ({files.length})</h3>
-                <Button intent="admin" onClick={clearAllFiles} size="sm">
+                <Button intent="admin" onClick={clearAllFiles} size="sm" variant="outline">
                   Limpar Tudo
                 </Button>
               </div>
@@ -185,7 +185,7 @@ export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
 
         {files.length > 0 && (
           <DialogFooter>
-            <Button intent="admin" onClick={handleClose}>
+            <Button intent="admin" onClick={handleClose} variant="outline">
               Cancelar
             </Button>
             <Button
@@ -215,15 +215,15 @@ function FileListItem({ file, onRemove }: FileListItemProps) {
     <div
       className={cn(
         'flex items-center gap-3 rounded-lg border p-3',
-        hasError ? 'border-destructive bg-destructive/5' : 'border-border',
+        hasError ? 'border-red-500 bg-red-50' : 'border-zinc-300',
       )}
     >
-      <div className="size-12 flex-shrink-0 overflow-hidden rounded border bg-muted">
+      <div className="size-12 flex-shrink-0 overflow-hidden rounded border bg-zinc-100">
         {file.preview ? (
           <Image alt={file.file.name} className="size-full object-cover" height={48} src={file.preview} width={48} />
         ) : (
           <div className="flex size-full items-center justify-center">
-            <ImageIcon className="size-4 text-muted-foreground" />
+            <ImageIcon className="size-4 text-zinc-500" />
           </div>
         )}
       </div>
@@ -231,20 +231,20 @@ function FileListItem({ file, onRemove }: FileListItemProps) {
       <div className="min-w-0 flex-1 space-y-1">
         <div className="flex items-center gap-2">
           {file.status === 'success' && <CheckCircle className="size-4 text-green-600" />}
-          {(hasError || file.status === 'error') && <AlertCircle className="size-4 text-destructive" />}
+          {(hasError || file.status === 'error') && <AlertCircle className="size-4 text-red-600" />}
           <span className="truncate font-medium text-sm">{file.file.name}</span>
         </div>
 
-        <p className="text-muted-foreground text-xs">{(file.file.size / (1024 * 1024)).toFixed(1)} MB</p>
+        <p className="text-xs text-zinc-600">{(file.file.size / (1024 * 1024)).toFixed(1)} MB</p>
 
         {file.status === 'uploading' && (
           <div className="space-y-1">
             <Progress className="h-2" value={file.progress} />
-            <p className="text-muted-foreground text-xs">{file.progress}% enviado</p>
+            <p className="text-xs text-zinc-600">{file.progress}% enviado</p>
           </div>
         )}
 
-        {(validation || file.error) && <p className="text-destructive text-xs">{validation || file.error}</p>}
+        {(validation || file.error) && <p className="text-red-600 text-xs">{validation || file.error}</p>}
 
         {file.status === 'success' && <p className="text-green-600 text-xs">Upload realizado com sucesso!</p>}
       </div>

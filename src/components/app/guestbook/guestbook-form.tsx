@@ -44,7 +44,7 @@ export function GuestbookForm() {
   }
 
   return (
-    <Card className="border-gold-200 bg-white shadow-lg">
+    <Card>
       <CardContent className="px-12 py-6">
         <Form {...form}>
           <form
