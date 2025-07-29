@@ -1,8 +1,8 @@
 'use client'
 
-import { m as motion, type Variants } from 'framer-motion'
+import { m as motion, useScroll, type Variants } from 'framer-motion'
 import { Baby, Clock, Crown, Heart, type LucideIcon, Sparkles, Users } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Card, CardContent } from '~/components/ui/card'
 import { Section } from '~/components/ui/section'
 import { SectionHeader } from '~/components/ui/section-header'
@@ -67,6 +67,21 @@ const content = {
 
 export function Timeline() {
   const prefersReducedMotion = useReducedMotion()
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [scrollDirection, setScrollDirection] = useState<'down' | 'up'>('down')
+  const [lastScrollY, setLastScrollY] = useState(0)
+
+  const { scrollY } = useScroll()
+
+  useEffect(() => {
+    const unsubscribe = scrollY.on('change', (latest) => {
+      const direction = latest > lastScrollY ? 'down' : 'up'
+      setScrollDirection(direction)
+      setLastScrollY(latest)
+    })
+
+    return () => unsubscribe()
+  }, [scrollY, lastScrollY])
 
   const animationConfig = prefersReducedMotion
     ? { duration: config.animation.duration.fast, ease: 'easeOut' as const }
@@ -82,7 +97,7 @@ export function Timeline() {
   }
 
   return (
-    <Section className="bg-white">
+    <Section className="bg-white" ref={containerRef}>
       <div className="timeline-container">
         <SectionHeader icon={Clock} subtitle={content.subtitle} title={content.title} />
 
@@ -91,7 +106,14 @@ export function Timeline() {
 
           <div className="timeline-spacing">
             {content.events.map((event, index) => (
-              <TimelineEvent event={event} index={index} key={event.year} variants={itemVariants} />
+              <TimelineEvent
+                event={event}
+                index={index}
+                key={event.year}
+                prefersReducedMotion={prefersReducedMotion}
+                scrollDirection={scrollDirection}
+                variants={itemVariants}
+              />
             ))}
           </div>
         </div>
@@ -107,17 +129,42 @@ interface TimelineEvent {
   icon: LucideIcon
 }
 
-function TimelineEvent({ event, index, variants }: { event: TimelineEvent; index: number; variants?: Variants }) {
+function TimelineEvent({
+  event,
+  index,
+  variants,
+  scrollDirection,
+  prefersReducedMotion,
+}: {
+  event: TimelineEvent
+  index: number
+  variants?: Variants
+  scrollDirection: 'down' | 'up'
+  prefersReducedMotion: boolean
+}) {
   const isLeft = index % 2 === 0
   const [isHovered, setIsHovered] = useState(false)
+  const [isVisible, setIsVisible] = useState(false)
 
   return (
     <motion.article
+      animate={isVisible ? 'visible' : 'hidden'}
       className="relative"
       initial="hidden"
+      onViewportEnter={() => {
+        // Only animate when scrolling down
+        if (scrollDirection === 'down' && !isVisible && !prefersReducedMotion) {
+          setIsVisible(true)
+        }
+      }}
+      onViewportLeave={() => {
+        // Reset visibility when element leaves viewport on scroll up
+        if (scrollDirection === 'up') {
+          setIsVisible(false)
+        }
+      }}
       variants={variants}
-      viewport={{ once: true, margin: '-150px' }}
-      whileInView="visible"
+      viewport={{ margin: '-150px' }}
     >
       <div className="-translate-x-1/2 absolute top-6 left-1/2 hidden md:block">
         <TimelineIcon icon={event.icon} isHovered={isHovered} />
