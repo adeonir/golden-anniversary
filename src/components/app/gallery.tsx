@@ -1,6 +1,7 @@
 'use client'
 
 import useEmblaCarousel from 'embla-carousel-react'
+import { m as motion } from 'framer-motion'
 import { Camera, ChevronLeft, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
 import { useCallback, useEffect, useState } from 'react'
@@ -8,6 +9,7 @@ import { Button } from '~/components/ui/button'
 import { Section } from '~/components/ui/section'
 import { SectionHeader } from '~/components/ui/section-header'
 import { usePhotos } from '~/hooks/use-photos'
+import { useReducedMotion } from '~/hooks/use-reduced-motion'
 import { cn, generateBlurDataURL } from '~/lib/utils'
 
 const content = {
@@ -22,6 +24,7 @@ export function Gallery() {
   const [canScrollNext, setCanScrollNext] = useState(false)
 
   const { data: photos = [] } = usePhotos()
+  const prefersReducedMotion = useReducedMotion()
 
   const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi])
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi])
@@ -78,7 +81,7 @@ export function Gallery() {
             </div>
 
             <Button
-              className="-translate-y-1/2 sm:-translate-y-1/2 absolute top-1/2 left-4 z-10 size-12 rounded-full border-white/80 bg-white/90 text-gold-600 shadow-xl hover:bg-white hover:text-gold-700 disabled:opacity-50 max-sm:top-auto max-sm:bottom-4 max-sm:left-4 max-sm:translate-y-0 sm:top-1/2 sm:left-4"
+              className="-translate-y-1/2 sm:-translate-y-1/2 absolute top-1/2 left-4 z-10 size-12 rounded-full bg-white text-gold-600 shadow-xl hover:bg-white hover:text-gold-700 disabled:opacity-50 max-sm:top-auto max-sm:bottom-4 max-sm:left-4 max-sm:translate-y-0 sm:top-1/2 sm:left-4"
               disabled={!canScrollPrev}
               onClick={scrollPrev}
               size="icon"
@@ -89,7 +92,7 @@ export function Gallery() {
             </Button>
 
             <Button
-              className="-translate-y-1/2 sm:-translate-y-1/2 absolute top-1/2 right-4 z-10 size-12 rounded-full border-white/80 bg-white/90 text-gold-600 shadow-xl hover:bg-white hover:text-gold-700 disabled:opacity-50 max-sm:top-auto max-sm:right-4 max-sm:bottom-4 max-sm:translate-y-0 sm:top-1/2 sm:right-4"
+              className="-translate-y-1/2 sm:-translate-y-1/2 absolute top-1/2 right-4 z-10 size-12 rounded-full bg-white text-gold-600 shadow-xl hover:bg-white hover:text-gold-700 disabled:opacity-50 max-sm:top-auto max-sm:right-4 max-sm:bottom-4 max-sm:translate-y-0 sm:top-1/2 sm:right-4"
               disabled={!canScrollNext}
               onClick={scrollNext}
               size="icon"
@@ -107,7 +110,7 @@ export function Gallery() {
           >
             {photos.length > 0
               ? photos.map((photo, index) => (
-                  <button
+                  <motion.button
                     aria-label={`Ver foto ${index + 1}: ${photo.title || `Foto ${index + 1}`}`}
                     aria-selected={index === selectedIndex}
                     className={cn(
@@ -119,7 +122,10 @@ export function Gallery() {
                     key={photo.id}
                     onClick={() => scrollTo(index)}
                     role="tab"
+                    transition={{ duration: 0.1, ease: 'easeOut' }}
                     type="button"
+                    whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}
+                    whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
                   >
                     <Image
                       alt={photo.title || `Foto ${index + 1}`}
@@ -130,7 +136,7 @@ export function Gallery() {
                       sizes="80px"
                       src={photo.url}
                     />
-                  </button>
+                  </motion.button>
                 ))
               : Array.from({ length: 10 }, () => crypto.randomUUID()).map((id) => (
                   <div className="aspect-square h-20 w-20 rounded-xl bg-zinc-100" key={id} />

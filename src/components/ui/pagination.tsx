@@ -30,7 +30,7 @@ function PaginationButton({ className, isActive, size = 'icon', variant, ...prop
   return (
     <Button
       aria-current={isActive ? 'page' : undefined}
-      className={className}
+      className={cn(className, isActive && 'hover:translate-y-0 hover:shadow-xs', !isActive && 'hover:-translate-y-px')}
       data-active={isActive}
       data-slot="pagination-button"
       size={size}

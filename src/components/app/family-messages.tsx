@@ -48,7 +48,7 @@ function MessageCard({ title, message, authors }: { title: string; message: stri
 
   return (
     <article>
-      <Card className="py-8">
+      <Card className="py-8 transition-all duration-300 hover:border-gold-600 hover:shadow-2xl">
         <CardContent className="card-content-spacing">
           <h3
             className="after:-translate-x-1/2 relative pb-4 text-center font-heading font-medium text-2xl text-gold-600 after:absolute after:bottom-1 after:left-1/2 after:h-0.5 after:w-20 after:bg-gold-400"

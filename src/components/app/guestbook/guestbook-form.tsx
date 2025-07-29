@@ -87,7 +87,12 @@ export function GuestbookForm() {
             <div className="text-sm text-zinc-500">* Sua mensagem será analisada antes da publicação</div>
 
             <div className="flex justify-end">
-              <Button className="w-48" loading={createMessageMutation.isPending} size="lg" type="submit">
+              <Button
+                className="hover:-translate-y-px w-48"
+                loading={createMessageMutation.isPending}
+                size="lg"
+                type="submit"
+              >
                 <Send className="mr-2 size-4" />
                 Enviar mensagem
               </Button>
