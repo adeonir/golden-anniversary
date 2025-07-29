@@ -3,7 +3,7 @@
 import { m as motion } from 'framer-motion'
 import { MoveDown } from 'lucide-react'
 import { Fragment } from 'react'
-import { Divider } from '~/components/ui/divider'
+import { PulseHeart } from '~/components/ui/pulse-heart'
 import { useReducedMotion } from '~/hooks/use-reduced-motion'
 import { config } from '~/lib/config'
 
@@ -62,7 +62,11 @@ export function Hero() {
         </motion.h1>
 
         <motion.div className="-mt-4" variants={itemVariants}>
-          <Divider />
+          <div className="flex items-center space-x-6">
+            <div className="h-0.5 w-20 bg-gold-400" />
+            <PulseHeart size="lg" />
+            <div className="h-0.5 w-20 bg-gold-400" />
+          </div>
         </motion.div>
 
         <motion.h2 className="font-heading font-medium text-4xl text-zinc-700 sm:text-5xl" variants={itemVariants}>
