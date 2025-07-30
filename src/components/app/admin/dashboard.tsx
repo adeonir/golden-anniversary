@@ -1,11 +1,17 @@
+'use client'
+
 import { Images, MessageSquare } from 'lucide-react'
 import type { SVGProps } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
+import { useAdminTabs } from '~/hooks/use-admin-tabs'
+import { config } from '~/lib/config'
 import { LogoutButton } from './logout-button'
 import { MessagesTab } from './messages-tab'
 import { PhotosTab } from './photos-tab'
 
 export function Dashboard() {
+  const { activeTab, setActiveTab } = useAdminTabs()
+
   return (
     <div className="admin-theme flex min-h-screen flex-col gap-8 bg-zinc-100 p-8">
       <header className="rounded-lg bg-white px-8 py-6 shadow-lg shadow-zinc-700/10">
@@ -18,23 +24,23 @@ export function Dashboard() {
       </header>
 
       <main className="flex flex-1 rounded-lg bg-white p-8 shadow-lg shadow-zinc-700/15">
-        <Tabs className="flex flex-1 flex-col gap-8" defaultValue="messages">
+        <Tabs className="flex flex-1 flex-col gap-8" onValueChange={setActiveTab} value={activeTab}>
           <TabsList>
-            <TabsTrigger value="messages">
+            <TabsTrigger value={config.admin.tabs.messages}>
               <MessageSquare className="mr-2 size-4" />
               Mensagens
             </TabsTrigger>
-            <TabsTrigger value="photos">
+            <TabsTrigger value={config.admin.tabs.photos}>
               <Images className="mr-2 size-4" />
               Galeria
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="messages">
+          <TabsContent value={config.admin.tabs.messages}>
             <MessagesTab />
           </TabsContent>
 
-          <TabsContent value="photos">
+          <TabsContent value={config.admin.tabs.photos}>
             <PhotosTab />
           </TabsContent>
         </Tabs>
