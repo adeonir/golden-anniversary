@@ -1,5 +1,9 @@
 -- Supabase Storage setup script for photos
 -- Execute this script in Supabase SQL Editor
+--
+-- SECURITY: This script configures RLS policies for the storage bucket
+-- - Public: Read access to all photos
+-- - Authenticated users (admin): Full CRUD access
 
 -- 1. Create storage bucket for photos
 INSERT INTO storage.buckets (id, name, public)
