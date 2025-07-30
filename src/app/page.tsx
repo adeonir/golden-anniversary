@@ -1,10 +1,10 @@
-import { Countdown } from '~/components/app/countdown'
-import { FamilyMessages } from '~/components/app/family-messages'
-import { Footer } from '~/components/app/footer'
-import { Gallery } from '~/components/app/gallery'
-import { Guestbook } from '~/components/app/guestbook'
-import { Hero } from '~/components/app/hero'
-import { Timeline } from '~/components/app/timeline'
+import { Footer } from '~/components/app/layout/footer'
+import { Hero } from '~/components/app/layout/hero'
+import { Countdown } from '~/components/app/sections/countdown'
+import { FamilyMessages } from '~/components/app/sections/family-messages'
+import { Gallery } from '~/components/app/sections/gallery'
+import { Guestbook } from '~/components/app/sections/guestbook'
+import { Timeline } from '~/components/app/sections/timeline'
 
 export default function Home() {
   return (
