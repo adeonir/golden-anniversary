@@ -159,6 +159,47 @@ pnpm build
 2. Configure templates de email
 3. Teste login admin
 
+### 4. Configurações de Segurança
+
+#### Row Level Security (RLS)
+
+As políticas RLS são aplicadas automaticamente pelos scripts SQL:
+
+- **Tabela `messages`**: Público lê apenas mensagens aprovadas, admin acesso total
+- **Tabela `photos`**: Público lê todas as fotos, admin acesso total
+- **Storage `photos`**: Público lê fotos, admin faz CRUD completo
+
+#### Autenticação Segura
+
+Configure no dashboard Supabase (Authentication > Settings):
+
+**Security:**
+
+1. Habilite "Breach password protection" para prevenir senhas vazadas
+2. Configure políticas de senhas fortes se necessário
+
+**Multi-Factor Authentication:**
+
+1. Habilite TOTP (Time-based One-Time Password)
+2. Configure backup codes
+3. Permita múltiplos fatores por usuário
+
+#### Verificação de Segurança
+
+Execute no SQL Editor para verificar se RLS está funcionando:
+
+```sql
+-- Verificar se RLS está habilitado
+SELECT schemaname, tablename, rowsecurity
+FROM pg_tables
+WHERE tablename IN ('messages', 'photos');
+
+-- Verificar políticas criadas
+SELECT tablename, policyname, cmd, qual
+FROM pg_policies
+WHERE tablename IN ('messages', 'photos');
+```
+
 ## Troubleshooting
 
 ### Problemas Comuns
