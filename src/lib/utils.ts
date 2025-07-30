@@ -1,4 +1,6 @@
 import { type ClassValue, clsx } from 'clsx'
+import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 import { twMerge } from 'tailwind-merge'
 
 export function cn(...inputs: ClassValue[]) {
@@ -41,4 +43,13 @@ export function getOptimizedAnimation(prefersReducedMotion: boolean) {
     duration: 0.3,
     ease: [0.4, 0, 0.2, 1], // easeOutQuart
   }
+}
+
+export function formatDate(date: Date): string {
+  const formatString = 'dd/MM/yyyy HH:mm'
+  return format(date, formatString, { locale: ptBR })
+}
+
+export function formatSize(bytes: number): string {
+  return `${(bytes / 1024).toFixed(0)} KB`
 }

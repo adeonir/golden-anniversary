@@ -7,7 +7,7 @@ interface UseMessagesFilterOptions {
   messages: Message[]
 }
 
-export function useMessagesFilter({ messages }: UseMessagesFilterOptions) {
+export function useMessagesFilters({ messages }: UseMessagesFilterOptions) {
   const [filter, setFilter] = useState<MessageFilter>('all')
 
   const { filteredMessages, pendingCount } = useMemo(() => {

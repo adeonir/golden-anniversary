@@ -1,4 +1,10 @@
 export const config = {
+  admin: {
+    tabs: {
+      messages: 'messages',
+      photos: 'photos',
+    } as const,
+  },
   pagination: {
     frontendPageSize: 5,
     adminPageSize: 100,
@@ -27,3 +33,5 @@ export const config = {
     },
   },
 } as const
+
+export type AdminTabValue = (typeof config.admin.tabs)[keyof typeof config.admin.tabs]

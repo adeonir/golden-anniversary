@@ -1,8 +1,5 @@
 'use client'
 
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
-
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import { Card } from '~/components/ui/card'
@@ -11,8 +8,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~
 import { useDataState } from '~/hooks/use-data-state'
 import { useMessageActions } from '~/hooks/use-message-actions'
 import { useApproveMessage, useDeleteMessage, useMessages, useRejectMessage } from '~/hooks/use-messages'
-import { useMessagesFilter } from '~/hooks/use-messages-filter'
+import { useMessagesFilters } from '~/hooks/use-messages-filter'
 import { config } from '~/lib/config'
+import { formatDate } from '~/lib/utils'
 
 export function MessagesTab() {
   const {
@@ -21,24 +19,13 @@ export function MessagesTab() {
     error,
   } = useMessages(config.pagination.defaultPage, config.pagination.adminPageSize)
 
-  const allMessages = messagesData?.messages || []
-  const { filter, setFilter, filteredMessages, pendingCount } = useMessagesFilter({ messages: allMessages })
-
   const approveMutation = useApproveMessage()
   const rejectMutation = useRejectMessage()
   const deleteMutation = useDeleteMessage()
 
+  const allMessages = messagesData?.messages || []
+  const { filter, setFilter, filteredMessages, pendingCount } = useMessagesFilters({ messages: allMessages })
   const { pendingActions, createHandler } = useMessageActions()
-
-  const formatDate = (date: Date) => {
-    return format(date, "dd/MM/yyyy 'às' HH:mm", {
-      locale: ptBR,
-    })
-  }
-
-  const handleApprove = createHandler('approve', approveMutation)
-  const handleReject = createHandler('reject', rejectMutation)
-  const handleDelete = createHandler('delete', deleteMutation)
 
   const dataStateAlert = useDataState({
     data: filteredMessages,
@@ -48,6 +35,10 @@ export function MessagesTab() {
     errorText: 'Erro ao carregar mensagens. Tente novamente.',
     emptyText: 'Nenhuma mensagem encontrada.',
   })
+
+  const handleApprove = createHandler('approve', approveMutation)
+  const handleReject = createHandler('reject', rejectMutation)
+  const handleDelete = createHandler('delete', deleteMutation)
 
   return (
     <div className="flex flex-1 flex-col gap-6">
