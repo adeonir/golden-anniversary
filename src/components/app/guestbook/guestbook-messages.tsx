@@ -19,13 +19,11 @@ import { getInitials } from '~/lib/utils'
 
 export function GuestbookMessages() {
   const [currentPage, setCurrentPage] = useState<number>(config.pagination.defaultPage)
-  const prefersReducedMotion = useReducedMotion()
-
   const { data, isLoading } = useMessages(currentPage, config.pagination.frontendPageSize, 'approved')
+  const prefersReducedMotion = useReducedMotion()
 
   const messages = data?.messages || []
   const totalPages = data?.totalPages || 1
-
   const isEmpty = messages.length === 0
 
   const animationConfig = prefersReducedMotion
