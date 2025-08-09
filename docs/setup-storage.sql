@@ -1,4 +1,4 @@
--- Supabase Storage setup script for photos
+-- Supabase Storage Setup Script for Photos
 -- Execute this script in Supabase SQL Editor
 --
 -- SECURITY: This script configures RLS policies for the storage bucket

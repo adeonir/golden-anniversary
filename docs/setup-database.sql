@@ -1,4 +1,4 @@
--- Database tables setup script
+-- Database Tables Setup Script
 -- Execute this script in Supabase SQL Editor
 
 -- ========================================
@@ -11,7 +11,7 @@ DROP TABLE IF EXISTS "photos" CASCADE;
 -- 2. CREATE TABLES
 -- ========================================
 
--- Messages table
+-- Messages table for guestbook functionality
 CREATE TABLE "messages" (
   "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   "name" TEXT NOT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE "messages" (
   "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Photos table
+-- Photos table for gallery functionality
 CREATE TABLE "photos" (
   "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   "filename" TEXT NOT NULL,
@@ -74,7 +74,7 @@ FOR UPDATE TO authenticated USING (true);
 CREATE POLICY "Admin can delete messages" ON "messages"
 FOR DELETE TO authenticated USING (true);
 
--- Photos policies
+-- Photos policies  
 -- Single SELECT policy for all users (avoids Multiple Permissive Policies warning)
 CREATE POLICY "Public can read photos" ON "photos"
 FOR SELECT USING (true);

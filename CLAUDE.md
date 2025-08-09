@@ -1,6 +1,7 @@
 # Golden Anniversary - Commemorative Site
 
 Commemorative website for Iria & Ari's 50th wedding anniversary.
+**Celebration date**: November 8, 2025, 6:30 PM
 
 ## Tech Stack
 
@@ -22,10 +23,11 @@ Commemorative website for Iria & Ari's 50th wedding anniversary.
 
 This project follows MVVM architecture:
 
-- **Actions** (`src/actions/`) - Data layer (Supabase operations)
-- **Hooks** (`src/hooks/`) - Business logic (TanStack Query + state)
-- **Components** (`src/components/app/`) - Section components with their logic
-- **Components** (`src/components/ui/`) - Reusable UI components (Shadcn/ui)
+- **Model** (`src/actions/`) - Data layer and business logic
+- **ViewModel** (`src/hooks/`) - State management and presentation logic
+- **View** (`src/components/`) - User interface components
+  - `app/` - Application-specific sections
+  - `ui/` - Reusable UI components (Shadcn/ui)
 
 ## Project-Specific Rules
 
@@ -50,9 +52,9 @@ This project follows MVVM architecture:
 ## Core Features
 
 1. **Header/Hero** - Couple presentation
-2. **Countdown** - Timer to celebration (11/08/2025 18:30)
+2. **Countdown** - Timer to celebration (November 8, 2025, 6:30 PM)
 3. **Photo Gallery** - Carousel + thumbnails with lazy loading
-4. **GuestBook** - Messages with mandatory moderation
+4. **Guestbook** - Messages with mandatory moderation
 5. **Family Messages** - Special section for children/grandchildren
 6. **Timeline** - Important milestones in the couple's life
 7. **Footer** - Inspirational quote and credits
@@ -68,7 +70,7 @@ Follow **Conventional Commits** format:
 - `fix: description` - Bug fixes
 - `docs: description` - Documentation
 - `chore: description` - Maintenance tasks
-- Use Linear issue IDs as scope when applicable (e.g., `DEV-XX`)
+- Don't use scope on commits
 
 ### Pull Request Format
 
@@ -102,6 +104,13 @@ Closes DEV-XX
 2. Consider edge cases and error scenarios
 3. Follow the rules below strictly
 4. Validate accessibility requirements
+
+## important-instruction-reminders
+
+Do what has been asked; nothing more, nothing less.
+NEVER create files unless they're absolutely necessary for achieving your goal.
+ALWAYS prefer editing an existing file to creating a new one.
+NEVER proactively create documentation files (\*.md) or README files. Only create documentation files if explicitly requested by the User.
 
 ## Rules
 

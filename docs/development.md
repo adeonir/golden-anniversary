@@ -1,19 +1,19 @@
-# Guia de Desenvolvimento
+# Development Guide
 
-## Visão Geral
+## Overview
 
-Este guia cobre a configuração do ambiente de desenvolvimento para o site Bodas de Ouro.
+This guide covers the development environment setup for the Golden Anniversary website.
 
-## Pré-requisitos
+## Prerequisites
 
 - Node.js 22+
 - pnpm
-- Conta Supabase
-- Editor de código (Cursor recomendado)
+- Supabase account
+- Code editor (Cursor recommended)
 
-## Configuração Inicial
+## Initial Setup
 
-### 1. Clone e Instalação
+### 1. Clone and Installation
 
 ```bash
 git clone https://github.com/adeonir/golden-anniversary.git
@@ -21,11 +21,11 @@ cd golden-anniversary
 pnpm install
 ```
 
-### 2. Variáveis de Ambiente
+### 2. Environment Variables
 
-#### Opção 1: Arquivo .env.local
+#### Option 1: .env.local File
 
-Crie o arquivo `.env.local`:
+Create the `.env.local` file:
 
 ```bash
 # Supabase
@@ -37,164 +37,166 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ADMIN_EMAIL=your_admin_email@gmail.com
 ```
 
-#### Opção 2: 1Password CLI (Recomendado)
+#### Option 2: 1Password CLI (Recommended)
 
 ```bash
-# Instalar 1Password CLI
+# Install 1Password CLI
 brew install 1password-cli
 
-# Autenticar
+# Authenticate
 op signin
 
-# Executar com variáveis do 1Password
+# Run with 1Password variables
 op run --env-file=.env.local -- pnpm dev
 ```
 
-### 3. Configuração do Banco
+### 3. Database Setup
 
-Execute no SQL Editor do Supabase:
+Execute in Supabase SQL Editor:
 
-- `docs/setup-database.sql` - Criação das tabelas (messages e photos)
-- `docs/setup-storage.sql` - Configuração do bucket de fotos
-- `docs/seed-messages.sql` - Dados de exemplo (opcional)
+- `docs/setup-database.sql` - Create tables (messages and photos)
+- `docs/setup-storage.sql` - Configure photo bucket
+- `docs/seed-messages.sql` - Sample data (optional)
 
-## Scripts de Desenvolvimento
+## Development Scripts
 
 ```bash
-# Desenvolvimento
-pnpm dev          # Inicia servidor de desenvolvimento
-pnpm build        # Build para desenvolvimento
-pnpm build:prod   # Build para produção
-pnpm start        # Inicia servidor de produção
+# Development
+pnpm dev          # Start development server
+pnpm build        # Build for development
+pnpm build:prod   # Build for production
+pnpm start        # Start production server
 
-# Qualidade de Código
-pnpm lint         # Formata e faz lint do código
-pnpm type-check   # Executa verificações TypeScript
+# Code Quality
+pnpm lint         # Format and lint code
+pnpm type-check   # Run TypeScript checks
 ```
 
-## Estrutura do Projeto
+## Project Structure
 
 ```
 src/
-├── actions/         # Server Actions
+├── actions/         # Model - Data layer and business logic
 ├── app/            # Next.js App Router
-├── components/     # Componentes React
-├── hooks/          # React Hooks
-├── lib/            # Utilitários & Config
+├── components/     # View - User interface components
+│   ├── app/        # Application-specific sections
+│   └── ui/         # Reusable UI components
+├── hooks/          # ViewModel - State management
+├── lib/            # Utilities & Config
 ├── providers/      # Context Providers
-├── types/          # Tipos TypeScript
-└── env.ts          # Validação de variáveis
+├── types/          # TypeScript types
+└── env.ts          # Environment variables validation
 ```
 
-## Ferramentas de Desenvolvimento
+## Development Tools
 
 ### Code Quality
 
-- **Ultracite**: Linting e formatação automática
-- **TypeScript**: Verificação de tipos rigorosa
-- **Git Hooks**: Lefthook para verificações pre-commit
+- **Ultracite**: Automatic linting and formatting
+- **TypeScript**: Strict type checking
+- **Git Hooks**: Lefthook for pre-commit checks
 
-### Extensões VS Code Recomendadas
+### Recommended VS Code Extensions
 
 - TypeScript Importer
 - Tailwind CSS IntelliSense
 - ES7+ React/Redux/React-Native snippets
 - Prettier - Code formatter
 
-## Workflow de Desenvolvimento
+## Development Workflow
 
-### 1. Nova Feature
+### 1. New Feature
 
-**Commit Message**: `feat: descrição da feature`
-**PR Title**: `feat(DEV-XX): descrição da feature com verbo imperativo`
+**Commit Message**: `feat: feature description`
+**PR Title**: `feat(DEV-XX): feature description with imperative verb`
 
 ```bash
-# Criar branch com ticket do Linear
-git checkout -b feat/DEV-XX-nome-da-feature
+# Create branch with Linear ticket
+git checkout -b feat/DEV-XX-feature-name
 
-# Desenvolver...
+# Develop...
 pnpm lint
 pnpm type-check
 git add .
-git commit -m "feat: descrição da feature"
-git push origin feat/DEV-XX-nome-da-feature
+git commit -m "feat: feature description"
+git push origin feat/DEV-XX-feature-name
 ```
 
 ### 2. Debugging
 
 ```bash
-# Desenvolvimento com logs
+# Development with logs
 pnpm dev
 
-# Verificar tipos
+# Check types
 pnpm type-check
 
-# Build local
+# Local build
 pnpm build
 ```
 
-### 3. Testes
+### 3. Testing
 
-- **Testes Manuais**: Navegar pela aplicação
-- **Verificação de Tipos**: `pnpm type-check`
+- **Manual Testing**: Navigate through the application
+- **Type Checking**: `pnpm type-check`
 - **Linting**: `pnpm lint`
 
-## Configuração do Supabase
+## Supabase Configuration
 
-### 1. Projeto Local
+### 1. Local Project
 
-1. Crie um projeto no [Supabase](https://supabase.com)
-2. Configure as variáveis de ambiente
-3. Execute os scripts SQL
+1. Create a project at [Supabase](https://supabase.com)
+2. Configure environment variables
+3. Execute SQL scripts
 
 ### 2. Storage
 
-1. Crie o bucket `photos`
-2. Configure como público
-3. Teste upload de imagens
+1. Create `photos` bucket
+2. Configure as public
+3. Test image uploads
 
-### 3. Autenticação
+### 3. Authentication
 
-1. Habilite autenticação por email
-2. Configure templates de email
-3. Teste login admin
+1. Enable email authentication
+2. Configure email templates
+3. Test admin login
 
-### 4. Configurações de Segurança
+### 4. Security Settings
 
 #### Row Level Security (RLS)
 
-As políticas RLS são aplicadas automaticamente pelos scripts SQL:
+RLS policies are applied automatically by SQL scripts:
 
-- **Tabela `messages`**: Público lê apenas mensagens aprovadas, admin acesso total
-- **Tabela `photos`**: Público lê todas as fotos, admin acesso total
-- **Storage `photos`**: Público lê fotos, admin faz CRUD completo
+- **messages table**: Public reads only approved messages, admin has full access
+- **photos table**: Public reads all photos, admin has full access
+- **photos storage**: Public reads photos, admin has full CRUD
 
-#### Autenticação Segura
+#### Secure Authentication
 
-Configure no dashboard Supabase (Authentication > Settings):
+Configure in Supabase dashboard (Authentication > Settings):
 
 **Security:**
 
-1. Habilite "Breach password protection" para prevenir senhas vazadas
-2. Configure políticas de senhas fortes se necessário
+1. Enable "Breach password protection" to prevent leaked passwords
+2. Configure strong password policies if needed
 
 **Multi-Factor Authentication:**
 
-1. Habilite TOTP (Time-based One-Time Password)
+1. Enable TOTP (Time-based One-Time Password)
 2. Configure backup codes
-3. Permita múltiplos fatores por usuário
+3. Allow multiple factors per user
 
-#### Verificação de Segurança
+#### Security Verification
 
-Execute no SQL Editor para verificar se RLS está funcionando:
+Execute in SQL Editor to verify RLS is working:
 
 ```sql
--- Verificar se RLS está habilitado
+-- Check if RLS is enabled
 SELECT schemaname, tablename, rowsecurity
 FROM pg_tables
 WHERE tablename IN ('messages', 'photos');
 
--- Verificar políticas criadas
+-- Check created policies
 SELECT tablename, policyname, cmd, qual
 FROM pg_policies
 WHERE tablename IN ('messages', 'photos');
@@ -202,83 +204,83 @@ WHERE tablename IN ('messages', 'photos');
 
 ## Troubleshooting
 
-### Problemas Comuns
+### Common Issues
 
-1. **Erro de Variáveis de Ambiente**
+1. **Environment Variables Error**
 
-   - Verifique `.env.local`
-   - Reinicie o servidor de desenvolvimento
+   - Check `.env.local`
+   - Restart development server
 
-2. **Erro de Tipos TypeScript**
+2. **TypeScript Type Errors**
 
-   - Execute `pnpm type-check`
-   - Verifique imports e tipos
+   - Run `pnpm type-check`
+   - Check imports and types
 
-3. **Erro de Conexão Supabase**
-   - Verifique URL e chaves
-   - Teste no SQL Editor
+3. **Supabase Connection Error**
+   - Check URL and keys
+   - Test in SQL Editor
 
-### Comandos Úteis
+### Useful Commands
 
 ```bash
-# Limpar cache
+# Clear cache
 rm -rf .next
 pnpm dev
 
-# Reinstalar dependências
+# Reinstall dependencies
 rm -rf node_modules pnpm-lock.yaml
 pnpm install
 
-# Verificar versões
+# Check versions
 node --version
 pnpm --version
 ```
 
-## Boas Práticas
+## Best Practices
 
-### Código
+### Code
 
-- Use TypeScript rigorosamente
-- Siga convenções de nomenclatura
-- Mantenha componentes pequenos
-- Use Server Actions para operações server-side
+- Use TypeScript strictly
+- Follow naming conventions
+- Keep components small
+- Use Server Actions for server-side operations
 
 ### Git
 
-- Commits atômicos e descritivos
+- Atomic and descriptive commits
 - Use conventional commits
-- Mantenha branch main limpa
-- Faça PRs para mudanças significativas
+- Keep main branch clean
+- Create PRs for significant changes
 
 ### Performance
 
-- Use React Query para cache
-- Otimize imagens
-- Implemente lazy loading
-- Monitore Core Web Vitals
+- Use React Query for caching
+- Optimize images
+- Implement lazy loading
+- Monitor Core Web Vitals
 
 ### Network Resilience
 
-#### Retry Logic com Backoff Exponencial
+#### Retry Logic with Exponential Backoff
 
-O projeto implementa retry automático com backoff exponencial para melhorar a resiliência da rede:
+The project implements automatic retry with exponential backoff to improve network resilience:
 
-**Configuração Global (TanStack Query Provider):**
+**Global Configuration (TanStack Query Provider):**
 
-- **Queries**: 3 tentativas com delays 1s → 2s → 4s (máximo 30s)
-- **Mutations**: 2 tentativas com delays 1s → 2s (máximo 10s)
+- **Queries**: 3 attempts with delays 1s → 2s → 4s (max 30s)
+- **Mutations**: 2 attempts with delays 1s → 2s (max 10s)
 
-**Por que Backoff Exponencial?**
+**Why Exponential Backoff?**
 
-- **Problema do delay fixo**: Sobrecarga constante no servidor durante instabilidade
-- **Solução inteligente**: Aumenta progressivamente o tempo entre tentativas
-- **Benefícios**:
-  - Reduz carga no servidor durante picos de erro
-  - Evita "thundering herd effect" (todos tentando simultaneamente)
-  - Dá tempo para serviços se recuperarem
-  - Respeita naturalmente rate limits de APIs
+- **Fixed delay problem**: Constant server overload during instability
+- **Smart solution**: Progressively increases time between attempts
+- **Benefits**:
+  - Reduces server load during error spikes
+  - Prevents "thundering herd effect" (everyone trying simultaneously)
+  - Gives services time to recover
+  - Naturally respects API rate limits
 
-**Implementação:**
+**Implementation:**
 
 ```typescript
 // src/providers/query-client.tsx
@@ -288,9 +290,9 @@ queries: {
 }
 ```
 
-**Cenários de uso:**
+**Use cases:**
 
-- Falhas temporárias de API
-- Instabilidade de rede
-- Rate limiting do Supabase
-- Sobrecarga temporária do servidor
+- Temporary API failures
+- Network instability
+- Supabase rate limiting
+- Temporary server overload

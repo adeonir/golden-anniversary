@@ -1,33 +1,33 @@
-# Guia de Deploy
+# Deployment Guide
 
-## Visão Geral
+## Overview
 
-Este guia cobre o processo de deploy do site Bodas de Ouro usando Vercel.
+This guide covers the deployment process for the Golden Anniversary website using Vercel.
 
-## Pré-requisitos
+## Prerequisites
 
-- Conta Vercel
-- Projeto Supabase configurado
-- Repositório GitHub
+- Vercel account
+- Configured Supabase project
+- GitHub repository
 
-## Deploy na Vercel
+## Vercel Deployment
 
-### 1. Conectar Repositório
+### 1. Connect Repository
 
-1. Vá para o [Vercel Dashboard](https://vercel.com/dashboard)
-2. Clique em "New Project"
-3. Importe seu repositório GitHub
-4. Configure as configurações do projeto:
+1. Go to [Vercel Dashboard](https://vercel.com/dashboard)
+2. Click "New Project"
+3. Import your GitHub repository
+4. Configure project settings:
    - **Framework Preset**: Next.js
-   - **Root Directory**: `./` (padrão)
+   - **Root Directory**: `./` (default)
    - **Build Command**: `pnpm build:prod`
-   - **Output Directory**: `.next` (padrão)
+   - **Output Directory**: `.next` (default)
 
-### 2. Configuração das Variáveis de Ambiente
+### 2. Environment Variables Configuration
 
-1. Vá para as configurações do seu projeto na Vercel
-2. Navegue até "Environment Variables"
-3. Adicione as variáveis obrigatórias:
+1. Go to your project settings in Vercel
+2. Navigate to "Environment Variables"
+3. Add required variables:
 
 ```bash
 # Supabase
@@ -39,7 +39,7 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ADMIN_EMAIL=your_admin_email@gmail.com
 ```
 
-### 3. Configuração de Build
+### 3. Build Configuration
 
 ```json
 // vercel.json
@@ -50,54 +50,54 @@ ADMIN_EMAIL=your_admin_email@gmail.com
 }
 ```
 
-## Monitoramento
+## Monitoring
 
 ### Vercel Analytics
 
-1. Habilite Vercel Analytics nas configurações do projeto
-2. Visualize métricas de performance no dashboard
-3. Monitore Core Web Vitals
+1. Enable Vercel Analytics in project settings
+2. View performance metrics in dashboard
+3. Monitor Core Web Vitals
 
-### Rastreamento de Erros
+### Error Tracking
 
-1. Configure relatórios de erro na Vercel
-2. Monitore logs de função
-3. Configure alertas para erros críticos
+1. Configure error reporting in Vercel
+2. Monitor function logs
+3. Set up alerts for critical errors
 
 ## Troubleshooting
 
-### Problemas Comuns
+### Common Issues
 
-1. **Falhas de Build**
+1. **Build Failures**
 
-   - Verifique variáveis de ambiente
-   - Verifique erros TypeScript
-   - Verifique versões de dependências
+   - Check environment variables
+   - Verify TypeScript errors
+   - Check dependency versions
 
-2. **Problemas de Conexão com Banco**
+2. **Database Connection Issues**
 
-   - Verifique URL e chaves do Supabase
-   - Verifique conectividade de rede
-   - Verifique estrutura das tabelas
+   - Verify Supabase URL and keys
+   - Check network connectivity
+   - Verify table structure
 
-3. **Problemas de Carregamento de Imagens**
-   - Verifique configuração do Supabase Storage
-   - Verifique configurações CORS
-   - Verifique URLs das imagens
+3. **Image Loading Issues**
+   - Check Supabase Storage configuration
+   - Verify CORS settings
+   - Check image URLs
 
-## Estratégia de Rollback
+## Rollback Strategy
 
-1. **Rollback da Vercel**: Use o dashboard da Vercel para fazer rollback para deploy anterior
-2. **Rollback do Banco**: Use migrações do Supabase se necessário
-3. **Variáveis de Ambiente**: Mantenha valores anteriores como backup
+1. **Vercel Rollback**: Use Vercel dashboard to rollback to previous deployment
+2. **Database Rollback**: Use Supabase migrations if needed
+3. **Environment Variables**: Keep previous values as backup
 
-## Manutenção
+## Maintenance
 
-### Checklist de Monitoramento
+### Monitoring Checklist
 
-- [ ] Status de deploy da Vercel
-- [ ] Saúde do banco Supabase
-- [ ] Validade das variáveis de ambiente
-- [ ] Métricas de performance
-- [ ] Taxa de erros
-- [ ] Analytics de usuários
+- [ ] Vercel deployment status
+- [ ] Supabase database health
+- [ ] Environment variables validity
+- [ ] Performance metrics
+- [ ] Error rates
+- [ ] User analytics

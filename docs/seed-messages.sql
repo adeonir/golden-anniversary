@@ -1,5 +1,6 @@
--- Script to insert 18 sample messages
+-- Sample Messages Data Script
 -- Execute this script in Supabase SQL Editor
+-- Inserts 18 sample messages with different statuses for development/testing
 
 INSERT INTO "messages" ("name", "message", "status", "createdAt") VALUES
 -- Approved messages (12)
@@ -26,7 +27,7 @@ INSERT INTO "messages" ("name", "message", "status", "createdAt") VALUES
 ('Amanda Silva', 'Feliz aniversário! Que este novo ano seja cheio de realizações e momentos especiais.', 'rejected', NOW() - INTERVAL '5 hours'),
 ('Thiago Costa', 'Parabéns! Que você continue sendo essa pessoa incrível que é.', 'rejected', NOW() - INTERVAL '3 hours');
 
--- Check distribution
+-- Verify message distribution by status
 SELECT
   status,
   COUNT(*) as quantidade
