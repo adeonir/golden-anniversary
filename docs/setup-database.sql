@@ -28,6 +28,7 @@ CREATE TABLE "photos" (
   "url" TEXT NOT NULL,
   "size" INTEGER NOT NULL,
   "order" INTEGER NOT NULL DEFAULT 0,
+  "category" TEXT NOT NULL DEFAULT 'memory' CHECK (category IN ('memory', 'event')),
   "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -37,6 +38,7 @@ CREATE TABLE "photos" (
 CREATE INDEX "messages_status_idx" ON "messages" ("status");
 CREATE INDEX "messages_createdAt_idx" ON "messages" ("createdAt");
 CREATE INDEX "photos_order_idx" ON "photos" ("order");
+CREATE INDEX "photos_category_idx" ON "photos" ("category");
 
 -- ========================================
 -- 4. ENABLE ROW LEVEL SECURITY
@@ -56,7 +58,7 @@ ALTER TABLE "photos" ENABLE ROW LEVEL SECURITY;
 -- Single SELECT policy with conditional logic (avoids Multiple Permissive Policies warning)
 CREATE POLICY "Public can read messages" ON "messages"
 FOR SELECT USING (
-  CASE 
+  CASE
     WHEN (select auth.role()) = 'authenticated' THEN true  -- Admin can read all
     ELSE status = 'approved'                               -- Public only approved
   END
@@ -74,7 +76,7 @@ FOR UPDATE TO authenticated USING (true);
 CREATE POLICY "Admin can delete messages" ON "messages"
 FOR DELETE TO authenticated USING (true);
 
--- Photos policies  
+-- Photos policies
 -- Single SELECT policy for all users (avoids Multiple Permissive Policies warning)
 CREATE POLICY "Public can read photos" ON "photos"
 FOR SELECT USING (true);

@@ -2,12 +2,18 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '~/lib/supabase/server'
-import type { CreatePhotoData, Photo } from '~/types/photos'
+import type { Category, CreatePhotoData, Photo } from '~/types/photos'
 
-export async function fetchPhotos(): Promise<Photo[]> {
+export async function fetchPhotos(category?: Category): Promise<Photo[]> {
   try {
     const supabase = await createClient()
-    const { data: photosList, error } = await supabase.from('photos').select('*').order('order', { ascending: true })
+    let query = supabase.from('photos').select('*')
+
+    if (category) {
+      query = query.eq('category', category)
+    }
+
+    const { data: photosList, error } = await query.order('order', { ascending: true })
 
     if (error) {
       throw new Error(error.message)
@@ -24,12 +30,16 @@ export async function fetchPhotos(): Promise<Photo[]> {
   }
 }
 
+export function fetchMemories(): Promise<Photo[]> {
+  return fetchPhotos('memory')
+}
+
 export async function uploadPhoto(file: File): Promise<Photo> {
   try {
     const supabase = await createClient()
 
     const filename = `${crypto.randomUUID()}.jpg`
-    const filePath = `gallery/${filename}`
+    const filePath = `memories/${filename}`
 
     const { data: uploadData, error: uploadError } = await supabase.storage.from('photos').upload(filePath, file, {
       cacheControl: '3600',
@@ -47,6 +57,7 @@ export async function uploadPhoto(file: File): Promise<Photo> {
       title: file.name,
       url: urlData.publicUrl,
       size: file.size,
+      category: 'memory',
     }
 
     const { data: newPhoto, error: dbError } = await supabase.from('photos').insert(photoData).select().single()
@@ -134,7 +145,7 @@ export async function deletePhoto(id: string): Promise<string> {
       throw new Error('Photo not found')
     }
 
-    const { error: storageError } = await supabase.storage.from('photos').remove([`gallery/${photo.filename}`])
+    const { error: storageError } = await supabase.storage.from('photos').remove([`memories/${photo.filename}`])
 
     if (storageError) {
       throw new Error(`Failed to delete file: ${storageError.message}`)

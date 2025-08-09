@@ -6,8 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { useAdminTabs } from '~/hooks/use-admin-tabs'
 import { config } from '~/lib/config'
 import { LogoutButton } from './logout-button'
+import { MemoriesTab } from './memories-tab'
 import { MessagesTab } from './messages-tab'
-import { PhotosTab } from './photos-tab'
 
 export function Dashboard() {
   const { activeTab, setActiveTab } = useAdminTabs()
@@ -41,7 +41,7 @@ export function Dashboard() {
           </TabsContent>
 
           <TabsContent value={config.admin.tabs.photos}>
-            <PhotosTab />
+            <MemoriesTab />
           </TabsContent>
         </Tabs>
       </main>
