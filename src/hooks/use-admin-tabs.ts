@@ -1,10 +1,11 @@
 import { useQueryState } from 'nuqs'
 import { useEffect } from 'react'
-import { config, type AdminTabValue } from '~/lib/config'
+import { type AdminTabValue, config } from '~/lib/config'
 
 export function useAdminTabs() {
   const [activeTab, setActiveTab] = useQueryState<AdminTabValue>('tab', {
-    parse: (value): AdminTabValue => (value === config.admin.tabs.photos ? config.admin.tabs.photos : config.admin.tabs.messages),
+    parse: (value): AdminTabValue =>
+      value === config.admin.tabs.photos ? config.admin.tabs.photos : config.admin.tabs.messages,
     serialize: (value) => value,
   })
 

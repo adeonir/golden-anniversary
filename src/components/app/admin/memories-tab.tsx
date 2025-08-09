@@ -20,13 +20,13 @@ import { Button } from '~/components/ui/button'
 import { ScrollArea } from '~/components/ui/scroll-area'
 import { useDataState } from '~/hooks/use-data-state'
 import { usePhotoActions } from '~/hooks/use-photo-actions'
-import { useDeletePhoto, usePhotos, useReorderPhotos, useUpdatePhoto } from '~/hooks/use-photos'
+import { useDeletePhoto, useMemories, useReorderPhotos, useUpdatePhoto } from '~/hooks/use-photos'
 import type { Photo } from '~/types/photos'
-import { PhotoRow, type PhotoRowProps } from './photo-row'
+import { MemoryRow, type MemoryRowProps } from './memory-row'
 import { UploadsModal } from './uploads-modal'
 
-export function PhotosTab() {
-  const { data: photos = [], isLoading, error } = usePhotos()
+export function MemoriesTab() {
+  const { data: photos = [], isLoading, error } = useMemories()
 
   const updatePhotoMutation = useUpdatePhoto()
   const deletePhotoMutation = useDeletePhoto()
@@ -143,7 +143,7 @@ export function PhotosTab() {
             <SortableContext items={localPhotos.map((p) => p.id)} strategy={rectSortingStrategy}>
               <div className="space-y-2">
                 {localPhotos.map((photo) => (
-                  <SortablePhotoRow
+                  <SortableMemoryRow
                     editTitle={editTitle}
                     isDeleting={deletePhotoMutation.isPending && deletePhotoMutation.variables === photo.id}
                     isEditing={editingId === photo.id}
@@ -189,11 +189,11 @@ export function PhotosTab() {
   )
 }
 
-interface SortablePhotoRowProps extends PhotoRowProps {
+interface SortableMemoryRowProps extends MemoryRowProps {
   photo: Photo
 }
 
-function SortablePhotoRow(props: SortablePhotoRowProps) {
+function SortableMemoryRow(props: SortableMemoryRowProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: props.photo.id,
   })
@@ -205,7 +205,7 @@ function SortablePhotoRow(props: SortablePhotoRowProps) {
 
   return (
     <div className={isDragging ? 'opacity-50' : ''} ref={setNodeRef} style={style}>
-      <PhotoRow {...props} dragHandleProps={{ ...attributes, ...listeners }} />
+      <MemoryRow {...props} dragHandleProps={{ ...attributes, ...listeners }} />
     </div>
   )
 }

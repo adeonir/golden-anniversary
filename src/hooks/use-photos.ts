@@ -1,11 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import { deletePhoto, fetchPhotos, reorderPhotos, updatePhoto, uploadPhoto } from '~/actions/photos'
+import { deletePhoto, fetchMemories, fetchPhotos, reorderPhotos, updatePhoto, uploadPhoto } from '~/actions/photos'
 import { useToast } from '~/hooks/use-toast'
 
 const photosKeys = {
   all: ['photos'] as const,
   list: () => [...photosKeys.all, 'list'] as const,
+  memories: () => [...photosKeys.all, 'memories'] as const,
 }
 
 export function usePhotos() {
@@ -13,13 +14,31 @@ export function usePhotos() {
 
   const query = useQuery({
     queryKey: photosKeys.list(),
-    queryFn: fetchPhotos,
+    queryFn: () => fetchPhotos(),
     refetchOnWindowFocus: false,
   })
 
   useEffect(() => {
     if (query.error) {
       toast.error('Erro ao carregar fotos. Tente novamente mais tarde.')
+    }
+  }, [query.error, toast])
+
+  return query
+}
+
+export function useMemories() {
+  const toast = useToast()
+
+  const query = useQuery({
+    queryKey: photosKeys.memories(),
+    queryFn: fetchMemories,
+    refetchOnWindowFocus: false,
+  })
+
+  useEffect(() => {
+    if (query.error) {
+      toast.error('Erro ao carregar memórias. Tente novamente mais tarde.')
     }
   }, [query.error, toast])
 

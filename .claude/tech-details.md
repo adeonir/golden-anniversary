@@ -80,7 +80,7 @@ src/
 
 **Bucket `photos`** (public):
 
-- Structure: `gallery/{uuid}.{ext}`
+- Structure: `memories/{uuid}.{ext}` for memories, `event/{uuid}.{ext}` for event photos
 - RLS policies configured for controlled access
 - Automatic image optimization by Supabase
 

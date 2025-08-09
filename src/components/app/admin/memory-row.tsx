@@ -5,7 +5,7 @@ import { Input } from '~/components/ui/input'
 import { formatDate, formatSize } from '~/lib/utils'
 import type { Photo } from '~/types/photos'
 
-export interface PhotoRowProps {
+export interface MemoryRowProps {
   photo: Photo
   isEditing: boolean
   editTitle: string
@@ -20,7 +20,7 @@ export interface PhotoRowProps {
   dragHandleProps?: Record<string, unknown>
 }
 
-export function PhotoRow({
+export function MemoryRow({
   photo,
   isEditing,
   editTitle,
@@ -33,7 +33,7 @@ export function PhotoRow({
   onEditTitleChange,
   onDelete,
   dragHandleProps,
-}: PhotoRowProps) {
+}: MemoryRowProps) {
   return (
     <div className="group flex items-center gap-4 rounded-lg border border-zinc-200 p-4 hover:bg-zinc-50">
       <div className="flex-shrink-0">

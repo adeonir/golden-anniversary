@@ -8,7 +8,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Button } from '~/components/ui/button'
 import { Section } from '~/components/ui/section'
 import { SectionHeader } from '~/components/ui/section-header'
-import { usePhotos } from '~/hooks/use-photos'
+import { useMemories } from '~/hooks/use-photos'
 import { useReducedMotion } from '~/hooks/use-reduced-motion'
 import { cn, generateBlurDataURL } from '~/lib/utils'
 
@@ -17,12 +17,12 @@ const content = {
   subtitle: '50 anos de momentos inesquecíveis.',
 }
 
-export function Gallery() {
+export function Memories() {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true })
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [canScrollPrev, setCanScrollPrev] = useState(false)
   const [canScrollNext, setCanScrollNext] = useState(false)
-  const { data: photos = [] } = usePhotos()
+  const { data: photos = [] } = useMemories()
   const prefersReducedMotion = useReducedMotion()
 
   const onSelect = useCallback(() => {
