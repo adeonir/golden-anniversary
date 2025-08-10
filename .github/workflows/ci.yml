@@ -10,9 +10,12 @@ concurrency:
 
 env:
   NODE_VERSION: 22.17.0
-  PNPM_VERSION: 10.13.1
+  PNPM_VERSION: 10.14.0
   JWT_SECRET: ${{ secrets.JWT_SECRET }}
   DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  IMAGEKIT_PRIVATE_KEY: ${{ secrets.IMAGEKIT_PRIVATE_KEY }}
+  NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY: ${{ secrets.IMAGEKIT_PUBLIC_KEY }}
+  NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT: ${{ secrets.IMAGEKIT_URL_ENDPOINT }}
 
 jobs:
   lint:
@@ -85,4 +88,7 @@ jobs:
         env:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          IMAGEKIT_PRIVATE_KEY: ${{ secrets.IMAGEKIT_PRIVATE_KEY }}
+          NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY: ${{ secrets.IMAGEKIT_PUBLIC_KEY }}
+          NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT: ${{ secrets.IMAGEKIT_URL_ENDPOINT }}
           SKIP_ENV_VALIDATION: true
