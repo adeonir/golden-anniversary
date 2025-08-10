@@ -32,7 +32,7 @@ export function Dashboard() {
             </TabsTrigger>
             <TabsTrigger value={config.admin.tabs.memories}>
               <Images className="mr-2 size-4" />
-              Galeria
+              Memórias
             </TabsTrigger>
           </TabsList>
 

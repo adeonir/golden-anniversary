@@ -13,7 +13,7 @@ import { useReducedMotion } from '~/hooks/use-reduced-motion'
 import { cn, generateBlurDataURL } from '~/lib/utils'
 
 const content = {
-  title: 'Galeria de Memórias',
+  title: 'Memórias Especiais',
   subtitle: '50 anos de momentos inesquecíveis.',
 }
 
@@ -103,7 +103,7 @@ export function Memories() {
           </div>
 
           <div
-            aria-label="Miniaturas das fotos da galeria"
+            aria-label="Miniaturas das fotos de memórias"
             className="scrollbar-thin flex gap-2 overflow-x-auto px-2 py-4 sm:gap-4"
             role="tablist"
           >

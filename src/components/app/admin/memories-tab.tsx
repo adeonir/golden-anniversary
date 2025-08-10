@@ -121,8 +121,8 @@ export function MemoriesTab() {
     <div className="flex flex-1 flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="font-semibold text-2xl text-zinc-900">Galeria</h2>
-          <p className="text-zinc-600">Gerencie as fotos da galeria de aniversário</p>
+          <h2 className="font-semibold text-2xl text-zinc-900">Memórias</h2>
+          <p className="text-zinc-600">Gerencie as fotos das memórias do casal</p>
         </div>
         <Button className="flex items-center gap-2" intent="admin" onClick={() => setModalOpen(true)}>
           <Upload />
