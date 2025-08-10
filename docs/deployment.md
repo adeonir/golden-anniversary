@@ -2,12 +2,13 @@
 
 ## Overview
 
-This guide covers the deployment process for the Golden Anniversary website using Vercel.
+This guide covers the deployment process for the Golden Anniversary website using Vercel with the new tech stack (Neon + JWT + ImageKit).
 
 ## Prerequisites
 
 - Vercel account
-- Configured Supabase project
+- Configured Neon database
+- ImageKit account and configuration
 - GitHub repository
 
 ## Vercel Deployment
@@ -30,16 +31,40 @@ This guide covers the deployment process for the Golden Anniversary website usin
 3. Add required variables:
 
 ```bash
-# Supabase
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+# JWT Authentication
+JWT_SECRET=your-super-secure-jwt-secret-key-at-least-32-chars
 
-# Admin
-ADMIN_EMAIL=your_admin_email@gmail.com
+# Neon Database
+DATABASE_URL=postgresql://username:password@ep-example.us-east-2.aws.neon.tech/dbname?sslmode=require
+
+# ImageKit Configuration
+IMAGEKIT_PRIVATE_KEY=private_your-private-key-here
+NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY=public_your-public-key-here
+NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT=https://ik.imagekit.io/your-id
+
+# Optional: Skip environment validation during build
+SKIP_ENV_VALIDATION=true
 ```
 
-### 3. Build Configuration
+### 3. Database Setup
+
+After deployment, you may need to run database migrations:
+
+```bash
+# Push schema changes to Neon database
+pnpm db:push
+
+# View and manage database with Drizzle Studio
+pnpm db:studio
+
+# Generate migrations (if using migration files instead of push)
+pnpm db:generate
+
+# Seed database with sample data (optional)
+pnpm db:seed
+```
+
+### 4. Build Configuration
 
 ```json
 // vercel.json
@@ -76,19 +101,21 @@ ADMIN_EMAIL=your_admin_email@gmail.com
 
 2. **Database Connection Issues**
 
-   - Verify Supabase URL and keys
-   - Check network connectivity
-   - Verify table structure
+   - Verify Neon DATABASE_URL
+   - Check network connectivity and SSL settings
+   - Verify Drizzle schema matches database
+   - Run `drizzle-kit push` to sync schema
 
 3. **Image Loading Issues**
-   - Check Supabase Storage configuration
-   - Verify CORS settings
-   - Check image URLs
+   - Check ImageKit configuration and keys
+   - Verify ImageKit URL endpoint
+   - Check Next.js `remotePatterns` configuration
+   - Verify ImageKit file IDs in database
 
 ## Rollback Strategy
 
 1. **Vercel Rollback**: Use Vercel dashboard to rollback to previous deployment
-2. **Database Rollback**: Use Supabase migrations if needed
+2. **Database Rollback**: Use Drizzle migrations or Neon branch restore if needed
 3. **Environment Variables**: Keep previous values as backup
 
 ## Maintenance
@@ -96,8 +123,10 @@ ADMIN_EMAIL=your_admin_email@gmail.com
 ### Monitoring Checklist
 
 - [ ] Vercel deployment status
-- [ ] Supabase database health
+- [ ] Neon database health and compute usage
+- [ ] ImageKit bandwidth and storage usage
 - [ ] Environment variables validity
-- [ ] Performance metrics
-- [ ] Error rates
+- [ ] JWT authentication functionality
+- [ ] Performance metrics and CDN delivery
+- [ ] Error rates and function logs
 - [ ] User analytics

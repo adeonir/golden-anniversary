@@ -3,12 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "op run --env-file=.env.local -- next dev --turbopack",
-    "build": "op run --env-file=.env.local -- next build",
+    "op": "op run --env-file=.env.local --",
+    "dev": "pnpm op next dev --turbopack",
+    "build": "pnpm op next build",
     "build:prod": "next build",
     "start": "next start",
     "lint": "ultracite format",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "db:push": "pnpm op drizzle-kit push",
+    "db:studio": "pnpm op drizzle-kit studio",
+    "db:generate": "pnpm op drizzle-kit generate",
+    "db:seed": "pnpm op node src/lib/database/seed.js"
   },
   "dependencies": {
     "@dnd-kit/core": "6.3.1",

@@ -13,7 +13,9 @@
 
 ### Backend & Services
 
-- **Database**: Supabase PostgreSQL + Auth + Storage
+- **Database**: Neon PostgreSQL + Drizzle ORM
+- **Auth**: JWT + bcrypt (stateless, httpOnly cookies)
+- **Storage**: ImageKit CDN (with automatic optimizations)
 - **Email**: Nodemailer with Vercel Cron Jobs
 - **Deployment**: Vercel
 - **Monitoring**: Vercel Analytics
@@ -37,6 +39,9 @@ src/
 │   ├── app/           # Application-specific sections
 │   └── ui/            # Reusable UI components (Shadcn/ui)
 ├── lib/               # Utilities and configurations
+│   ├── database/      # Neon connection + Drizzle schemas
+│   ├── auth/          # JWT tokens + authentication utilities
+│   └── images/        # ImageKit client + blur placeholders
 ├── providers/         # Context Providers
 ├── types/             # TypeScript definitions
 └── middleware.ts      # Next.js middleware
@@ -50,54 +55,74 @@ src/
   - `app/` - Application-specific sections and layouts
   - `ui/` - Reusable design system components
 
-## Database Schema
+## Database Schema (Drizzle ORM)
 
 ### Tables
 
+**users** (Authentication):
+
+```typescript
+- id (UUID) - Unique identifier
+- email (TEXT) - Admin email
+- password (TEXT) - bcrypt hashed password
+- createdAt (TIMESTAMPTZ) - Creation date
+```
+
 **messages** (Guestbook):
 
-```sql
+```typescript
 - id (UUID) - Unique identifier
 - name (TEXT) - Author name
 - message (TEXT) - Message content
-- status (TEXT) - 'pending' | 'approved' | 'rejected'
+- status (ENUM) - 'pending' | 'approved' | 'rejected'
 - createdAt (TIMESTAMPTZ) - Creation date
 ```
 
 **photos** (Gallery):
 
-```sql
+```typescript
 - id (UUID) - Unique identifier
-- filename (TEXT) - File name in storage
+- filename (TEXT) - File name in ImageKit
 - title (TEXT, nullable) - Optional photo title
-- url (TEXT) - Public image URL
+- url (TEXT) - ImageKit CDN URL
+- fileId (TEXT) - ImageKit file ID for deletion
 - size (INTEGER) - Size in bytes
 - order (INTEGER) - Position in gallery
+- category (ENUM) - 'memory' | 'event'
 - createdAt (TIMESTAMPTZ) - Upload date
 ```
 
 ### Storage
 
-**Bucket `photos`** (public):
+**ImageKit CDN**:
 
 - Structure: `memories/{uuid}.{ext}` for memories, `event/{uuid}.{ext}` for event photos
-- RLS policies configured for controlled access
-- Automatic image optimization by Supabase
+- Automatic image optimization and CDN delivery
+- Blur placeholders generated with plaiceholder
+- File operations via ImageKit SDK
 
-### Row Level Security (RLS)
+### Authentication & Authorization
 
+- **JWT**: Stateless authentication with httpOnly cookies
+- **Middleware**: Validates JWT tokens and checks user existence
 - **messages**: Public read (only 'approved'), authenticated write for admin
 - **photos**: Public read, admin-only authenticated write
-- **storage.objects**: Admin-only upload, public read from photos bucket
 
 ## Environment Variables
 
 ### Development (.env.local)
 
 ```bash
-NEXT_PUBLIC_SUPABASE_URL=your_project_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+# Database
+DATABASE_URL=postgresql://username:password@ep-example.us-east-2.aws.neon.tech/dbname?sslmode=require
+
+# Authentication
+JWT_SECRET=your-super-secure-jwt-secret-key-at-least-32-chars
+
+# ImageKit
+IMAGEKIT_PRIVATE_KEY=private_your-private-key-here
+NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY=public_your-public-key-here
+NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT=https://ik.imagekit.io/your-id
 
 EMAIL_HOST=smtp.gmail.com
 EMAIL_PORT=587
@@ -133,28 +158,27 @@ pnpm add <package>    # Add new dependency
 
 ### Database Setup
 
-```sql
--- Execute in Supabase SQL Editor:
--- 1. docs/setup-database.sql (create tables)
--- 2. docs/setup-storage.sql (configure bucket)
--- 3. docs/seed-messages.sql (sample data - optional)
-```
-
-### Backup Commands
-
 ```bash
-# Complete backup via Supabase CLI
-supabase db dump --file backup.sql
-supabase storage cp --recursive supabase://photos ./backup-photos/
+# Push schema to Neon database
+pnpm db:push
+
+# Generate Drizzle migrations
+pnpm db:generate
+
+# View database with Drizzle Studio
+pnpm db:studio
+
+# Seed database with sample data
+pnpm db:seed
 ```
 
 ## Integrations and APIs
 
-### Supabase Client Configuration
+### Integration Configuration
 
-- **Auth**: Email/password login for admin
-- **Database**: TypeScript-typed queries
-- **Storage**: Optimized image upload/download
+- **Auth**: JWT tokens with bcrypt password hashing
+- **Database**: Drizzle ORM with TypeScript-typed queries
+- **Storage**: ImageKit CDN with automatic optimizations
 
 ### Email System
 
@@ -175,7 +199,7 @@ supabase storage cp --recursive supabase://photos ./backup-photos/
 
 - Next.js Image component with lazy loading
 - Blur placeholders for better UX
-- Automatic WebP formats via Supabase Storage
+- Automatic WebP formats via ImageKit CDN
 - Responsive images with srcSet
 
 ### Bundle
@@ -188,13 +212,13 @@ supabase storage cp --recursive supabase://photos ./backup-photos/
 
 - Optimized indexes for frequent queries
 - Efficient RLS policies
-- Connection pooling via Supabase
+- Connection pooling via Neon
 
 ## Security
 
 ### Authentication
 
-- Supabase Auth with JWT tokens
+- JWT authentication with httpOnly cookies
 - Automatic session management
 - Middleware for protected routes (/admin)
 

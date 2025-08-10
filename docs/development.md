@@ -8,7 +8,9 @@ This guide covers the development environment setup for the Golden Anniversary w
 
 - Node.js 22+
 - pnpm
-- Supabase account
+- Neon database account
+- ImageKit account
+- 1Password CLI (recommended for environment variables)
 - Code editor (Cursor recommended)
 
 ## Initial Setup
@@ -23,21 +25,25 @@ pnpm install
 
 ### 2. Environment Variables
 
-#### Option 1: .env.local File
-
-Create the `.env.local` file:
+Create the `.env.local` file based on `.env.example`:
 
 ```bash
-# Supabase
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+# JWT Secret for authentication
+JWT_SECRET=your-super-secure-jwt-secret-key-at-least-32-chars
 
-# Admin
-ADMIN_EMAIL=your_admin_email@gmail.com
+# Neon Database
+DATABASE_URL=postgresql://username:password@ep-example.us-east-2.aws.neon.tech/dbname?sslmode=require
+
+# ImageKit Configuration
+IMAGEKIT_PRIVATE_KEY=private_your-private-key-here
+NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY=public_your-public-key-here
+NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT=https://ik.imagekit.io/your-id
+
+# Optional: Skip environment validation during build
+SKIP_ENV_VALIDATION=true
 ```
 
-#### Option 2: 1Password CLI (Recommended)
+#### Using 1Password CLI (Recommended)
 
 ```bash
 # Install 1Password CLI
@@ -46,17 +52,32 @@ brew install 1password-cli
 # Authenticate
 op signin
 
-# Run with 1Password variables
-op run --env-file=.env.local -- pnpm dev
+# All commands will run with 1Password variables `op run --env-file=.env.local --`
+pnpm dev
+pnpm build
+pnpm db:push
 ```
 
 ### 3. Database Setup
 
-Execute in Supabase SQL Editor:
+The project uses Drizzle ORM with Neon PostgreSQL:
 
-- `docs/setup-database.sql` - Create tables (messages and photos)
-- `docs/setup-storage.sql` - Configure photo bucket
-- `docs/seed-messages.sql` - Sample data (optional)
+```bash
+# Push database schema to Neon
+pnpm db:push
+
+# Seed the database with sample data (optional)
+pnpm db:seed
+
+# Open Drizzle Studio to manage database
+pnpm db:studio
+```
+
+The database includes:
+
+- **users**: Admin authentication with bcrypt hashed passwords
+- **messages**: Guestbook messages with moderation status
+- **photos**: Photo metadata with ImageKit file IDs
 
 ## Development Scripts
 
@@ -66,6 +87,12 @@ pnpm dev          # Start development server
 pnpm build        # Build for development
 pnpm build:prod   # Build for production
 pnpm start        # Start production server
+
+# Database
+pnpm db:push      # Push schema changes
+pnpm db:studio    # Open database UI
+pnpm db:generate  # Generate migrations
+pnpm db:seed      # Seed database with sample data
 
 # Code Quality
 pnpm lint         # Format and lint code
@@ -141,66 +168,45 @@ pnpm build
 - **Type Checking**: `pnpm type-check`
 - **Linting**: `pnpm lint`
 
-## Supabase Configuration
+## Technology Configuration
 
-### 1. Local Project
+### 1. Neon Database
 
-1. Create a project at [Supabase](https://supabase.com)
-2. Configure environment variables
-3. Execute SQL scripts
+1. Create a project at [Neon](https://neon.tech)
+2. Copy the connection string to `DATABASE_URL`
+3. Use Drizzle to manage schema and migrations
 
-### 2. Storage
+### 2. ImageKit Storage
 
-1. Create `photos` bucket
-2. Configure as public
-3. Test image uploads
+1. Create account at [ImageKit](https://imagekit.io)
+2. Get your URL endpoint, public key, and private key
+3. Configure environment variables
+4. Images are automatically optimized and served via CDN
 
-### 3. Authentication
+### 3. JWT Authentication
 
-1. Enable email authentication
-2. Configure email templates
-3. Test admin login
+- Stateless authentication using JSON Web Tokens
+- Passwords hashed with bcrypt
+- Admin user created via temporary script
+- Middleware validates JWT and user existence
+- Sessions stored in httpOnly cookies
 
-### 4. Security Settings
+### 4. Security
 
-#### Row Level Security (RLS)
+#### Application-Level Security
 
-RLS policies are applied automatically by SQL scripts:
+- **JWT tokens**: Signed with secure secret, httpOnly cookies
+- **Password hashing**: bcrypt with salt rounds
+- **Database access**: Controlled at application level via Drizzle
+- **File uploads**: Validated size, format, and processed via ImageKit
+- **Environment variables**: Validated with Zod schemas
 
-- **messages table**: Public reads only approved messages, admin has full access
-- **photos table**: Public reads all photos, admin has full access
-- **photos storage**: Public reads photos, admin has full CRUD
+#### Database Security
 
-#### Secure Authentication
-
-Configure in Supabase dashboard (Authentication > Settings):
-
-**Security:**
-
-1. Enable "Breach password protection" to prevent leaked passwords
-2. Configure strong password policies if needed
-
-**Multi-Factor Authentication:**
-
-1. Enable TOTP (Time-based One-Time Password)
-2. Configure backup codes
-3. Allow multiple factors per user
-
-#### Security Verification
-
-Execute in SQL Editor to verify RLS is working:
-
-```sql
--- Check if RLS is enabled
-SELECT schemaname, tablename, rowsecurity
-FROM pg_tables
-WHERE tablename IN ('messages', 'photos');
-
--- Check created policies
-SELECT tablename, policyname, cmd, qual
-FROM pg_policies
-WHERE tablename IN ('messages', 'photos');
-```
+- **SSL connections**: Required for Neon database
+- **Connection pooling**: Handled by Neon automatically
+- **Backup**: Automatic backups via Neon
+- **Branching**: Use Neon branches for safe schema changes
 
 ## Troubleshooting
 
@@ -216,9 +222,16 @@ WHERE tablename IN ('messages', 'photos');
    - Run `pnpm type-check`
    - Check imports and types
 
-3. **Supabase Connection Error**
-   - Check URL and keys
-   - Test in SQL Editor
+3. **Database Connection Error**
+
+   - Check Neon DATABASE_URL format
+   - Verify SSL connection settings
+   - Test with Drizzle Studio
+
+4. **ImageKit Upload Issues**
+   - Check ImageKit keys and endpoint
+   - Verify file size and format limits
+   - Check Next.js image configuration
 
 ### Useful Commands
 
@@ -294,5 +307,6 @@ queries: {
 
 - Temporary API failures
 - Network instability
-- Supabase rate limiting
+- Neon connection issues
+- ImageKit rate limiting
 - Temporary server overload
