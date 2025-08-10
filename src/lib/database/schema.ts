@@ -23,6 +23,7 @@ export const photos = pgTable('photos', {
   filename: text('filename').notNull(),
   title: text('title'),
   url: text('url').notNull(),
+  fileId: text('file_id').notNull(),
   size: integer('size').notNull(),
   order: integer('order').notNull().default(0),
   category: photoCategoryEnum('category').notNull().default('memory'),

@@ -1,30 +1,22 @@
 'use server'
 
+import { asc, eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
-import { createClient } from '~/lib/supabase/server'
+import { db } from '~/lib/database/client'
+import { photos } from '~/lib/database/schema'
+import { deleteImage, uploadImage } from '~/lib/images/client'
 import type { Category, CreatePhotoData, Photo } from '~/types/photos'
 
 export async function fetchPhotos(category?: Category): Promise<Photo[]> {
   try {
-    const supabase = await createClient()
-    let query = supabase.from('photos').select('*')
+    const whereCondition = category ? eq(photos.category, category) : undefined
 
-    if (category) {
-      query = query.eq('category', category)
-    }
+    const photosList = await db.select().from(photos).where(whereCondition).orderBy(asc(photos.order))
 
-    const { data: photosList, error } = await query.order('order', { ascending: true })
-
-    if (error) {
-      throw new Error(error.message)
-    }
-
-    return (
-      photosList?.map((photo) => ({
-        ...photo,
-        createdAt: new Date(photo.createdAt),
-      })) || []
-    )
+    return photosList.map((photo) => ({
+      ...photo,
+      createdAt: new Date(photo.createdAt),
+    }))
   } catch (error) {
     throw new Error(`Failed to fetch photos: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
@@ -36,43 +28,25 @@ export async function fetchMemories(): Promise<Photo[]> {
 
 export async function uploadPhoto(file: File): Promise<Photo> {
   try {
-    const supabase = await createClient()
-
-    const filename = `${crypto.randomUUID()}.jpg`
-    const filePath = `memories/${filename}`
-
-    const { data: uploadData, error: uploadError } = await supabase.storage.from('photos').upload(filePath, file, {
-      cacheControl: '3600',
-      upsert: false,
-    })
-
-    if (uploadError) {
-      throw new Error(`Upload failed: ${uploadError.message}`)
-    }
-
-    const { data: urlData } = supabase.storage.from('photos').getPublicUrl(uploadData.path)
+    const uploadResult = await uploadImage(file, 'memories')
 
     const photoData: CreatePhotoData = {
-      filename,
+      filename: uploadResult.name,
       title: file.name,
-      url: urlData.publicUrl,
-      size: file.size,
+      url: uploadResult.url,
+      fileId: uploadResult.fileId,
+      size: uploadResult.size,
       category: 'memory',
     }
 
-    const { data: newPhoto, error: dbError } = await supabase.from('photos').insert(photoData).select().single()
-
-    if (dbError) {
-      await supabase.storage.from('photos').remove([uploadData.path])
-      throw new Error(`Database error: ${dbError.message}`)
-    }
+    const [newPhoto] = await db.insert(photos).values(photoData).returning()
 
     if (!newPhoto) {
-      await supabase.storage.from('photos').remove([uploadData.path])
+      await deleteImage(uploadResult.fileId)
       throw new Error('Failed to save photo metadata')
     }
 
-    revalidatePath('/admin')
+    revalidatePath('/admin?tab=memories')
     return {
       ...newPhoto,
       createdAt: new Date(newPhoto.createdAt),
@@ -84,24 +58,13 @@ export async function uploadPhoto(file: File): Promise<Photo> {
 
 export async function updatePhoto(id: string, title: string): Promise<Photo> {
   try {
-    const supabase = await createClient()
-
-    const { data: updatedPhoto, error: updateError } = await supabase
-      .from('photos')
-      .update({ title })
-      .eq('id', id)
-      .select()
-      .single()
-
-    if (updateError) {
-      throw new Error(`Failed to update photo: ${updateError.message}`)
-    }
+    const [updatedPhoto] = await db.update(photos).set({ title }).where(eq(photos.id, id)).returning()
 
     if (!updatedPhoto) {
       throw new Error('Photo not found')
     }
 
-    revalidatePath('/admin')
+    revalidatePath('/admin?tab=memories')
     return {
       ...updatedPhoto,
       createdAt: new Date(updatedPhoto.createdAt),
@@ -113,23 +76,11 @@ export async function updatePhoto(id: string, title: string): Promise<Photo> {
 
 export async function reorderPhotos(photoIds: string[]): Promise<void> {
   try {
-    const supabase = await createClient()
-
-    const updatePromises = photoIds.map((id, index) =>
-      supabase
-        .from('photos')
-        .update({ order: index })
-        .eq('id', id)
-        .then(({ error }) => {
-          if (error) {
-            throw new Error(`Failed to update photo ${id}: ${error.message}`)
-          }
-        }),
-    )
+    const updatePromises = photoIds.map((id, index) => db.update(photos).set({ order: index }).where(eq(photos.id, id)))
 
     await Promise.all(updatePromises)
 
-    revalidatePath('/admin')
+    revalidatePath('/admin?tab=memories')
   } catch (error) {
     throw new Error(`Failed to reorder photos: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
@@ -137,27 +88,17 @@ export async function reorderPhotos(photoIds: string[]): Promise<void> {
 
 export async function deletePhoto(id: string): Promise<string> {
   try {
-    const supabase = await createClient()
+    const [photo] = await db.select({ fileId: photos.fileId }).from(photos).where(eq(photos.id, id))
 
-    const { data: photo, error: fetchError } = await supabase.from('photos').select('filename').eq('id', id).single()
-
-    if (fetchError || !photo) {
+    if (!photo) {
       throw new Error('Photo not found')
     }
 
-    const { error: storageError } = await supabase.storage.from('photos').remove([`memories/${photo.filename}`])
+    await deleteImage(photo.fileId)
 
-    if (storageError) {
-      throw new Error(`Failed to delete file: ${storageError.message}`)
-    }
+    await db.delete(photos).where(eq(photos.id, id))
 
-    const { error: dbError } = await supabase.from('photos').delete().eq('id', id)
-
-    if (dbError) {
-      throw new Error(`Failed to delete photo record: ${dbError.message}`)
-    }
-
-    revalidatePath('/admin')
+    revalidatePath('/admin?tab=memories')
     return id
   } catch (error) {
     throw new Error(`Failed to delete photo: ${error instanceof Error ? error.message : 'Unknown error'}`)
