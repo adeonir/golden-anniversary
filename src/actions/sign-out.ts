@@ -1,16 +1,10 @@
 'use server'
 
 import { redirect } from 'next/navigation'
-import { createClient } from '~/lib/supabase/server'
+import { clearCookie } from '~/lib/auth/jwt'
 
 export async function signOut() {
-  const supabase = await createClient()
+  await clearCookie()
 
-  const { error } = await supabase.auth.signOut()
-
-  if (error) {
-    throw new Error(error.message)
-  }
-
-  redirect('/login')
+  redirect('/sign-in')
 }

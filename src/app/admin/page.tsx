@@ -1,18 +1,8 @@
-import { redirect } from 'next/navigation'
 import { Dashboard } from '~/components/app/admin/dashboard'
-import { env } from '~/env'
-import { createClient } from '~/lib/supabase/server'
+import { requireAuth } from '~/lib/auth/utils'
 
 export default async function AdminPage() {
-  const supabase = await createClient()
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user || user.email !== env.ADMIN_EMAIL) {
-    redirect('/login')
-  }
+  await requireAuth()
 
   return <Dashboard />
 }
