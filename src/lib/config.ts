@@ -2,7 +2,7 @@ export const config = {
   admin: {
     tabs: {
       messages: 'messages',
-      photos: 'photos',
+      memories: 'memories',
     } as const,
   },
   pagination: {
@@ -14,11 +14,12 @@ export const config = {
     targetDate: '2025-11-08T18:30:00',
     celebrationYear: 2025,
   },
-  storage: {
-    bucketName: 'photos',
+  images: {
     maxFileSize: 1_048_576, // 1MB
-    allowedTypes: ['image/jpeg'],
-    maxDimension: 1000, // pixels
+    allowedTypes: ['image/jpeg', 'image/png', 'image/webp'],
+    maxDimension: 2048, // pixels
+    quality: 80, // default quality
+    folder: 'memories', // default upload folder
   },
   animation: {
     easing: {

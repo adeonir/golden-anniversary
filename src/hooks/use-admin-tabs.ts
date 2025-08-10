@@ -5,7 +5,7 @@ import { type AdminTabValue, config } from '~/lib/config'
 export function useAdminTabs() {
   const [activeTab, setActiveTab] = useQueryState<AdminTabValue>('tab', {
     parse: (value): AdminTabValue =>
-      value === config.admin.tabs.photos ? config.admin.tabs.photos : config.admin.tabs.messages,
+      value === config.admin.tabs.memories ? config.admin.tabs.memories : config.admin.tabs.messages,
     serialize: (value) => value,
   })
 
