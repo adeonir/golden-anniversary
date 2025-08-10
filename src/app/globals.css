@@ -54,7 +54,7 @@
     scrollbar-color: var(--scrollbar-color, var(--gold-500)) transparent;
   }
   body {
-    @apply bg-white text-zinc-900;
+    @apply bg-white text-zinc-900 overscroll-x-auto;
   }
 }
 

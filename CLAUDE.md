@@ -7,7 +7,9 @@ Commemorative website for Iria & Ari's 50th wedding anniversary.
 
 - **Framework**: Next.js (App Router) + React + TypeScript
 - **Styling**: Tailwind CSS + Shadcn/ui
-- **Database**: Supabase PostgreSQL + Auth + Storage
+- **Database**: Neon PostgreSQL + Drizzle ORM
+- **Auth**: JWT + bcrypt (stateless, httpOnly cookies)
+- **Storage**: ImageKit CDN (with automatic optimizations)
 - **Email**: Nodemailer + Vercel Cron Jobs
 - **Deployment**: Vercel
 - **Code Quality**: Ultracite (BiomeJS)
@@ -28,6 +30,10 @@ This project follows MVVM architecture:
 - **View** (`src/components/`) - User interface components
   - `app/` - Application-specific sections
   - `ui/` - Reusable UI components (Shadcn/ui)
+- **Infrastructure** (`src/lib/`) - Database, auth, and storage utilities
+  - `database/` - Neon connection + Drizzle schemas
+  - `auth/` - JWT tokens + authentication utilities
+  - `images/` - ImageKit client + blur placeholders
 
 ## Project-Specific Rules
 
@@ -39,15 +45,40 @@ This project follows MVVM architecture:
 
 ### Database & API
 
-- Use Supabase Row Level Security (RLS) for all tables
+- Use Drizzle ORM for type-safe database operations
+- Database schemas: `users`, `messages`, `photos`
+- Use JWT authentication with bcrypt for password hashing
+- Admin credentials stored in `users` table (bcrypt hashed)
+- JWT stateless authentication with httpOnly cookies
+- Middleware validates JWT and checks user existence
+- Authorization handled at application level (no RLS)
 - Environment variables must be validated using `@t3-oss/env-nextjs`
 - All API routes require proper error handling and type safety
 
 ### Image Handling
 
 - Always use Next.js Image component with optimization
-- Implement blur placeholders for better UX
+- Use ImageKit for storage, CDN delivery and automatic optimizations
+- Automatic blur placeholders via plaiceholder + ImageKit
+- Upload/delete operations via ImageKit SDK
 - Use lazy loading for gallery images
+
+## Environment Variables
+
+- `DATABASE_URL` - Neon PostgreSQL connection string
+- `JWT_SECRET` - Secret for JWT token signing (min. 32 chars)
+- `IMAGEKIT_PUBLIC_KEY` - ImageKit public key
+- `IMAGEKIT_PRIVATE_KEY` - ImageKit private key
+- `IMAGEKIT_URL_ENDPOINT` - ImageKit URL endpoint
+
+## Key Architecture Points
+
+- Admin user managed via database (created with seed script)
+- JWT authentication with httpOnly cookies
+- Middleware validates JWT and checks user existence
+- Database operations via Drizzle ORM
+- Image storage and CDN via ImageKit
+- Authorization handled at application level
 
 ## Core Features
 
@@ -58,7 +89,7 @@ This project follows MVVM architecture:
 5. **Family Messages** - Special section for children/grandchildren
 6. **Timeline** - Important milestones in the couple's life
 7. **Footer** - Inspirational quote and credits
-8. **Admin Panel** - Moderation via Supabase Auth
+8. **Admin Panel** - Moderation via JWT authentication
 
 ## Git & PR Conventions
 
@@ -71,6 +102,13 @@ Follow **Conventional Commits** format:
 - `docs: description` - Documentation
 - `chore: description` - Maintenance tasks
 - Don't use scope on commits
+
+**Important**: Commit messages should describe **what was implemented**, not the process or decisions made:
+
+- ✅ Good: `feat: setup Neon database with Drizzle ORM`
+- ❌ Bad: `feat: implement Phase 2 of migration with 1Password integration`
+- Focus on the actual changes in the codebase
+- Avoid mentioning phases, tools used for development, or implementation details
 
 ### Pull Request Format
 

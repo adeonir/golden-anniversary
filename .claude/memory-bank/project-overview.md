@@ -55,9 +55,9 @@ Inspirational quote, credits, and future links.
 
 ### 8. Admin Panel
 
-- Authentication via Supabase Auth
+- Authentication via JWT tokens (stateless)
 - Approve/reject guestbook messages
-- Upload and manage gallery photos
+- Upload and manage gallery photos via ImageKit
 - Basic usage statistics
 
 ## Critical Flows
@@ -72,10 +72,11 @@ Inspirational quote, credits, and future links.
 ### Gallery Flow
 
 1. Admin uploads photos via panel
-2. Images processed and saved to Supabase Storage
-3. Order defined by 'order' field
-4. Lazy loading implemented for performance
-5. Smooth navigation between photos in carousel
+2. Images processed and saved to ImageKit CDN
+3. Automatic blur placeholders generated
+4. Order defined by 'order' field in database
+5. Lazy loading implemented for performance
+6. Smooth navigation between photos in carousel
 
 ## Performance Targets
 

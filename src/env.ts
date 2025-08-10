@@ -3,18 +3,20 @@ import { z } from 'zod'
 
 export const env = createEnv({
   server: {
-    SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
-    ADMIN_EMAIL: z.string().email(),
+    JWT_SECRET: z.string().min(32),
+    DATABASE_URL: z.url(),
+    IMAGEKIT_PRIVATE_KEY: z.string().min(1),
   },
   client: {
-    NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
+    NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY: z.string().min(1),
+    NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT: z.url(),
   },
   runtimeEnv: {
-    SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
-    ADMIN_EMAIL: process.env.ADMIN_EMAIL,
-    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    JWT_SECRET: process.env.JWT_SECRET,
+    DATABASE_URL: process.env.DATABASE_URL,
+    IMAGEKIT_PRIVATE_KEY: process.env.IMAGEKIT_PRIVATE_KEY,
+    NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY,
+    NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 })

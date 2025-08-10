@@ -30,9 +30,9 @@ export function Dashboard() {
               <MessageSquare className="mr-2 size-4" />
               Mensagens
             </TabsTrigger>
-            <TabsTrigger value={config.admin.tabs.photos}>
+            <TabsTrigger value={config.admin.tabs.memories}>
               <Images className="mr-2 size-4" />
-              Galeria
+              Memórias
             </TabsTrigger>
           </TabsList>
 
@@ -40,7 +40,7 @@ export function Dashboard() {
             <MessagesTab />
           </TabsContent>
 
-          <TabsContent value={config.admin.tabs.photos}>
+          <TabsContent value={config.admin.tabs.memories}>
             <MemoriesTab />
           </TabsContent>
         </Tabs>

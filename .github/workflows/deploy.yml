@@ -11,16 +11,15 @@ concurrency:
 
 env:
   NODE_VERSION: 22.17.0
-  PNPM_VERSION: 10.13.1
+  PNPM_VERSION: 10.14.0
   VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-  NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-  SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-  DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-  SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
-  ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+  JWT_SECRET: ${{ secrets.JWT_SECRET }}
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  IMAGEKIT_PRIVATE_KEY: ${{ secrets.IMAGEKIT_PRIVATE_KEY }}
+  NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY: ${{ secrets.IMAGEKIT_PUBLIC_KEY }}
+  NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT: ${{ secrets.IMAGEKIT_URL_ENDPOINT }}
 
 jobs:
   lint:
@@ -39,7 +38,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -64,4 +63,4 @@ jobs:
           vercel-token: ${{ env.VERCEL_TOKEN }}
           vercel-org-id: ${{ env.VERCEL_ORG_ID }}
           vercel-project-id: ${{ env.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
+          vercel-args: "--prod"

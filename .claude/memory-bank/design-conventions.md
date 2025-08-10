@@ -215,7 +215,7 @@ Closes DEV-XX
 
 ### Security & Environment
 
-- ✅ RLS policies enabled on all Supabase tables
+- ✅ JWT authentication with bcrypt password hashing
 - ✅ Environment variables validated with `@t3-oss/env-nextjs`
 - ❌ NEVER expose secrets on client-side
 - ✅ Input sanitization before database saves
