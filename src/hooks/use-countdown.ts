@@ -37,7 +37,7 @@ export function useCountdown(targetDate: Date): CountdownTime {
   return timeLeft
 }
 
-function calculateTimeLeft(targetDate: Date): CountdownTime {
+export function calculateTimeLeft(targetDate: Date): CountdownTime {
   const now = new Date()
 
   if (isBefore(targetDate, now)) {
