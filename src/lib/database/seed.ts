@@ -1,6 +1,6 @@
 /** biome-ignore-all lint/suspicious/noConsole: needed for seed script feedback */
 import { db } from './client'
-import { messages, photos } from './schema'
+import { messages } from './schema'
 
 const sampleMessages = [
   // Approved messages (12)
@@ -100,55 +100,6 @@ const sampleMessages = [
   },
 ]
 
-const samplePhotos = [
-  // Sample photos - these will be replaced with real photos via ImageKit later
-  {
-    filename: 'sample1.jpg',
-    title: 'Casamento 1975',
-    url: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800',
-    fileId: 'placeholder-file-id-1',
-    size: 456_789,
-    order: 1,
-    category: 'memory' as const,
-  },
-  {
-    filename: 'sample2.jpg',
-    title: 'Família reunida',
-    url: 'https://images.unsplash.com/photo-1606889462584-9b08c2b96e5e?w=800',
-    fileId: 'placeholder-file-id-2',
-    size: 567_890,
-    order: 2,
-    category: 'memory' as const,
-  },
-  {
-    filename: 'sample3.jpg',
-    title: 'Aniversário de 25 anos',
-    url: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800',
-    fileId: 'placeholder-file-id-3',
-    size: 678_901,
-    order: 3,
-    category: 'event' as const,
-  },
-  {
-    filename: 'sample4.jpg',
-    title: 'Viagem especial',
-    url: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800',
-    fileId: 'placeholder-file-id-4',
-    size: 789_012,
-    order: 4,
-    category: 'memory' as const,
-  },
-  {
-    filename: 'sample5.jpg',
-    title: 'Momento em família',
-    url: 'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=800',
-    fileId: 'placeholder-file-id-5',
-    size: 890_123,
-    order: 5,
-    category: 'memory' as const,
-  },
-]
-
 export async function seedDatabase() {
   try {
     console.log('Starting database seed...')
@@ -158,22 +109,13 @@ export async function seedDatabase() {
     await db.insert(messages).values(sampleMessages)
     console.log(`Inserted ${sampleMessages.length} messages`)
 
-    // Insert photos
-    console.log('Inserting sample photos...')
-    await db.insert(photos).values(samplePhotos)
-
-    console.log(`Inserted ${samplePhotos.length} photos`)
-
     console.log('Database seeded successfully!')
 
     // Show status summary
     const messageStats = await db.select().from(messages)
 
-    const photoStats = await db.select().from(photos)
-
     console.log('Seed summary:')
     console.log(`- Messages: ${messageStats.length}`)
-    console.log(`- Photos: ${photoStats.length}`)
   } catch (error) {
     console.error('Error seeding database:', error)
     throw error

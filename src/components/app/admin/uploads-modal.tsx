@@ -186,20 +186,19 @@ export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
         {files.length > 0 && (
           <DialogFooter>
             <Button intent="admin" onClick={handleClose} variant="outline">
-              Cancelar
+              {files.every((f) => f.status === 'success' || f.status === 'error') ? 'Fechar' : 'Cancelar'}
             </Button>
-            <Button
-              className="w-32"
-              disabled={
-                files.every((f) => f.status !== 'pending') &&
-                !files.every((f) => f.status === 'success' || f.status === 'error')
-              }
-              intent="admin"
-              loading={uploadMutation.isPending}
-              onClick={handleUpload}
-            >
-              {files.every((f) => f.status === 'success' || f.status === 'error') ? 'Fechar' : 'Fazer Upload'}
-            </Button>
+            {!files.every((f) => f.status === 'success' || f.status === 'error') && (
+              <Button
+                className="w-32"
+                disabled={files.every((f) => f.status !== 'pending')}
+                intent="admin"
+                loading={uploadMutation.isPending}
+                onClick={handleUpload}
+              >
+                Fazer Upload
+              </Button>
+            )}
           </DialogFooter>
         )}
       </DialogContent>
