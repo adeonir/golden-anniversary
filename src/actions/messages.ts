@@ -4,7 +4,9 @@ import { count, eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { db } from '~/lib/database/client'
 import { messages } from '~/lib/database/schema'
-import type { CreateMessageData, Message } from '~/types/messages'
+import type { CreateMessageData } from '~/schemas/messages'
+import { createMessageSchema } from '~/schemas/messages'
+import type { Message } from '~/types/messages'
 
 export async function fetchMessages(
   page = 1,
@@ -38,7 +40,9 @@ export async function fetchMessages(
 
 export async function createMessage(data: CreateMessageData): Promise<Message> {
   try {
-    const [newMessage] = await db.insert(messages).values(data).returning()
+    const validatedData = createMessageSchema.parse(data)
+
+    const [newMessage] = await db.insert(messages).values(validatedData).returning()
 
     if (!newMessage) {
       throw new Error('Failed to create message')

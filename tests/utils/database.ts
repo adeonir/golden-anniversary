@@ -92,3 +92,20 @@ export async function createTestMessage(messageData: {
 
   return message
 }
+
+/**
+ * Create test photo using real database operations
+ */
+export async function createTestPhoto(photoData: {
+  filename: string
+  title?: string
+  url: string
+  fileId: string
+  size: number
+  category: 'memory' | 'event'
+  order?: number
+}) {
+  const [photo] = await testDb.insert(schema.photos).values(photoData).returning()
+
+  return photo
+}

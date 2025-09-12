@@ -11,6 +11,10 @@ export const mockUploadResult = {
   size: 1_024_000,
   width: 1920,
   height: 1080,
+  // Fields used by client normalization
+  filePath: '/memories/test-image.jpg',
+  thumbnailUrl: 'https://mock-imagekit.com/test-image.jpg',
+  fileType: 'image',
 }
 
 // Mock ImageKit client methods
