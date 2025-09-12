@@ -20,6 +20,8 @@ Commemorative website for Iria & Ari's 50th wedding anniversary.
 - `pnpm build` - Build for production
 - `pnpm lint` - Format and lint code
 - `pnpm type-check` - TypeScript type checking
+- `pnpm test` - Run tests
+- `pnpm test:watch` - Run tests in watch mode
 
 ## Architecture Pattern
 
@@ -34,6 +36,9 @@ This project follows MVVM architecture:
   - `database/` - Neon connection + Drizzle schemas
   - `auth/` - JWT tokens + authentication utilities
   - `images/` - ImageKit client + blur placeholders
+- **Testing** (`tests/`) - Test infrastructure and utilities
+  - `mocks/` - Mock implementations (database, ImageKit, Next.js)
+  - `utils/` - Test utilities and helpers
 
 ## Project-Specific Rules
 
@@ -71,6 +76,16 @@ This project follows MVVM architecture:
 - `IMAGEKIT_PRIVATE_KEY` - ImageKit private key
 - `IMAGEKIT_URL_ENDPOINT` - ImageKit URL endpoint
 
+## Testing Infrastructure
+
+- **Framework**: Vitest + React Testing Library + jsdom
+- **Database Testing**: PGlite (in-memory PostgreSQL) following Drizzle ORM docs
+- **Test Organization**:
+  - `tests/mocks/` - Mock implementations (database, ImageKit, Next.js)
+  - `tests/utils/` - Database utilities and test helpers
+- **Setup**: Comprehensive environment variable mocking
+- **Status**: 83 unit tests passing, integration test infrastructure ready
+
 ## Key Architecture Points
 
 - Admin user managed via database (created with seed script)
@@ -95,24 +110,59 @@ This project follows MVVM architecture:
 
 ### Commit Messages
 
-Follow **Conventional Commits** format:
+#### Commit Message Structure
 
-- `feat: description` - New features
-- `fix: description` - Bug fixes
-- `docs: description` - Documentation
-- `chore: description` - Maintenance tasks
-- Don't use scope on commits
+- **Commit message**: concise and descriptive, focusing on WHAT functionality is being added/changed
+- **Commit body**: concise explanation of HOW the changes were implemented (optional); prefer 3–4 list items max
 
-**Important**: Commit messages should describe **what was implemented**, not the process or decisions made:
+#### Message Format
 
-- ✅ Good: `feat: setup Neon database with Drizzle ORM`
-- ❌ Bad: `feat: implement Phase 2 of migration with 1Password integration`
-- Focus on the actual changes in the codebase
-- Avoid mentioning phases, tools used for development, or implementation details
+- Use Conventional Commits types (no scope in this project)
+- Be specific about functionality, not generic
+- Focus on WHAT is added/fixed, not HOW
+- For dependencies, specify the purpose
+- For fixes, describe the problem being solved
+- Use imperative mood (e.g., "add", "fix", "implement")
+- Keep it concise; avoid details visible in the diff
+- Do not describe changes not in the staged area
+- Do not mention future tasks, architectural decisions, or reasoning
+- Describe what is being committed, not what was planned or considered
+
+#### Body Format
+
+- Optional when the message is clear enough
+- Use list items for multiple changes (3–4 max)
+- Focus on HOW the changes were implemented
+- Keep items direct and concise
+- Do not list files or packages
+- Do not mention development decisions
+- Do not reference phases or temporary task lists
+
+Examples:
+
+- Good:
+
+```text
+test: expand coverage for server actions and middleware
+
+- Add assertions for revalidatePath in critical flows
+- Polyfill File.arrayBuffer for jsdom stability
+- Refine mocks and DB utilities to stabilize integration tests
+```
+
+- Bad:
+
+```text
+test: work on tests
+
+- Update src/actions/messages.spec.ts and src/actions/photos.spec.ts
+- Phase 2 of tests; will add more later
+- Decided to not test admin hooks for now
+```
 
 ### Pull Request Format
 
-**Title**: `type(scope): concise description`
+**Title**: `type(scope): a concise description about the feature/change`
 
 **Body template**:
 
@@ -143,7 +193,7 @@ Closes DEV-XX
 3. Follow the rules below strictly
 4. Validate accessibility requirements
 
-## important-instruction-reminders
+## Important Instruction Reminders
 
 Do what has been asked; nothing more, nothing less.
 NEVER create files unless they're absolutely necessary for achieving your goal.

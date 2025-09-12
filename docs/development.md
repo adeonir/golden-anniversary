@@ -168,6 +168,33 @@ pnpm build
 - **Type Checking**: `pnpm type-check`
 - **Linting**: `pnpm lint`
 
+## Testing
+
+- Scope
+
+  - Cover: server actions (messages/photos), auth/JWT and middleware, image workflows (client/blur), TanStack Query wrappers
+  - Exclude: UI hooks (state/UX)
+
+- Organization
+
+  - Co-locate specs in `src/**/*.spec.ts(x)`
+  - Use `tests/` only for mocks and utilities
+
+- Infrastructure
+
+  - In-memory PGlite database; reset between tests
+  - Isolated environment variables for tests
+  - Validate cache invalidation via `revalidatePath` in critical flows
+  - Polyfill `File.arrayBuffer` in jsdom when required
+
+- Commands
+
+  - `pnpm test`
+  - `pnpm test:watch`
+
+- Conventions
+  - Prefer domain assertions over implementation details
+
 ## Technology Configuration
 
 ### 1. Neon Database
