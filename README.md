@@ -27,8 +27,10 @@ This project was developed to celebrate a special milestone: 50 years of marriag
 - **Database**: Neon PostgreSQL + Drizzle ORM
 - **Auth**: JWT + bcrypt (stateless, httpOnly cookies)
 - **Storage**: ImageKit CDN (with automatic optimizations)
+- **Analytics**: PostHog
 - **Email**: Nodemailer + Vercel Cron Jobs
 - **Deployment**: Vercel
+- **Testing**: Vitest + React Testing Library + PGlite
 - **Code Quality**: Ultracite (BiomeJS)
 
 ## Quick Start
@@ -62,34 +64,37 @@ src/
 └── types/           # TypeScript definitions
 ```
 
-## Technical Decisions
-
-### Infrastructure Evolution
-
-The project initially started with Supabase but was later migrated to Neon + JWT + ImageKit. The main reason was practical: Supabase's free tier limitations didn't align well with the expected usage patterns.
-
-The migration involved:
-
-- Moving from Supabase Auth to JWT-based authentication with httpOnly cookies
-- Transitioning the database from Supabase to Neon PostgreSQL with Drizzle ORM
-- Replacing Supabase Storage with ImageKit for better CDN capabilities
-- Keeping the same MVVM architecture to minimize refactoring
-
-The current stack offers more generous free tier limits and better suits the project's needs - particularly for image delivery and database operations.
-
 ## Documentation
 
-### Operational Guides
+For detailed setup instructions, start with the [Development Guide](docs/development.md).
 
-- [Development](docs/development.md) - Environment setup, security, troubleshooting
-- [Deployment](docs/deployment.md) - Vercel deployment, monitoring
+### Docs
 
-### Design System & Conventions
+- **[Development](docs/development.md)** - Complete environment setup, database configuration, security, and troubleshooting
+- **[Deployment](docs/deployment.md)** - Vercel deployment process, environment variables, and monitoring
+- **[Changelog](docs/changelog.md)** - Project history and notable changes
 
-- Golden color system (gold-50 to gold-950) using OKLCH
-- Typography: Inter (body), Playfair Display (headings), Dancing Script (special text)
-- Always maintain contrast ratio ≥ 4.5:1, mobile-first, WCAG 2.1 accessibility
-- Git: Conventional Commits, structured PR templates
+## Design System
+
+### Colors
+
+- **Golden palette**: 11 shades from gold-50 (lightest) to gold-950 (darkest) using OKLCH color space
+- **Neutral palette**: Zinc scale for backgrounds and secondary elements
+- All color combinations maintain WCAG 2.1 AA contrast ratio (≥ 4.5:1)
+
+### Typography
+
+- **Body text**: Inter - clean, readable sans-serif
+- **Headings**: Playfair Display - elegant serif for titles
+- **Special text**: Dancing Script - handwritten style for emotional touches
+
+### Accessibility
+
+- Mobile-first responsive design
+- WCAG 2.1 Level AA compliance
+- Semantic HTML structure
+- Screen reader optimized
+- Reduced motion support for animations
 
 ## License
 
