@@ -10,6 +10,7 @@ This guide covers the development environment setup for the Golden Anniversary w
 - pnpm
 - Neon database account
 - ImageKit account
+- PostHog account (for analytics)
 - 1Password CLI (recommended for environment variables)
 - Code editor (Cursor recommended)
 
@@ -38,6 +39,10 @@ DATABASE_URL=postgresql://username:password@ep-example.us-east-2.aws.neon.tech/d
 IMAGEKIT_PRIVATE_KEY=private_your-private-key-here
 NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY=public_your-public-key-here
 NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT=https://ik.imagekit.io/your-id
+
+# PostHog Analytics
+NEXT_PUBLIC_POSTHOG_KEY=your-public-key-here
+NEXT_PUBLIC_POSTHOG_HOST=https://app.posthog.com
 
 # Optional: Skip environment validation during build
 SKIP_ENV_VALIDATION=true
@@ -210,7 +215,21 @@ pnpm build
 3. Configure environment variables
 4. Images are automatically optimized and served via CDN
 
-### 3. JWT Authentication
+### 3. PostHog Analytics
+
+1. Create account at [PostHog](https://posthog.com)
+2. Create a new project in your workspace
+3. Copy your project API key and host URL
+4. Configure environment variables:
+   - `NEXT_PUBLIC_POSTHOG_KEY`: Your PostHog project API key
+   - `NEXT_PUBLIC_POSTHOG_HOST`: PostHog host URL (default: https://app.posthog.com)
+5. Analytics are automatically tracked across key user interactions:
+   - Section views (countdown, timeline, family messages)
+   - Gallery navigation (next/prev, thumbnail clicks)
+   - Guestbook message submissions
+   - Footer external link clicks
+
+### 4. JWT Authentication
 
 - Stateless authentication using JSON Web Tokens
 - Passwords hashed with bcrypt
@@ -218,7 +237,7 @@ pnpm build
 - Middleware validates JWT and user existence
 - Sessions stored in httpOnly cookies
 
-### 4. Security
+### 5. Security
 
 #### Application-Level Security
 

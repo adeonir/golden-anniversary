@@ -47,6 +47,7 @@
     "next": "15.4.3",
     "nuqs": "2.4.3",
     "plaiceholder": "3.0.0",
+    "posthog-js": "1.275.1",
     "radix-ui": "1.4.2",
     "react": "19.1.0",
     "react-dom": "19.1.0",

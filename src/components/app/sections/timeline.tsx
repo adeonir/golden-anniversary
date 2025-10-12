@@ -6,7 +6,9 @@ import { useEffect, useRef, useState } from 'react'
 import { Card, CardContent } from '~/components/ui/card'
 import { Section } from '~/components/ui/section'
 import { SectionHeader } from '~/components/ui/section-header'
+import { usePostHog } from '~/hooks/use-posthog'
 import { useReducedMotion } from '~/hooks/use-reduced-motion'
+import { analyticsEvents } from '~/lib/analytics/events'
 import { config } from '~/lib/config'
 import { cn } from '~/lib/utils'
 
@@ -67,11 +69,22 @@ const content = {
 
 export function Timeline() {
   const prefersReducedMotion = useReducedMotion()
+  const posthog = usePostHog()
   const containerRef = useRef<HTMLDivElement>(null)
+  const hasCaptured = useRef(false)
   const [scrollDirection, setScrollDirection] = useState<'down' | 'up'>('down')
   const [lastScrollY, setLastScrollY] = useState(0)
 
   const { scrollY } = useScroll()
+
+  useEffect(() => {
+    if (!hasCaptured.current && posthog) {
+      posthog.capture(analyticsEvents.timelineSectionView, {
+        section: 'timeline',
+      })
+      hasCaptured.current = true
+    }
+  }, [posthog])
 
   useEffect(() => {
     const unsubscribe = scrollY.on('change', (latest) => {
