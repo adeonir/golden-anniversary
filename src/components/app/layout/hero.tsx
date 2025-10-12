@@ -10,7 +10,7 @@ import { config } from '~/lib/config'
 const content = {
   names: 'Iria e Ari',
   title: 'Bodas de Ouro',
-  subtitle: 'Celebrando 50 anos de amor, cumplicidade e uma jornada extraordinária juntos!',
+  subtitle: 'Celebrando 50 anos de amor e união. Uma jornada de vida compartilhada em família.',
   dates: ['08 de novembro de 1975', '08 de novembro de 2025'],
 }
 

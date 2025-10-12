@@ -28,6 +28,7 @@ const monteCarlo = MonteCarlo({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(env.NEXT_PUBLIC_SITE_URL),
   title: 'Iria & Ari - Bodas de Ouro',
   description:
     'Site comemorativo dos 50 anos de casamento de Iria e Ari. Uma celebração de amor, família e memórias que atravessaram meio século.',
@@ -38,6 +39,14 @@ export const metadata: Metadata = {
     description: 'Celebrando 50 anos de amor e união. Uma jornada de vida compartilhada em família.',
     type: 'website',
     locale: 'pt_BR',
+    images: [
+      {
+        url: '/opengraph-image',
+        width: 1200,
+        height: 630,
+        alt: 'Iria e Ari - Bodas de Ouro - Celebrando 50 anos de amor',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',

@@ -12,6 +12,7 @@ export const env = createEnv({
     NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT: z.url(),
     NEXT_PUBLIC_POSTHOG_KEY: z.string().min(1),
     NEXT_PUBLIC_POSTHOG_HOST: z.string().url().optional(),
+    NEXT_PUBLIC_SITE_URL: z.string().url().default('http://localhost:3000'),
   },
   runtimeEnv: {
     JWT_SECRET: process.env.JWT_SECRET,
@@ -21,6 +22,7 @@ export const env = createEnv({
     NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT,
     NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
     NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 })
