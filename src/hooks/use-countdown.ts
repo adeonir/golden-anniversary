@@ -1,7 +1,7 @@
 import { differenceInDays, differenceInHours, differenceInMinutes, differenceInSeconds, isBefore } from 'date-fns'
 import { useEffect, useState } from 'react'
 
-export interface CountdownTime {
+export type CountdownTime = {
   days: number
   hours: number
   minutes: number

@@ -7,7 +7,7 @@ import { createContext, useEffect } from 'react'
 
 export const PostHogContext = createContext<typeof posthog | null>(null)
 
-interface PostHogProviderProps {
+type PostHogProviderProps = {
   children: ReactNode
 }
 

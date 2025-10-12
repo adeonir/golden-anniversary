@@ -63,7 +63,7 @@ export function Countdown() {
   )
 }
 
-interface TimeCardProps {
+type TimeCardProps = {
   value: number
   label: string
 }

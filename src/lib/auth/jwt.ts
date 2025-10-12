@@ -6,7 +6,7 @@ const secret = new TextEncoder().encode(env.JWT_SECRET)
 const alg = 'HS256'
 const cookieName = 'auth-token'
 
-export interface TokenPayload {
+export type TokenPayload = {
   userId: string
   email: string
 }

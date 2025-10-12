@@ -1,10 +1,10 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.1.2/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.2.5/schema.json",
   "extends": ["ultracite"],
   "linter": {
     "rules": {
       "nursery": {
-        "noUnknownAtRule": "off",
+        "noUnusedExpressions": "off",
         "useSortedClasses": {
           "fix": "safe",
           "level": "warn",
@@ -18,7 +18,12 @@
         "noNamespaceImport": "off"
       },
       "style": {
+        "noMagicNumbers": "off",
         "useBlockStatements": "off"
+      },
+      "suspicious": {
+        "noAlert": "off",
+        "noUnknownAtRules": "off"
       }
     }
   },

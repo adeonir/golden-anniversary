@@ -135,7 +135,7 @@ export function Timeline() {
   )
 }
 
-interface TimelineEvent {
+type TimelineEvent = {
   year: string
   title: string
   description: string
@@ -217,7 +217,7 @@ function TimelineEvent({
   )
 }
 
-interface TimelineIconProps {
+type TimelineIconProps = {
   icon: LucideIcon
   className?: string
   isHovered?: boolean

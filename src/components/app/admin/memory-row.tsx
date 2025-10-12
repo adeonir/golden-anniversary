@@ -5,7 +5,7 @@ import { Input } from '~/components/ui/input'
 import { formatDate, formatSize } from '~/lib/utils'
 import type { Photo } from '~/types/photos'
 
-export interface MemoryRowProps {
+export type MemoryRowProps = {
   photo: Photo
   isEditing: boolean
   editTitle: string

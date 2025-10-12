@@ -1,6 +1,6 @@
 import { cn } from '~/lib/utils'
 
-interface DividerProps {
+type DividerProps = {
   className?: string
 }
 

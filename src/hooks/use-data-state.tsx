@@ -1,7 +1,7 @@
 import { AlertCircle, AlertTriangle, Loader2 } from 'lucide-react'
 import { Alert, AlertDescription } from '~/components/ui/alert'
 
-interface UseDataStateOptions {
+type UseDataStateOptions = {
   data: unknown[] | undefined
   isLoading: boolean
   error: Error | null | unknown

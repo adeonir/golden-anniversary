@@ -19,7 +19,7 @@ import { useUploadPhoto } from '~/hooks/use-photos'
 import { useViewportHeight } from '~/hooks/use-viewport-height'
 import { cn, validateFile } from '~/lib/utils'
 
-interface UploadFile {
+type UploadFile = {
   id: string
   file: File
   preview: string
@@ -28,7 +28,7 @@ interface UploadFile {
   error?: string
 }
 
-interface UploadsModalProps {
+type UploadsModalProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
 }
@@ -97,7 +97,6 @@ export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
       updateFileStatus(file.id, 'uploading', 0)
 
       try {
-        // biome-ignore lint/nursery/noAwaitInLoop: Sequential upload is intentional for better UX and server performance
         await uploadMutation.mutateAsync(file.file)
         updateFileStatus(file.id, 'success', 100)
       } catch (_error) {
@@ -206,7 +205,7 @@ export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
   )
 }
 
-interface FileListItemProps {
+type FileListItemProps = {
   file: UploadFile
   onRemove: () => void
 }
