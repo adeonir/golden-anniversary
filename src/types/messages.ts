@@ -1,9 +1,9 @@
-export interface CreateMessageData {
+export type CreateMessageData = {
   name: string
   message: string
 }
 
-export interface Message {
+export type Message = {
   id: string
   name: string
   message: string

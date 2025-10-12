@@ -2,7 +2,7 @@
 
 import { m as motion } from 'framer-motion'
 
-interface PulseHeartProps {
+type PulseHeartProps = {
   className?: string
   size?: 'sm' | 'md' | 'lg'
 }

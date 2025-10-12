@@ -12,32 +12,32 @@ export const analyticsEvents = {
 
 export type AnalyticsEvent = (typeof analyticsEvents)[keyof typeof analyticsEvents]
 
-export interface GuestbookSubmitProps {
+export type GuestbookSubmitProps = {
   name: string
   hasEmail: boolean
 }
 
-export interface GalleryNavigateProps {
+export type GalleryNavigateProps = {
   currentIndex: number
   totalPhotos: number
   direction?: 'next' | 'prev'
 }
 
-export interface GalleryThumbnailClickProps {
+export type GalleryThumbnailClickProps = {
   photoIndex: number
   photoId: string
 }
 
-export interface CountdownMilestoneProps {
+export type CountdownMilestoneProps = {
   milestone: string
   daysRemaining: number
 }
 
-export interface SectionViewProps {
+export type SectionViewProps = {
   section: string
 }
 
-export interface FooterLinkClickProps {
+export type FooterLinkClickProps = {
   destination: string
   link_type: string
   link_text: string

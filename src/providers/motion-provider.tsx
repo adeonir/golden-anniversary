@@ -3,7 +3,7 @@
 import { domAnimation, LazyMotion } from 'framer-motion'
 import type { ReactNode } from 'react'
 
-interface MotionProviderProps {
+type MotionProviderProps = {
   children: ReactNode
 }
 

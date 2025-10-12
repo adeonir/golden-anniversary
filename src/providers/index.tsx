@@ -6,7 +6,7 @@ import { MotionProvider } from './motion-provider'
 import { PostHogProvider } from './posthog-provider'
 import { QueryProvider } from './query-client'
 
-interface ProvidersProps {
+type ProvidersProps = {
   children: ReactNode
 }
 

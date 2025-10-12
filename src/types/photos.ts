@@ -1,6 +1,6 @@
 export type Category = 'memory' | 'event'
 
-export interface Photo {
+export type Photo = {
   id: string
   filename: string
   title?: string | null
@@ -12,7 +12,7 @@ export interface Photo {
   createdAt: Date
 }
 
-export interface CreatePhotoData {
+export type CreatePhotoData = {
   filename: string
   title?: string
   url: string

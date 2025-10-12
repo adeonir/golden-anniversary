@@ -2,7 +2,7 @@ import type { LucideIcon } from 'lucide-react'
 import { cn } from '~/lib/utils'
 import { Divider } from './divider'
 
-interface SectionHeaderProps {
+type SectionHeaderProps = {
   icon: LucideIcon
   title: string
   subtitle: string

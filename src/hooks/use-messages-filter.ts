@@ -3,7 +3,7 @@ import type { Message } from '~/types/messages'
 
 type MessageFilter = 'all' | 'pending' | 'approved' | 'rejected'
 
-interface UseMessagesFilterOptions {
+type UseMessagesFilterOptions = {
   messages: Message[]
 }
 

@@ -6,12 +6,9 @@ type ActionType = 'approve' | 'reject' | 'delete'
 export function useMessageActions() {
   const [pendingActions, setPendingActions] = useState<Record<string, ActionType>>({})
 
-  const createHandler = (
-    actionType: ActionType,
-    mutation: UseMutationResult<unknown, Error, string, unknown>,
-    confirmMessage?: string,
-  ) => {
-    return (id: string) => {
+  const createHandler =
+    (actionType: ActionType, mutation: UseMutationResult<unknown, Error, string, unknown>, confirmMessage?: string) =>
+    (id: string) => {
       if (confirmMessage && !confirm(confirmMessage)) return
 
       setPendingActions((prev) => ({ ...prev, [id]: actionType }))
@@ -23,7 +20,6 @@ export function useMessageActions() {
           }),
       })
     }
-  }
 
   return { pendingActions, createHandler }
 }

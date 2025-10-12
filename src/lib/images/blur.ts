@@ -1,7 +1,7 @@
 import { getPlaiceholder } from 'plaiceholder'
 import { getOptimizedImageUrl } from './client'
 
-export interface BlurData {
+export type BlurData = {
   blurDataURL: string
   width: number
   height: number

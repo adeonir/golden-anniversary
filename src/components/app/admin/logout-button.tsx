@@ -5,7 +5,7 @@ import { signOut } from '~/actions/sign-out'
 import { Button } from '~/components/ui/button'
 import { cn } from '~/lib/utils'
 
-interface LogoutButtonProps {
+type LogoutButtonProps = {
   className?: string
 }
 

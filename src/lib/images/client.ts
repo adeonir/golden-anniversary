@@ -7,7 +7,7 @@ export const imagekit = new ImageKit({
   urlEndpoint: env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT,
 })
 
-export interface UploadResult {
+export type UploadResult = {
   fileId: string
   name: string
   size: number
