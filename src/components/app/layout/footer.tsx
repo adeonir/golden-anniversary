@@ -2,8 +2,20 @@
 
 import type { ComponentProps } from 'react'
 import { PulseHeart } from '~/components/ui/pulse-heart'
+import { usePostHog } from '~/hooks/use-posthog'
+import { analyticsEvents } from '~/lib/analytics/events'
 
 export function Footer() {
+  const posthog = usePostHog()
+
+  const handleFooterLinkClick = () => {
+    posthog?.capture(analyticsEvents.footerLinkClick, {
+      destination: 'adeonir.dev',
+      link_type: 'external',
+      link_text: 'Adeonir Kohl',
+    })
+  }
+
   return (
     <footer>
       <section className="bg-gold-200 py-16 sm:py-24">
@@ -37,8 +49,9 @@ export function Footer() {
             Site feito com carinho por
             <a
               aria-label="Link externo: Site do desenvolvedor Adeonir Kohl"
-              href="https://adeonir.dev?ref=golden-anniversary"
-              rel="noopener noreferrer"
+              href="https://adeonir.dev?utm_source=golden-anniversary&utm_medium=referral"
+              onClick={handleFooterLinkClick}
+              rel="noopener"
               target="_blank"
             >
               <AdeonirLogo className="h-auto w-32" />

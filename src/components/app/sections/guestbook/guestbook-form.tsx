@@ -10,6 +10,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '~/components/ui/input'
 import { Textarea } from '~/components/ui/textarea'
 import { useCreateMessage } from '~/hooks/use-messages'
+import { usePostHog } from '~/hooks/use-posthog'
+import { analyticsEvents } from '~/lib/analytics/events'
 import type { CreateMessageData } from '~/types/messages'
 
 const guestbookSchema = z.object({
@@ -21,6 +23,7 @@ type GuestbookFormData = z.infer<typeof guestbookSchema>
 
 export function GuestbookForm() {
   const createMessageMutation = useCreateMessage()
+  const posthog = usePostHog()
 
   const form = useForm<GuestbookFormData>({
     resolver: zodResolver(guestbookSchema),
@@ -38,6 +41,10 @@ export function GuestbookForm() {
 
     createMessageMutation.mutate(messageData, {
       onSuccess: () => {
+        posthog?.capture(analyticsEvents.guestbookMessageSubmit, {
+          name: data.name.trim(),
+          hasEmail: false,
+        })
         form.reset()
       },
     })

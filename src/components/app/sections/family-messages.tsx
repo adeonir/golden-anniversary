@@ -1,7 +1,12 @@
+'use client'
+
 import { Users } from 'lucide-react'
+import { useEffect, useRef } from 'react'
 import { Card, CardContent } from '~/components/ui/card'
 import { Section } from '~/components/ui/section'
 import { SectionHeader } from '~/components/ui/section-header'
+import { usePostHog } from '~/hooks/use-posthog'
+import { analyticsEvents } from '~/lib/analytics/events'
 
 const content = {
   title: 'Mensagens do Coração',
@@ -21,6 +26,18 @@ const content = {
 }
 
 export function FamilyMessages() {
+  const posthog = usePostHog()
+  const hasCaptured = useRef(false)
+
+  useEffect(() => {
+    if (!hasCaptured.current && posthog) {
+      posthog.capture(analyticsEvents.familyMessagesView, {
+        section: 'family-messages',
+      })
+      hasCaptured.current = true
+    }
+  }, [posthog])
+
   return (
     <Section className="bg-zinc-100">
       <div className="section-container">

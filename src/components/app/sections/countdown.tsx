@@ -2,11 +2,14 @@
 
 import { AnimatePresence, m as motion } from 'framer-motion'
 import { CalendarFold } from 'lucide-react'
+import { useEffect, useRef } from 'react'
 import { Card } from '~/components/ui/card'
 import { Section } from '~/components/ui/section'
 import { SectionHeader } from '~/components/ui/section-header'
 import { useCountdown } from '~/hooks/use-countdown'
+import { usePostHog } from '~/hooks/use-posthog'
 import { useReducedMotion } from '~/hooks/use-reduced-motion'
+import { analyticsEvents } from '~/lib/analytics/events'
 import { config } from '~/lib/config'
 
 const targetDate = new Date(config.event.targetDate)
@@ -24,6 +27,18 @@ const content = {
 
 export function Countdown() {
   const { days, hours, minutes, seconds } = useCountdown(targetDate)
+  const posthog = usePostHog()
+  const hasCaptured = useRef(false)
+
+  useEffect(() => {
+    if (!hasCaptured.current && posthog) {
+      posthog.capture(analyticsEvents.countdownView, {
+        section: 'countdown',
+        daysRemaining: days,
+      })
+      hasCaptured.current = true
+    }
+  }, [posthog, days])
 
   return (
     <Section className="bg-gold-50">

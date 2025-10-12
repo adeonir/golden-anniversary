@@ -9,7 +9,9 @@ import { Button } from '~/components/ui/button'
 import { Section } from '~/components/ui/section'
 import { SectionHeader } from '~/components/ui/section-header'
 import { useMemories } from '~/hooks/use-photos'
+import { usePostHog } from '~/hooks/use-posthog'
 import { useReducedMotion } from '~/hooks/use-reduced-motion'
+import { analyticsEvents } from '~/lib/analytics/events'
 import { cn, generateBlurDataURL } from '~/lib/utils'
 
 const content = {
@@ -24,6 +26,7 @@ export function Memories() {
   const [canScrollNext, setCanScrollNext] = useState(false)
   const { data: photos = [] } = useMemories()
   const prefersReducedMotion = useReducedMotion()
+  const posthog = usePostHog()
 
   const onSelect = useCallback(() => {
     if (!emblaApi) return
@@ -41,9 +44,37 @@ export function Memories() {
     emblaApi.on('reInit', onSelect)
   }, [emblaApi, onSelect])
 
-  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi])
-  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi])
-  const scrollTo = useCallback((index: number) => emblaApi?.scrollTo(index), [emblaApi])
+  const scrollPrev = useCallback(() => {
+    emblaApi?.scrollPrev()
+    posthog?.capture(analyticsEvents.galleryNavigatePrev, {
+      currentIndex: selectedIndex,
+      totalPhotos: photos.length,
+      direction: 'prev',
+    })
+  }, [emblaApi, posthog, selectedIndex, photos.length])
+
+  const scrollNext = useCallback(() => {
+    emblaApi?.scrollNext()
+    posthog?.capture(analyticsEvents.galleryNavigateNext, {
+      currentIndex: selectedIndex,
+      totalPhotos: photos.length,
+      direction: 'next',
+    })
+  }, [emblaApi, posthog, selectedIndex, photos.length])
+
+  const scrollTo = useCallback(
+    (index: number) => {
+      emblaApi?.scrollTo(index)
+      const photo = photos[index]
+      if (photo) {
+        posthog?.capture(analyticsEvents.galleryThumbnailClick, {
+          photoIndex: index,
+          photoId: photo.id,
+        })
+      }
+    },
+    [emblaApi, photos, posthog],
+  )
 
   return (
     <Section className="bg-white">
