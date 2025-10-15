@@ -28,7 +28,9 @@ export async function initializeTestDatabase() {
       name TEXT NOT NULL,
       message TEXT NOT NULL,
       status TEXT CHECK (status IN ('pending', 'approved', 'rejected')) DEFAULT 'pending',
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      approved_at TIMESTAMP,
+      rejected_at TIMESTAMP
     )
   `)
 

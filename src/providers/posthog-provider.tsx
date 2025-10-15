@@ -12,7 +12,7 @@ type PostHogProviderProps = {
 }
 
 function isAdminRoute(pathname: string | null): boolean {
-  return pathname?.startsWith('/admin') || pathname === '/sign-in'
+  return pathname?.startsWith('/admin') || pathname === '/login'
 }
 
 function capturePageView() {

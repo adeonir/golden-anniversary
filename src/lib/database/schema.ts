@@ -1,4 +1,4 @@
-import { integer, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { index, integer, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 
 export const messageStatusEnum = pgEnum('message_status', ['pending', 'approved', 'rejected'])
 export const photoCategoryEnum = pgEnum('photo_category', ['memory', 'event'])
@@ -10,13 +10,22 @@ export const users = pgTable('users', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
 })
 
-export const messages = pgTable('messages', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  name: text('name').notNull(),
-  message: text('message').notNull(),
-  status: messageStatusEnum('status').notNull().default('pending'),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-})
+export const messages = pgTable(
+  'messages',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    name: text('name').notNull(),
+    message: text('message').notNull(),
+    status: messageStatusEnum('status').notNull().default('pending'),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    approvedAt: timestamp('approved_at'),
+    rejectedAt: timestamp('rejected_at'),
+  },
+  (table) => ({
+    statusIdx: index('messages_status_idx').on(table.status),
+    createdAtIdx: index('messages_created_at_idx').on(table.createdAt),
+  }),
+)
 
 export const photos = pgTable('photos', {
   id: uuid('id').primaryKey().defaultRandom(),

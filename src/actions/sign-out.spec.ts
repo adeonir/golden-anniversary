@@ -15,7 +15,7 @@ describe('Sign Out Server Action Integration Tests', () => {
   })
 
   describe('signOut', () => {
-    it('should clear cookie and redirect to sign-in', async () => {
+    it('should clear cookie and redirect to login', async () => {
       const { clearCookie } = await import('~/lib/auth/jwt')
       const { redirect } = await import('next/navigation')
 
@@ -24,7 +24,7 @@ describe('Sign Out Server Action Integration Tests', () => {
       await signOut()
 
       expect(clearCookie).toHaveBeenCalledWith()
-      expect(redirect).toHaveBeenCalledWith('/sign-in')
+      expect(redirect).toHaveBeenCalledWith('/login')
     })
 
     it('should handle cookie clearing failure', async () => {
@@ -53,7 +53,7 @@ describe('Sign Out Server Action Integration Tests', () => {
       await expect(signOut()).rejects.toThrow('Redirect failed')
 
       expect(clearCookie).toHaveBeenCalledWith()
-      expect(redirect).toHaveBeenCalledWith('/sign-in')
+      expect(redirect).toHaveBeenCalledWith('/login')
     })
 
     it('should complete sign-out flow successfully', async () => {
@@ -70,7 +70,7 @@ describe('Sign Out Server Action Integration Tests', () => {
       await expect(signOut()).resolves.not.toThrow()
 
       expect(clearCookie).toHaveBeenCalledWith()
-      expect(redirect).toHaveBeenCalledWith('/sign-in')
+      expect(redirect).toHaveBeenCalledWith('/login')
     })
 
     it('should call operations in correct order', async () => {
@@ -141,7 +141,7 @@ describe('Sign Out Server Action Integration Tests', () => {
       // Verify complete workflow
       expect(clearCookie).toHaveBeenCalledTimes(1)
       expect(redirect).toHaveBeenCalledTimes(1)
-      expect(redirect).toHaveBeenCalledWith('/sign-in')
+      expect(redirect).toHaveBeenCalledWith('/login')
     })
 
     it('should maintain consistency during error recovery', async () => {
@@ -162,7 +162,7 @@ describe('Sign Out Server Action Integration Tests', () => {
 
       expect(clearCookie).toHaveBeenCalledTimes(2)
       expect(redirect).toHaveBeenCalledTimes(1) // Only called on successful attempt
-      expect(redirect).toHaveBeenCalledWith('/sign-in')
+      expect(redirect).toHaveBeenCalledWith('/login')
     })
   })
 })

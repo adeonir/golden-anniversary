@@ -47,7 +47,7 @@ jobs:
         run: pnpm lint
 
       - name: Run type checking
-        run: pnpm type-check
+        run: pnpm check
 
   deploy:
     name: Deploy

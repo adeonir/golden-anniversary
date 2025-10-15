@@ -6,5 +6,5 @@ import { clearCookie } from '~/lib/auth/jwt'
 export async function signOut() {
   await clearCookie()
 
-  redirect('/sign-in')
+  redirect('/login')
 }

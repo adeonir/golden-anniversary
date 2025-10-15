@@ -10,5 +10,5 @@ pre-push:
   parallel: true
   jobs:
     - name: type check
-      run: pnpm type-check
+      run: pnpm check
       stage_fixed: true

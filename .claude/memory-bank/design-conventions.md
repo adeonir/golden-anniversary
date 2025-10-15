@@ -226,7 +226,7 @@ Closes DEV-XX
 ### Pre-commit Checklist
 
 - ✅ `pnpm lint` passes without errors
-- ✅ `pnpm type-check` passes without errors
+- ✅ `pnpm check` passes without errors
 - ✅ Component tested on real mobile device
 - ✅ Contrast validated (≥ 4.5:1)
 - ✅ Keyboard navigation functional

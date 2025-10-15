@@ -30,7 +30,7 @@ export async function requireAuth(): Promise<void> {
   const authenticated = await isAuthenticated()
 
   if (!authenticated) {
-    redirect('/sign-in')
+    redirect('/login')
   }
 }
 

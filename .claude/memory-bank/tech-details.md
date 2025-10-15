@@ -147,7 +147,7 @@ pnpm start            # Start production server
 
 # Code Quality
 pnpm lint             # Format + lint with Ultracite/BiomeJS
-pnpm type-check       # TypeScript type checking
+pnpm check            # TypeScript type checking
 
 # Dependencies
 pnpm install          # Install dependencies

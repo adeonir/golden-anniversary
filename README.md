@@ -48,7 +48,7 @@ pnpm dev
 - `pnpm dev` - Start development server
 - `pnpm build` - Build for production
 - `pnpm lint` - Format and lint code
-- `pnpm type-check` - TypeScript type checking
+- `pnpm check` - TypeScript type checking
 
 ## MVVM Architecture
 
