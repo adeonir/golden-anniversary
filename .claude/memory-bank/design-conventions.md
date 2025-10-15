@@ -52,7 +52,7 @@ const dancingScript = Dancing_Script({
 **Usage in code**:
 
 ```tsx
-<h1 className="font-script text-gold-500">Iria & Ari</h1>      // Special names
+<h1 className="font-script text-gold-500">Iria e Ari</h1>      // Special names
 <h2 className="font-heading text-gold-700">Golden Anniversary</h2>   // Main titles
 <p className="font-body text-muted-foreground">Body text</p>   // General content
 ```

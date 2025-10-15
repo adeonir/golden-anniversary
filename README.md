@@ -1,6 +1,6 @@
 # Golden Anniversary
 
-A commemorative website celebrating Iria & Ari's 50th wedding anniversary.
+A commemorative website celebrating Iria e Ari's 50th wedding anniversary.
 **Celebration date**: November 8, 2025, 6:30 PM
 
 A digital experience that allows family and friends to leave heartfelt messages and browse through the couple's special photo gallery.
