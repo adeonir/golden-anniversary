@@ -101,7 +101,7 @@ pnpm db:seed      # Seed database with sample data
 
 # Code Quality
 pnpm lint         # Format and lint code
-pnpm type-check   # Run TypeScript checks
+pnpm check        # Run TypeScript checks
 ```
 
 ## Project Structure
@@ -148,7 +148,7 @@ git checkout -b feat/DEV-XX-feature-name
 
 # Develop...
 pnpm lint
-pnpm type-check
+pnpm check
 git add .
 git commit -m "feat: feature description"
 git push origin feat/DEV-XX-feature-name
@@ -161,7 +161,7 @@ git push origin feat/DEV-XX-feature-name
 pnpm dev
 
 # Check types
-pnpm type-check
+pnpm check
 
 # Local build
 pnpm build
@@ -170,7 +170,7 @@ pnpm build
 ### 3. Testing
 
 - **Manual Testing**: Navigate through the application
-- **Type Checking**: `pnpm type-check`
+- **Type Checking**: `pnpm check`
 - **Linting**: `pnpm lint`
 
 ## Testing
@@ -265,7 +265,7 @@ pnpm build
 
 2. **TypeScript Type Errors**
 
-   - Run `pnpm type-check`
+   - Run `pnpm check`
    - Check imports and types
 
 3. **Database Connection Error**

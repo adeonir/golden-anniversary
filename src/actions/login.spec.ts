@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { testDb } from '~tests/mocks/database'
 import { cleanTestDatabase, createTestUser, initializeTestDatabase } from '~tests/utils/database'
-import { signIn } from './sign-in'
+import { signIn } from './login'
 
 vi.mock('next/navigation', () => ({
   redirect: vi.fn(),

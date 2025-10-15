@@ -1,6 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import { approveMessage, createMessage, deleteMessage, fetchMessages, rejectMessage } from '~/actions/messages'
+import {
+  approveMessage,
+  batchApproveMessages,
+  batchDeleteMessages,
+  batchRejectMessages,
+  createMessage,
+  deleteMessage,
+  fetchMessages,
+  rejectMessage,
+} from '~/actions/messages'
 import { useToast } from '~/hooks/use-toast'
 import { config } from '~/lib/config'
 
@@ -94,6 +103,57 @@ export function useDeleteMessage() {
     },
     onError: () => {
       toast.error('Erro ao deletar mensagem. Tente novamente.')
+    },
+  })
+}
+
+export function useBatchApproveMessages() {
+  const queryClient = useQueryClient()
+  const toast = useToast()
+
+  return useMutation({
+    mutationFn: batchApproveMessages,
+    onSuccess: (messages) => {
+      queryClient.invalidateQueries({ queryKey: messagesKeys.all })
+      toast.success(`${messages.length} mensagem(ns) aprovada(s) com sucesso!`)
+    },
+    onError: () => {
+      toast.error('Erro ao aprovar mensagens. Tente novamente.')
+    },
+  })
+}
+
+export function useBatchRejectMessages() {
+  const queryClient = useQueryClient()
+  const toast = useToast()
+
+  return useMutation({
+    mutationFn: batchRejectMessages,
+    onSuccess: (messages) => {
+      queryClient.invalidateQueries({ queryKey: messagesKeys.all })
+      toast.success(`${messages.length} mensagem(ns) rejeitada(s).`)
+    },
+    onError: () => {
+      toast.error('Erro ao rejeitar mensagens. Tente novamente.')
+    },
+  })
+}
+
+export function useBatchDeleteMessages() {
+  const queryClient = useQueryClient()
+  const toast = useToast()
+
+  return useMutation({
+    mutationFn: batchDeleteMessages,
+    onSuccess: (deletedIds) => {
+      queryClient.invalidateQueries({ queryKey: messagesKeys.all })
+      for (const id of deletedIds) {
+        queryClient.removeQueries({ queryKey: messagesKeys.detail(id) })
+      }
+      toast.success(`${deletedIds.length} mensagem(ns) deletada(s) com sucesso!`)
+    },
+    onError: () => {
+      toast.error('Erro ao deletar mensagens. Tente novamente.')
     },
   })
 }

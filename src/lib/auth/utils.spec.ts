@@ -97,11 +97,11 @@ describe('Auth Utils', () => {
     it('should redirect when not authenticated', async () => {
       setupAuth(false) // no token
       await requireAuth()
-      expect(redirect).toHaveBeenCalledWith('/sign-in')
+      expect(redirect).toHaveBeenCalledWith('/login')
 
       setupAuth(true, false) // invalid token
       await requireAuth()
-      expect(redirect).toHaveBeenCalledWith('/sign-in')
+      expect(redirect).toHaveBeenCalledWith('/login')
     })
 
     it('should not redirect when authenticated', async () => {
@@ -118,7 +118,7 @@ describe('Auth Utils', () => {
 
       await requireAuth()
 
-      expect(redirect).toHaveBeenCalledWith('/sign-in')
+      expect(redirect).toHaveBeenCalledWith('/login')
     })
   })
 
