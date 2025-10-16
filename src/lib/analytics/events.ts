@@ -1,12 +1,10 @@
 export const analyticsEvents = {
   guestbookMessageSubmit: 'Guestbook Message Submit',
-  galleryNavigateNext: 'Gallery Navigate Next',
-  galleryNavigatePrev: 'Gallery Navigate Previous',
   galleryThumbnailClick: 'Gallery Thumbnail Click',
   countdownView: 'Countdown View',
-  countdownMilestone: 'Countdown Milestone',
   timelineSectionView: 'Timeline Section View',
   familyMessagesView: 'Family Messages View',
+  footerView: 'Footer View',
   footerLinkClick: 'Footer Link Click',
 } as const
 
@@ -17,20 +15,9 @@ export type GuestbookSubmitProps = {
   hasEmail: boolean
 }
 
-export type GalleryNavigateProps = {
-  currentIndex: number
-  totalPhotos: number
-  direction?: 'next' | 'prev'
-}
-
 export type GalleryThumbnailClickProps = {
   photoIndex: number
   photoId: string
-}
-
-export type CountdownMilestoneProps = {
-  milestone: string
-  daysRemaining: number
 }
 
 export type SectionViewProps = {

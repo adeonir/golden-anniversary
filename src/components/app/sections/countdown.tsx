@@ -34,11 +34,10 @@ export function Countdown() {
     if (!hasCaptured.current && posthog) {
       posthog.capture(analyticsEvents.countdownView, {
         section: 'countdown',
-        daysRemaining: days,
       })
       hasCaptured.current = true
     }
-  }, [posthog, days])
+  }, [posthog])
 
   return (
     <Section className="bg-gold-50">

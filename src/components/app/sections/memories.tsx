@@ -46,21 +46,11 @@ export function Memories() {
 
   const scrollPrev = useCallback(() => {
     emblaApi?.scrollPrev()
-    posthog?.capture(analyticsEvents.galleryNavigatePrev, {
-      currentIndex: selectedIndex,
-      totalPhotos: photos.length,
-      direction: 'prev',
-    })
-  }, [emblaApi, posthog, selectedIndex, photos.length])
+  }, [emblaApi])
 
   const scrollNext = useCallback(() => {
     emblaApi?.scrollNext()
-    posthog?.capture(analyticsEvents.galleryNavigateNext, {
-      currentIndex: selectedIndex,
-      totalPhotos: photos.length,
-      direction: 'next',
-    })
-  }, [emblaApi, posthog, selectedIndex, photos.length])
+  }, [emblaApi])
 
   const scrollTo = useCallback(
     (index: number) => {

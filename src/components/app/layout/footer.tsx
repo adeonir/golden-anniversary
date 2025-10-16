@@ -1,12 +1,22 @@
 'use client'
 
-import type { ComponentProps } from 'react'
+import { type ComponentProps, useEffect, useRef } from 'react'
 import { PulseHeart } from '~/components/ui/pulse-heart'
 import { usePostHog } from '~/hooks/use-posthog'
 import { analyticsEvents } from '~/lib/analytics/events'
 
 export function Footer() {
   const posthog = usePostHog()
+  const hasCaptured = useRef(false)
+
+  useEffect(() => {
+    if (!hasCaptured.current && posthog) {
+      posthog.capture(analyticsEvents.footerView, {
+        section: 'footer',
+      })
+      hasCaptured.current = true
+    }
+  }, [posthog])
 
   const handleFooterLinkClick = () => {
     posthog?.capture(analyticsEvents.footerLinkClick, {
