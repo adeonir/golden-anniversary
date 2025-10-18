@@ -80,13 +80,7 @@ function DialogHeader({ className, ...props }: React.ComponentProps<'div'>) {
 }
 
 function DialogFooter({ className, ...props }: React.ComponentProps<'div'>) {
-  return (
-    <div
-      className={cn('flex flex-col-reverse gap-2 sm:flex-row sm:justify-end', className)}
-      data-slot="dialog-footer"
-      {...props}
-    />
-  )
+  return <div className={cn('flex flex-row justify-end gap-2', className)} data-slot="dialog-footer" {...props} />
 }
 
 function DialogTitle({ className, ...props }: React.ComponentProps<typeof DialogPrimitive.Title>) {

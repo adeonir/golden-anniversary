@@ -5,7 +5,7 @@ import { Input } from '~/components/ui/input'
 import { formatDate, formatSize } from '~/lib/utils'
 import type { Photo } from '~/types/photos'
 
-export type MemoryRowProps = {
+export type MemoryCardProps = {
   photo: Photo
   isEditing: boolean
   editTitle: string
@@ -20,7 +20,7 @@ export type MemoryRowProps = {
   dragHandleProps?: Record<string, unknown>
 }
 
-export function MemoryRow({
+export function MemoryCard({
   photo,
   isEditing,
   editTitle,
@@ -33,9 +33,9 @@ export function MemoryRow({
   onEditTitleChange,
   onDelete,
   dragHandleProps,
-}: MemoryRowProps) {
+}: MemoryCardProps) {
   return (
-    <div className="group flex items-center gap-4 rounded-lg border border-zinc-200 p-4 hover:bg-zinc-50">
+    <div className="group flex items-center gap-4 rounded-lg border border-zinc-200 p-4">
       <div className="flex-shrink-0">
         <Button
           className="cursor-grab active:cursor-grabbing"
@@ -69,7 +69,7 @@ export function MemoryRow({
           />
         ) : (
           <button
-            className="w-full cursor-pointer truncate text-left text-sm text-zinc-900 hover:text-zinc-700"
+            className="h-8 w-full cursor-pointer truncate rounded-md border border-transparent px-3 py-1 text-left text-sm text-zinc-900 transition hover:border-gray-300 hover:text-zinc-700"
             onClick={onEditStart}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
