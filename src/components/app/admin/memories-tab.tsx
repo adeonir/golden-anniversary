@@ -118,14 +118,14 @@ export function MemoriesTab() {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-6">
-      <div className="flex flex-shrink-0 items-center justify-between">
+      <div className="flex flex-shrink-0 items-center justify-between gap-6">
         <div>
           <h2 className="font-semibold text-2xl text-zinc-900">Memórias</h2>
           <p className="text-zinc-600">Gerencie as fotos das memórias do casal</p>
         </div>
         <Button className="flex items-center gap-2" intent="admin" onClick={() => setModalOpen(true)}>
           <Upload />
-          Fazer Upload
+          <span className="hidden sm:block">Fazer Upload</span>
         </Button>
       </div>
 

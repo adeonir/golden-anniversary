@@ -1,6 +1,6 @@
 'use client'
 
-import { Images, MessageSquare } from 'lucide-react'
+import { Image, MessageSquare } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { useAdminTabs } from '~/hooks/use-admin-tabs'
 import { config } from '~/lib/config'
@@ -14,16 +14,16 @@ export function Dashboard() {
   return (
     <div className="admin-theme flex h-screen flex-col gap-8 overflow-hidden bg-zinc-100 p-8">
       <header className="flex-shrink-0 rounded-lg bg-white px-8 py-6 shadow-lg shadow-zinc-700/10">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-6">
           <Tabs onValueChange={setActiveTab} value={activeTab}>
             <TabsList className="flex-shrink-0">
               <TabsTrigger value={config.admin.tabs.messages}>
                 <MessageSquare className="mr-2 size-4" />
-                Mensagens
+                <span className="hidden lg:block">Mensagens</span>
               </TabsTrigger>
               <TabsTrigger value={config.admin.tabs.memories}>
-                <Images className="mr-2 size-4" />
-                Memórias
+                <Image className="mr-2 size-4" />
+                <span className="hidden lg:block">Memórias</span>
               </TabsTrigger>
             </TabsList>
           </Tabs>

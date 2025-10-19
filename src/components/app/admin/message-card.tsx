@@ -28,22 +28,25 @@ export function MessageCard({
   onDelete,
 }: MessageCardProps) {
   return (
-    <div className="flex flex-col gap-6 rounded-xl border border-zinc-300 bg-gray-50 p-6 text-zinc-900 shadow-none">
-      <div className="flex items-start gap-4">
-        <Checkbox checked={isSelected} className="mt-1" id={`message-${message.id}`} onCheckedChange={onToggleSelect} />
+    <div className="flex flex-col gap-4 rounded-xl border border-zinc-300 bg-gray-50 p-4 text-zinc-900 shadow-none md:gap-6 md:p-6">
+      <div className="flex gap-4 md:items-start">
+        <Checkbox
+          checked={isSelected}
+          className="mt-1 self-start"
+          id={`message-${message.id}`}
+          onCheckedChange={onToggleSelect}
+        />
 
-        <div className="flex flex-1 items-start justify-between gap-4">
+        <div className="flex flex-1 flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div className="flex-1 space-y-2">
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2">
               <h3 className="font-medium text-zinc-900">{message.name}</h3>
               <StatusBadge status={message.status} />
             </div>
 
             <p className="text-zinc-900 leading-relaxed">{message.message}</p>
-          </div>
 
-          <div className="flex flex-col items-end gap-2">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-1 pt-2 lg:hidden">
               <p className="text-xs text-zinc-600">Enviado em {formatDate(message.createdAt)}</p>
               {message.approvedAt && (
                 <>
@@ -58,7 +61,25 @@ export function MessageCard({
                 </>
               )}
             </div>
-            <div className="flex gap-2">
+          </div>
+
+          <div className="flex flex-col gap-3 lg:items-end lg:gap-2">
+            <div className="hidden flex-wrap items-center gap-2 lg:flex">
+              <p className="text-xs text-zinc-600">Enviado em {formatDate(message.createdAt)}</p>
+              {message.approvedAt && (
+                <>
+                  <div className="h-4 w-px bg-zinc-300" />
+                  <p className="text-green-600 text-xs">Aprovada em {formatDate(message.approvedAt)}</p>
+                </>
+              )}
+              {message.rejectedAt && (
+                <>
+                  <div className="h-4 w-px bg-zinc-300" />
+                  <p className="text-red-600 text-xs">Rejeitada em {formatDate(message.rejectedAt)}</p>
+                </>
+              )}
+            </div>
+            <div className="flex flex-wrap gap-2">
               <Button
                 className="w-20"
                 disabled={message.status === 'approved'}

@@ -13,7 +13,6 @@ import {
 } from '~/components/ui/alert-dialog'
 import { Badge } from '~/components/ui/badge'
 import { Checkbox } from '~/components/ui/checkbox'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
 import { useBatchSelection } from '~/hooks/use-batch-selection'
 import { useDataState } from '~/hooks/use-data-state'
 import { useMessageActions } from '~/hooks/use-message-actions'
@@ -29,6 +28,7 @@ import {
 import { useMessagesFilters } from '~/hooks/use-messages-filter'
 import { config } from '~/lib/config'
 import { MessageCard } from './message-card'
+import { MessagesFilters } from './messages-filters'
 
 export function MessagesTab() {
   const {
@@ -113,8 +113,8 @@ export function MessagesTab() {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-6">
-      <div className="flex flex-shrink-0 items-center justify-between">
-        <div>
+      <div className="flex flex-shrink-0 flex-col items-start justify-between gap-6 lg:flex-row lg:items-center">
+        <div className="w-full">
           <div className="flex items-center gap-3">
             <h2 className="font-semibold text-2xl text-zinc-900">Mensagens</h2>
             {pendingCount > 0 && (
@@ -129,48 +129,39 @@ export function MessagesTab() {
             )}
           </div>
           <p className="text-zinc-600">Gerencie as mensagens do livro de visitas</p>
+          <div className="mt-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Checkbox
+                checked={count === filteredMessages.length && count > 0}
+                id="select-all"
+                onCheckedChange={handleSelectAll}
+              />
+              <label className="cursor-pointer text-sm text-zinc-700" htmlFor="select-all">
+                <span className="hidden sm:block">Selecionar todas</span>
+                <span className="sm:hidden">Todas</span>
+              </label>
+            </div>
+            <div className="lg:hidden">
+              <MessagesFilters
+                filter={filter}
+                filteredMessagesCount={filteredMessages.length}
+                onBatchAction={handleBatchAction}
+                onFilterChange={setFilter}
+                selectedAction={selectedAction}
+                selectedCount={count}
+              />
+            </div>
+          </div>
         </div>
-        <div className="flex items-center gap-4">
-          {filteredMessages.length > 0 && (
-            <>
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  checked={count === filteredMessages.length && count > 0}
-                  id="select-all"
-                  onCheckedChange={handleSelectAll}
-                />
-                <label className="cursor-pointer text-sm text-zinc-700" htmlFor="select-all">
-                  Selecionar todas
-                </label>
-              </div>
-              <Select
-                disabled={count === 0}
-                onValueChange={(value) => handleBatchAction(value as 'approve' | 'reject' | 'delete')}
-                value={selectedAction ?? ''}
-              >
-                <SelectTrigger className="w-48" intent="admin">
-                  <SelectValue placeholder="Ações em lote" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="approve">Aprovar Selecionadas</SelectItem>
-                  <SelectItem value="reject">Rejeitar Selecionadas</SelectItem>
-                  <SelectItem value="delete">Deletar Selecionadas</SelectItem>
-                </SelectContent>
-              </Select>
-              <div className="h-8 w-px bg-zinc-300" />
-            </>
-          )}
-          <Select onValueChange={(value) => setFilter(value as typeof filter)} value={filter}>
-            <SelectTrigger className="w-48" intent="admin">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todas mensagens</SelectItem>
-              <SelectItem value="pending">Pendentes</SelectItem>
-              <SelectItem value="approved">Aprovadas</SelectItem>
-              <SelectItem value="rejected">Rejeitadas</SelectItem>
-            </SelectContent>
-          </Select>
+        <div className="hidden lg:block">
+          <MessagesFilters
+            filter={filter}
+            filteredMessagesCount={filteredMessages.length}
+            onBatchAction={handleBatchAction}
+            onFilterChange={setFilter}
+            selectedAction={selectedAction}
+            selectedCount={count}
+          />
         </div>
       </div>
 
