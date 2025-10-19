@@ -9,9 +9,7 @@ import { Button } from '~/components/ui/button'
 import { Section } from '~/components/ui/section'
 import { SectionHeader } from '~/components/ui/section-header'
 import { useMemories } from '~/hooks/use-photos'
-import { usePostHog } from '~/hooks/use-posthog'
 import { useReducedMotion } from '~/hooks/use-reduced-motion'
-import { analyticsEvents } from '~/lib/analytics/events'
 import { cn, generateBlurDataURL } from '~/lib/utils'
 
 const content = {
@@ -26,7 +24,6 @@ export function Memories() {
   const [canScrollNext, setCanScrollNext] = useState(false)
   const { data: photos = [] } = useMemories()
   const prefersReducedMotion = useReducedMotion()
-  const posthog = usePostHog()
 
   const onSelect = useCallback(() => {
     if (!emblaApi) return
@@ -55,15 +52,8 @@ export function Memories() {
   const scrollTo = useCallback(
     (index: number) => {
       emblaApi?.scrollTo(index)
-      const photo = photos[index]
-      if (photo) {
-        posthog?.capture(analyticsEvents.galleryThumbnailClick, {
-          photoIndex: index,
-          photoId: photo.id,
-        })
-      }
     },
-    [emblaApi, photos, posthog],
+    [emblaApi],
   )
 
   return (

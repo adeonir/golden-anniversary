@@ -1,6 +1,5 @@
 export const analyticsEvents = {
   guestbookMessageSubmit: 'Guestbook Message Submit',
-  galleryThumbnailClick: 'Gallery Thumbnail Click',
   countdownView: 'Countdown View',
   timelineSectionView: 'Timeline Section View',
   familyMessagesView: 'Family Messages View',
@@ -13,11 +12,6 @@ export type AnalyticsEvent = (typeof analyticsEvents)[keyof typeof analyticsEven
 export type GuestbookSubmitProps = {
   name: string
   hasEmail: boolean
-}
-
-export type GalleryThumbnailClickProps = {
-  photoIndex: number
-  photoId: string
 }
 
 export type SectionViewProps = {
