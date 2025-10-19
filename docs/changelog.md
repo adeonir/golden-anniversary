@@ -11,11 +11,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - PostHog analytics integration for user behavior tracking
 - Event tracking across key interactions (gallery, guestbook, timeline, footer)
 - Comprehensive testing infrastructure with Vitest and PGlite
+- Open Graph image generation for social media sharing
+- Batch actions for message moderation (approve/reject multiple messages)
 
 ### Changed
 
 - Updated README to focus on current state and design system
 - Improved development documentation with PostHog setup
+- Optimized PostHog analytics events for better performance
+- Admin panel responsive design improvements
+- Component extraction for better code organization
+
+### Fixed
+
+- Site meta description for better SEO
 
 ## [October 2025] - Infrastructure Migration
 
