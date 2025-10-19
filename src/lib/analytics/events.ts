@@ -1,5 +1,6 @@
 export const analyticsEvents = {
   guestbookMessageSubmit: 'Guestbook Message Submit',
+  guestbookFormAbandoned: 'Guestbook Form Abandoned',
   countdownView: 'Countdown View',
   timelineSectionView: 'Timeline Section View',
   familyMessagesView: 'Family Messages View',
