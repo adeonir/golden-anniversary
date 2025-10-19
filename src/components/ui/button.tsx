@@ -51,7 +51,7 @@ const buttonVariants = cva(
       {
         variant: 'solid',
         intent: 'danger',
-        class: 'bg-red-500 text-white hover:bg-red-600 focus-visible:ring-red-500/20',
+        class: 'border border-red-500 text-red-500 hover:bg-red-50 focus-visible:ring-red-500/20',
       },
       {
         variant: 'solid',

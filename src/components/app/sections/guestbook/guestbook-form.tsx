@@ -2,6 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Send } from 'lucide-react'
+import { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Button } from '~/components/ui/button'
@@ -24,6 +25,8 @@ type GuestbookFormData = z.infer<typeof guestbookSchema>
 export function GuestbookForm() {
   const createMessageMutation = useCreateMessage()
   const posthog = usePostHog()
+  const formStartedRef = useRef(false)
+  const formSubmittedRef = useRef(false)
 
   const form = useForm<GuestbookFormData>({
     resolver: zodResolver(guestbookSchema),
@@ -33,6 +36,21 @@ export function GuestbookForm() {
     },
   })
 
+  useEffect(
+    () => () => {
+      if (formStartedRef.current && !formSubmittedRef.current) {
+        posthog?.capture(analyticsEvents.guestbookFormAbandoned)
+      }
+    },
+    [posthog],
+  )
+
+  const handleFormStart = () => {
+    if (!formStartedRef.current) {
+      formStartedRef.current = true
+    }
+  }
+
   const onSubmit = (data: GuestbookFormData) => {
     const messageData: CreateMessageData = {
       name: data.name.trim(),
@@ -41,6 +59,7 @@ export function GuestbookForm() {
 
     createMessageMutation.mutate(messageData, {
       onSuccess: () => {
+        formSubmittedRef.current = true
         posthog?.capture(analyticsEvents.guestbookMessageSubmit, {
           name: data.name.trim(),
           hasEmail: false,
@@ -66,7 +85,7 @@ export function GuestbookForm() {
                 <FormItem>
                   <FormLabel className="font-medium text-zinc-700">Seu nome ou família</FormLabel>
                   <FormControl>
-                    <Input placeholder="ex: João e Maria Souza" {...field} />
+                    <Input onFocus={handleFormStart} placeholder="ex: João e Maria Souza" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -82,6 +101,7 @@ export function GuestbookForm() {
                   <FormControl>
                     <Textarea
                       className="min-h-40"
+                      onFocus={handleFormStart}
                       placeholder="Deixe aqui sua mensagem de carinho e felicitações..."
                       {...field}
                     />

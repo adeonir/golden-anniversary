@@ -1,20 +1,11 @@
 'use client'
 
-import { AlertCircle, CheckCircle, Image as ImageIcon, Upload, X } from 'lucide-react'
+import { AlertCircle, CheckCircle, Image as ImageIcon, Trash2, Upload } from 'lucide-react'
 import Image from 'next/image'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Button } from '~/components/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '~/components/ui/dialog'
-import { Progress } from '~/components/ui/progress'
-import { ScrollArea } from '~/components/ui/scroll-area'
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '~/components/ui/dialog'
 import { useUploadPhoto } from '~/hooks/use-photos'
 import { useViewportHeight } from '~/hooks/use-viewport-height'
 import { cn, validateFile } from '~/lib/utils'
@@ -24,7 +15,6 @@ type UploadFile = {
   file: File
   preview: string
   status: 'pending' | 'uploading' | 'success' | 'error'
-  progress: number
   error?: string
 }
 
@@ -50,7 +40,6 @@ export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
         file,
         preview: URL.createObjectURL(file),
         status: 'pending',
-        progress: 0,
       }))
       setFiles((prev) => [...prev, ...newFiles])
     },
@@ -75,14 +64,9 @@ export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
     setFiles([])
   }
 
-  const updateFileStatus = useCallback(
-    (id: string, status: UploadFile['status'], progress?: number, error?: string) => {
-      setFiles((prev) =>
-        prev.map((file) => (file.id === id ? { ...file, status, progress: progress ?? file.progress, error } : file)),
-      )
-    },
-    [],
-  )
+  const updateFileStatus = useCallback((id: string, status: UploadFile['status'], error?: string) => {
+    setFiles((prev) => prev.map((file) => (file.id === id ? { ...file, status, error } : file)))
+  }, [])
 
   const handleUpload = useCallback(async () => {
     const pendingFiles = files.filter((f) => f.status === 'pending')
@@ -90,17 +74,17 @@ export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
     for (const file of pendingFiles) {
       const validation = validateFile(file.file)
       if (validation) {
-        updateFileStatus(file.id, 'error', 0, validation)
+        updateFileStatus(file.id, 'error', validation)
         continue
       }
 
-      updateFileStatus(file.id, 'uploading', 0)
+      updateFileStatus(file.id, 'uploading')
 
       try {
         await uploadMutation.mutateAsync(file.file)
-        updateFileStatus(file.id, 'success', 100)
+        updateFileStatus(file.id, 'success')
       } catch (_error) {
-        updateFileStatus(file.id, 'error', 0, 'Erro no upload')
+        updateFileStatus(file.id, 'error', 'Erro no upload')
       }
     }
   }, [files, uploadMutation, updateFileStatus])
@@ -136,14 +120,11 @@ export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
   return (
     <Dialog onOpenChange={handleClose} open={open}>
       <DialogContent
-        className={cn('flex max-h-[90vh] max-w-4xl flex-col', files.length > 0 && 'min-h-[534px]')}
+        className={cn('flex max-h-[90vh] max-w-[calc(100%-3rem)] flex-col', files.length > 0 && 'min-h-[534px]')}
         ref={modalRef}
       >
         <DialogHeader>
           <DialogTitle>Upload de Fotos</DialogTitle>
-          <DialogDescription>
-            Arraste e solte múltiplas fotos JPEG (máximo 1MB cada) para fazer upload
-          </DialogDescription>
         </DialogHeader>
 
         <div className="flex min-h-0 flex-1 flex-col space-y-6">
@@ -156,9 +137,6 @@ export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
           >
             <input {...getInputProps()} />
             <Upload className="mx-auto mb-4 size-12 text-zinc-500" />
-            <p className="mb-2 font-medium text-lg">
-              {isDragActive ? 'Solte as fotos aqui...' : 'Arraste fotos aqui ou clique para selecionar'}
-            </p>
             <p className="text-sm text-zinc-600">Apenas arquivos JPEG, máximo 1MB por arquivo</p>
           </div>
 
@@ -171,25 +149,25 @@ export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
                 </Button>
               </div>
 
-              <ScrollArea style={{ height: `${scrollAreaHeight}px`, scrollbarGutter: 'stable' }}>
+              <div className="min-h-0 overflow-y-auto pr-2" style={{ height: `${scrollAreaHeight}px` }}>
                 <div className="space-y-3">
                   {files.map((uploadFile) => (
                     <FileListItem file={uploadFile} key={uploadFile.id} onRemove={() => removeFile(uploadFile.id)} />
                   ))}
                 </div>
-              </ScrollArea>
+              </div>
             </div>
           )}
         </div>
 
         {files.length > 0 && (
           <DialogFooter>
-            <Button intent="admin" onClick={handleClose} variant="outline">
+            <Button className="flex-1 sm:flex-initial" intent="admin" onClick={handleClose} variant="outline">
               {files.every((f) => f.status === 'success' || f.status === 'error') ? 'Fechar' : 'Cancelar'}
             </Button>
             {!files.every((f) => f.status === 'success' || f.status === 'error') && (
               <Button
-                className="w-32"
+                className="flex-1 sm:w-32 sm:flex-initial"
                 disabled={files.every((f) => f.status !== 'pending')}
                 intent="admin"
                 loading={uploadMutation.isPending}
@@ -231,30 +209,24 @@ function FileListItem({ file, onRemove }: FileListItemProps) {
         )}
       </div>
 
-      <div className="min-w-0 flex-1 space-y-1">
+      <div className="grid min-w-0 flex-1 grid-rows-2">
         <div className="flex items-center gap-2">
-          {file.status === 'success' && <CheckCircle className="size-4 text-green-600" />}
-          {(hasError || file.status === 'error') && <AlertCircle className="size-4 text-red-600" />}
+          {file.status === 'success' && <CheckCircle className="size-4 flex-shrink-0 text-green-600" />}
+          {(hasError || file.status === 'error') && <AlertCircle className="size-4 flex-shrink-0 text-red-600" />}
           <span className="truncate font-medium text-sm">{file.file.name}</span>
+          <span className="flex-shrink-0 text-sm text-zinc-600">({(file.file.size / 1024).toFixed(0)} KB)</span>
         </div>
-
-        <p className="text-xs text-zinc-600">{(file.file.size / (1024 * 1024)).toFixed(1)} MB</p>
-
-        {file.status === 'uploading' && (
-          <div className="space-y-1">
-            <Progress className="h-2" value={file.progress} />
-            <p className="text-xs text-zinc-600">{file.progress}% enviado</p>
-          </div>
-        )}
 
         {(validation || file.error) && <p className="text-red-600 text-xs">{validation || file.error}</p>}
 
         {file.status === 'success' && <p className="text-green-600 text-xs">Upload realizado com sucesso!</p>}
       </div>
 
-      <Button className="size-6 flex-shrink-0 p-0" intent="danger" onClick={onRemove} size="sm">
-        <X className="size-4" />
-      </Button>
+      {file.status !== 'success' && (
+        <Button className="size-6 flex-shrink-0 p-0" intent="danger" onClick={onRemove} size="sm">
+          <Trash2 className="size-4" />
+        </Button>
+      )}
     </div>
   )
 }

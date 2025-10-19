@@ -17,12 +17,11 @@ import { Upload } from 'lucide-react'
 import Image from 'next/image'
 import { useEffect, useMemo } from 'react'
 import { Button } from '~/components/ui/button'
-import { ScrollArea } from '~/components/ui/scroll-area'
 import { useDataState } from '~/hooks/use-data-state'
 import { usePhotoActions } from '~/hooks/use-photo-actions'
 import { useDeletePhoto, useMemories, useReorderPhotos, useUpdatePhoto } from '~/hooks/use-photos'
 import type { Photo } from '~/types/photos'
-import { MemoryRow, type MemoryRowProps } from './memory-row'
+import { MemoryCard, type MemoryCardProps } from './memory-card'
 import { UploadsModal } from './uploads-modal'
 
 export function MemoriesTab() {
@@ -118,19 +117,19 @@ export function MemoriesTab() {
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-6">
-      <div className="flex items-center justify-between">
+    <div className="flex min-h-0 flex-1 flex-col gap-6">
+      <div className="flex flex-shrink-0 items-center justify-between gap-6">
         <div>
           <h2 className="font-semibold text-2xl text-zinc-900">Memórias</h2>
           <p className="text-zinc-600">Gerencie as fotos das memórias do casal</p>
         </div>
         <Button className="flex items-center gap-2" intent="admin" onClick={() => setModalOpen(true)}>
           <Upload />
-          Fazer Upload
+          <span className="hidden sm:block">Fazer Upload</span>
         </Button>
       </div>
 
-      <ScrollArea className="flex-1">
+      <div className="min-h-0 flex-1 overflow-y-auto pr-2">
         {dataStateAlert && <div className="flex items-center justify-center py-8">{dataStateAlert}</div>}
 
         {!dataStateAlert && (
@@ -143,7 +142,7 @@ export function MemoriesTab() {
             <SortableContext items={localPhotos.map((p) => p.id)} strategy={rectSortingStrategy}>
               <div className="space-y-2">
                 {localPhotos.map((photo) => (
-                  <SortableMemoryRow
+                  <SortableMemoryCard
                     editTitle={editTitle}
                     isDeleting={deletePhotoMutation.isPending && deletePhotoMutation.variables === photo.id}
                     isEditing={editingId === photo.id}
@@ -182,18 +181,18 @@ export function MemoriesTab() {
             </DragOverlay>
           </DndContext>
         )}
-      </ScrollArea>
+      </div>
 
       <UploadsModal onOpenChange={setModalOpen} open={modalOpen} />
     </div>
   )
 }
 
-interface SortableMemoryRowProps extends MemoryRowProps {
+interface SortableMemoryCardProps extends MemoryCardProps {
   photo: Photo
 }
 
-function SortableMemoryRow(props: SortableMemoryRowProps) {
+function SortableMemoryCard(props: SortableMemoryCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: props.photo.id,
   })
@@ -205,7 +204,7 @@ function SortableMemoryRow(props: SortableMemoryRowProps) {
 
   return (
     <div className={isDragging ? 'opacity-50' : ''} ref={setNodeRef} style={style}>
-      <MemoryRow {...props} dragHandleProps={{ ...attributes, ...listeners }} />
+      <MemoryCard {...props} dragHandleProps={{ ...attributes, ...listeners }} />
     </div>
   )
 }

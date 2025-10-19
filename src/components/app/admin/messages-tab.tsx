@@ -12,11 +12,7 @@ import {
   AlertDialogTitle,
 } from '~/components/ui/alert-dialog'
 import { Badge } from '~/components/ui/badge'
-import { Button } from '~/components/ui/button'
-import { Card } from '~/components/ui/card'
 import { Checkbox } from '~/components/ui/checkbox'
-import { ScrollArea } from '~/components/ui/scroll-area'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
 import { useBatchSelection } from '~/hooks/use-batch-selection'
 import { useDataState } from '~/hooks/use-data-state'
 import { useMessageActions } from '~/hooks/use-message-actions'
@@ -31,7 +27,8 @@ import {
 } from '~/hooks/use-messages'
 import { useMessagesFilters } from '~/hooks/use-messages-filter'
 import { config } from '~/lib/config'
-import { formatDate } from '~/lib/utils'
+import { MessageCard } from './message-card'
+import { MessagesFilters } from './messages-filters'
 
 export function MessagesTab() {
   const {
@@ -115,9 +112,9 @@ export function MessagesTab() {
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <div>
+    <div className="flex min-h-0 flex-1 flex-col gap-6">
+      <div className="flex flex-shrink-0 flex-col items-start justify-between gap-6 lg:flex-row lg:items-center">
+        <div className="w-full">
           <div className="flex items-center gap-3">
             <h2 className="font-semibold text-2xl text-zinc-900">Mensagens</h2>
             {pendingCount > 0 && (
@@ -132,131 +129,64 @@ export function MessagesTab() {
             )}
           </div>
           <p className="text-zinc-600">Gerencie as mensagens do livro de visitas</p>
+          <div className="mt-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Checkbox
+                checked={count === filteredMessages.length && count > 0}
+                id="select-all"
+                onCheckedChange={handleSelectAll}
+              />
+              <label className="cursor-pointer text-sm text-zinc-700" htmlFor="select-all">
+                <span className="hidden sm:block">Selecionar todas</span>
+                <span className="sm:hidden">Todas</span>
+              </label>
+            </div>
+            <div className="lg:hidden">
+              <MessagesFilters
+                filter={filter}
+                filteredMessagesCount={filteredMessages.length}
+                onBatchAction={handleBatchAction}
+                onFilterChange={setFilter}
+                selectedAction={selectedAction}
+                selectedCount={count}
+              />
+            </div>
+          </div>
         </div>
-        <div className="flex items-center gap-4">
-          {filteredMessages.length > 0 && (
-            <>
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  checked={count === filteredMessages.length && count > 0}
-                  id="select-all"
-                  onCheckedChange={handleSelectAll}
-                />
-                <label className="cursor-pointer text-sm text-zinc-700" htmlFor="select-all">
-                  Selecionar todas
-                </label>
-              </div>
-              <Select
-                disabled={count === 0}
-                onValueChange={(value) => handleBatchAction(value as 'approve' | 'reject' | 'delete')}
-                value={selectedAction ?? ''}
-              >
-                <SelectTrigger className="w-48" intent="admin">
-                  <SelectValue placeholder="Ações em lote" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="approve">Aprovar Selecionadas</SelectItem>
-                  <SelectItem value="reject">Rejeitar Selecionadas</SelectItem>
-                  <SelectItem value="delete">Deletar Selecionadas</SelectItem>
-                </SelectContent>
-              </Select>
-              <div className="h-8 w-px bg-zinc-300" />
-            </>
-          )}
-          <Select onValueChange={(value) => setFilter(value as typeof filter)} value={filter}>
-            <SelectTrigger className="w-48" intent="admin">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todas mensagens</SelectItem>
-              <SelectItem value="pending">Pendentes</SelectItem>
-              <SelectItem value="approved">Aprovadas</SelectItem>
-              <SelectItem value="rejected">Rejeitadas</SelectItem>
-            </SelectContent>
-          </Select>
+        <div className="hidden lg:block">
+          <MessagesFilters
+            filter={filter}
+            filteredMessagesCount={filteredMessages.length}
+            onBatchAction={handleBatchAction}
+            onFilterChange={setFilter}
+            selectedAction={selectedAction}
+            selectedCount={count}
+          />
         </div>
       </div>
 
-      <ScrollArea className="flex-1">
+      <div className="min-h-0 flex-1 overflow-y-auto pr-2">
         {dataStateAlert && <div className="flex items-center justify-center py-8">{dataStateAlert}</div>}
 
         {!dataStateAlert && (
           <div className="space-y-4">
             {filteredMessages.map((message) => (
-              <Card className="border-zinc-300 p-6" key={message.id}>
-                <div className="flex items-start gap-4">
-                  <Checkbox
-                    checked={isSelected(message.id)}
-                    className="mt-1"
-                    id={`message-${message.id}`}
-                    onCheckedChange={() => toggle(message.id)}
-                  />
-
-                  <div className="flex flex-1 items-start justify-between gap-4">
-                    <div className="flex-1 space-y-2">
-                      <div className="flex items-center gap-3">
-                        <h3 className="font-medium text-zinc-900">{message.name}</h3>
-                        <StatusBadge status={message.status} />
-                      </div>
-
-                      <p className="text-zinc-900 leading-relaxed">{message.message}</p>
-                    </div>
-
-                    <div className="flex flex-col items-end gap-2">
-                      <div className="flex items-center gap-2">
-                        <p className="text-xs text-zinc-600">Enviado em {formatDate(message.createdAt)}</p>
-                        {message.approvedAt && (
-                          <>
-                            <div className="h-4 w-px bg-zinc-300" />
-                            <p className="text-green-600 text-xs">Aprovada em {formatDate(message.approvedAt)}</p>
-                          </>
-                        )}
-                        {message.rejectedAt && (
-                          <>
-                            <div className="h-4 w-px bg-zinc-300" />
-                            <p className="text-red-600 text-xs">Rejeitada em {formatDate(message.rejectedAt)}</p>
-                          </>
-                        )}
-                      </div>
-                      <div className="flex gap-2">
-                        <Button
-                          className="w-20"
-                          disabled={message.status === 'approved'}
-                          intent="success"
-                          loading={pendingActions[message.id] === 'approve'}
-                          onClick={() => handleApprove(message.id)}
-                          size="sm"
-                        >
-                          Aprovar
-                        </Button>
-                        <Button
-                          className="w-20"
-                          disabled={message.status === 'rejected'}
-                          intent="danger"
-                          loading={pendingActions[message.id] === 'reject'}
-                          onClick={() => handleReject(message.id)}
-                          size="sm"
-                        >
-                          Rejeitar
-                        </Button>
-                        <Button
-                          className="w-20"
-                          intent="neutral"
-                          loading={pendingActions[message.id] === 'delete'}
-                          onClick={() => handleDelete(message.id)}
-                          size="sm"
-                        >
-                          Deletar
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Card>
+              <MessageCard
+                isPendingApprove={pendingActions[message.id] === 'approve'}
+                isPendingDelete={pendingActions[message.id] === 'delete'}
+                isPendingReject={pendingActions[message.id] === 'reject'}
+                isSelected={isSelected(message.id)}
+                key={message.id}
+                message={message}
+                onApprove={() => handleApprove(message.id)}
+                onDelete={() => handleDelete(message.id)}
+                onReject={() => handleReject(message.id)}
+                onToggleSelect={() => toggle(message.id)}
+              />
             ))}
           </div>
         )}
-      </ScrollArea>
+      </div>
 
       <AlertDialog
         onOpenChange={(open) => {
@@ -287,15 +217,4 @@ export function MessagesTab() {
       </AlertDialog>
     </div>
   )
-}
-
-function StatusBadge({ status }: { status: 'pending' | 'approved' | 'rejected' }) {
-  const variants = {
-    pending: { className: 'bg-amber-500 text-white', text: 'Pendente' },
-    approved: { className: 'bg-green-500 text-white', text: 'Aprovada' },
-    rejected: { className: 'bg-red-500 text-white', text: 'Rejeitada' },
-  }
-
-  const { className, text } = variants[status]
-  return <Badge className={className}>{text}</Badge>
 }

@@ -16,7 +16,7 @@ export function LogoutButton({ className }: LogoutButtonProps) {
 
   return (
     <Button className={cn('w-full', className)} intent="admin" onClick={handleLogout}>
-      Sair
+      <span className="hidden lg:block">Sair</span>
       <LogOut />
     </Button>
   )

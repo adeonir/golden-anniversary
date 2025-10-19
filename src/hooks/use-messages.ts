@@ -10,6 +10,7 @@ import {
   fetchMessages,
   rejectMessage,
 } from '~/actions/messages'
+import { useErrorTracking } from '~/hooks/use-error-tracking'
 import { useToast } from '~/hooks/use-toast'
 import { config } from '~/lib/config'
 
@@ -26,6 +27,7 @@ export function useMessages(
   status?: 'approved' | 'pending' | 'rejected',
 ) {
   const toast = useToast()
+  const { captureError } = useErrorTracking()
 
   const query = useQuery({
     queryKey: messagesKeys.list(page, limit),
@@ -35,9 +37,10 @@ export function useMessages(
 
   useEffect(() => {
     if (query.error) {
+      captureError(query.error, { context: 'fetchMessages', errorType: 'query' })
       toast.error('Erro ao carregar mensagens. Tente novamente mais tarde.')
     }
-  }, [query.error, toast])
+  }, [query.error, toast, captureError])
 
   return query
 }
@@ -45,6 +48,7 @@ export function useMessages(
 export function useCreateMessage() {
   const queryClient = useQueryClient()
   const toast = useToast()
+  const { captureError } = useErrorTracking()
 
   return useMutation({
     mutationFn: createMessage,
@@ -52,7 +56,8 @@ export function useCreateMessage() {
       queryClient.invalidateQueries({ queryKey: messagesKeys.all })
       toast.success('Mensagem enviada com sucesso! Será analisada e publicada em breve.')
     },
-    onError: () => {
+    onError: (error) => {
+      captureError(error, { context: 'createMessage', errorType: 'mutation' })
       toast.error('Erro ao enviar mensagem. Tente novamente.')
     },
   })
@@ -61,6 +66,7 @@ export function useCreateMessage() {
 export function useApproveMessage() {
   const queryClient = useQueryClient()
   const toast = useToast()
+  const { captureError } = useErrorTracking()
 
   return useMutation({
     mutationFn: approveMessage,
@@ -68,7 +74,8 @@ export function useApproveMessage() {
       queryClient.invalidateQueries({ queryKey: messagesKeys.all })
       toast.success('Mensagem aprovada com sucesso!')
     },
-    onError: () => {
+    onError: (error) => {
+      captureError(error, { context: 'approveMessage', errorType: 'mutation' })
       toast.error('Erro ao aprovar mensagem. Tente novamente.')
     },
   })
@@ -77,6 +84,7 @@ export function useApproveMessage() {
 export function useRejectMessage() {
   const queryClient = useQueryClient()
   const toast = useToast()
+  const { captureError } = useErrorTracking()
 
   return useMutation({
     mutationFn: rejectMessage,
@@ -84,7 +92,8 @@ export function useRejectMessage() {
       queryClient.invalidateQueries({ queryKey: messagesKeys.all })
       toast.success('Mensagem rejeitada.')
     },
-    onError: () => {
+    onError: (error) => {
+      captureError(error, { context: 'rejectMessage', errorType: 'mutation' })
       toast.error('Erro ao rejeitar mensagem. Tente novamente.')
     },
   })
@@ -93,6 +102,7 @@ export function useRejectMessage() {
 export function useDeleteMessage() {
   const queryClient = useQueryClient()
   const toast = useToast()
+  const { captureError } = useErrorTracking()
 
   return useMutation({
     mutationFn: deleteMessage,
@@ -101,7 +111,8 @@ export function useDeleteMessage() {
       queryClient.removeQueries({ queryKey: messagesKeys.detail(deletedId) })
       toast.success('Mensagem deletada com sucesso!')
     },
-    onError: () => {
+    onError: (error) => {
+      captureError(error, { context: 'deleteMessage', errorType: 'mutation' })
       toast.error('Erro ao deletar mensagem. Tente novamente.')
     },
   })
@@ -110,6 +121,7 @@ export function useDeleteMessage() {
 export function useBatchApproveMessages() {
   const queryClient = useQueryClient()
   const toast = useToast()
+  const { captureError } = useErrorTracking()
 
   return useMutation({
     mutationFn: batchApproveMessages,
@@ -117,7 +129,8 @@ export function useBatchApproveMessages() {
       queryClient.invalidateQueries({ queryKey: messagesKeys.all })
       toast.success(`${messages.length} mensagem(ns) aprovada(s) com sucesso!`)
     },
-    onError: () => {
+    onError: (error) => {
+      captureError(error, { context: 'batchApproveMessages', errorType: 'mutation' })
       toast.error('Erro ao aprovar mensagens. Tente novamente.')
     },
   })
@@ -126,6 +139,7 @@ export function useBatchApproveMessages() {
 export function useBatchRejectMessages() {
   const queryClient = useQueryClient()
   const toast = useToast()
+  const { captureError } = useErrorTracking()
 
   return useMutation({
     mutationFn: batchRejectMessages,
@@ -133,7 +147,8 @@ export function useBatchRejectMessages() {
       queryClient.invalidateQueries({ queryKey: messagesKeys.all })
       toast.success(`${messages.length} mensagem(ns) rejeitada(s).`)
     },
-    onError: () => {
+    onError: (error) => {
+      captureError(error, { context: 'batchRejectMessages', errorType: 'mutation' })
       toast.error('Erro ao rejeitar mensagens. Tente novamente.')
     },
   })
@@ -142,6 +157,7 @@ export function useBatchRejectMessages() {
 export function useBatchDeleteMessages() {
   const queryClient = useQueryClient()
   const toast = useToast()
+  const { captureError } = useErrorTracking()
 
   return useMutation({
     mutationFn: batchDeleteMessages,
@@ -152,7 +168,8 @@ export function useBatchDeleteMessages() {
       }
       toast.success(`${deletedIds.length} mensagem(ns) deletada(s) com sucesso!`)
     },
-    onError: () => {
+    onError: (error) => {
+      captureError(error, { context: 'batchDeleteMessages', errorType: 'mutation' })
       toast.error('Erro ao deletar mensagens. Tente novamente.')
     },
   })
