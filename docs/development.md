@@ -225,9 +225,27 @@ pnpm build
    - `NEXT_PUBLIC_POSTHOG_HOST`: PostHog host URL (default: https://app.posthog.com)
 5. Analytics are automatically tracked across key user interactions:
    - Section views (countdown, timeline, family messages)
-   - Gallery navigation (next/prev, thumbnail clicks)
-   - Guestbook message submissions
+   - Guestbook message submissions and form abandonment
    - Footer external link clicks
+
+#### Error Monitoring
+
+PostHog is configured to capture all errors from mutations and queries:
+
+**Tracked Events:**
+- `API Error`: General API errors
+- `Mutation Error`: Errors from create, update, delete operations
+- `Query Error`: Errors from data fetching operations
+
+**Error Properties:**
+- `error_message`: Error message text
+- `error_type`: Error class name
+- `context`: Operation context (e.g., "createMessage", "fetchPhotos")
+- `stack_trace`: Full error stack trace
+- `url`: Page URL where error occurred
+
+**Implementation:**
+All data hooks (`use-messages.ts`, `use-photos.ts`) use the `useErrorTracking` hook to automatically capture errors before showing user-facing toast messages. This provides full visibility into production errors.
 
 ### 4. JWT Authentication
 

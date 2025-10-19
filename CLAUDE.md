@@ -10,8 +10,10 @@ Commemorative website for Iria e Ari's 50th wedding anniversary.
 - **Database**: Neon PostgreSQL + Drizzle ORM
 - **Auth**: JWT + bcrypt (stateless, httpOnly cookies)
 - **Storage**: ImageKit CDN (with automatic optimizations)
+- **Analytics & Monitoring**: PostHog (user analytics + error tracking)
 - **Email**: Nodemailer + Vercel Cron Jobs
 - **Deployment**: Vercel
+- **Testing**: Vitest + React Testing Library + PGlite
 - **Code Quality**: Ultracite (BiomeJS)
 
 ## Development Commands
@@ -68,6 +70,15 @@ This project follows MVVM architecture:
 - Upload/delete operations via ImageKit SDK
 - Use lazy loading for gallery images
 
+### Analytics & Error Monitoring
+
+- PostHog for user analytics and error tracking
+- All data hooks must use `useErrorTracking` for error capture
+- Track user interactions: section views, form submissions, link clicks
+- Capture errors with context before showing user-facing messages
+- Error events: `apiError`, `mutationError`, `queryError`
+- Error properties: message, type, context, stack trace, URL
+
 ## Environment Variables
 
 - `DATABASE_URL` - Neon PostgreSQL connection string
@@ -75,6 +86,8 @@ This project follows MVVM architecture:
 - `IMAGEKIT_PUBLIC_KEY` - ImageKit public key
 - `IMAGEKIT_PRIVATE_KEY` - ImageKit private key
 - `IMAGEKIT_URL_ENDPOINT` - ImageKit URL endpoint
+- `NEXT_PUBLIC_POSTHOG_KEY` - PostHog project API key
+- `NEXT_PUBLIC_POSTHOG_HOST` - PostHog host URL (default: https://app.posthog.com)
 
 ## Testing Infrastructure
 

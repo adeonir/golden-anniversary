@@ -1,13 +1,12 @@
 # Golden Anniversary
 
-A commemorative website celebrating Iria e Ari's 50th wedding anniversary.
-**Celebration date**: November 8, 2025, 6:30 PM
+A commemorative website celebrating my parents' 50th wedding anniversary.
 
-A digital experience that allows family and friends to leave heartfelt messages and browse through the couple's special photo gallery.
+A digital space where family and friends can leave heartfelt messages and browse through five decades of memories captured in photos.
 
 ## About the Project
 
-This project was developed to celebrate a special milestone: 50 years of marriage. The website provides a platform where friends and family can share their memories and messages, creating a digital space of celebration and affection for this remarkable couple.
+This is a personal project created to honor my parents, Iria and Ari, on their 50th wedding anniversary. The website provides a platform for our family and friends to share memories and messages, creating a lasting digital keepsake of this remarkable milestone.
 
 ## Key Features
 
@@ -27,28 +26,11 @@ This project was developed to celebrate a special milestone: 50 years of marriag
 - **Database**: Neon PostgreSQL + Drizzle ORM
 - **Auth**: JWT + bcrypt (stateless, httpOnly cookies)
 - **Storage**: ImageKit CDN (with automatic optimizations)
-- **Analytics**: PostHog
+- **Analytics & Monitoring**: PostHog (user analytics + error tracking)
 - **Email**: Nodemailer + Vercel Cron Jobs
 - **Deployment**: Vercel
 - **Testing**: Vitest + React Testing Library + PGlite
 - **Code Quality**: Ultracite (BiomeJS)
-
-## Quick Start
-
-```bash
-git clone https://github.com/adeonir/golden-anniversary.git
-cd golden-anniversary
-pnpm install
-cp .env.example .env.local  # Configure your environment variables
-pnpm dev
-```
-
-### Main Commands
-
-- `pnpm dev` - Start development server
-- `pnpm build` - Build for production
-- `pnpm lint` - Format and lint code
-- `pnpm check` - TypeScript type checking
 
 ## MVVM Architecture
 

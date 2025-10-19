@@ -42,6 +42,10 @@ IMAGEKIT_PRIVATE_KEY=private_your-private-key-here
 NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY=public_your-public-key-here
 NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT=https://ik.imagekit.io/your-id
 
+# PostHog Analytics
+NEXT_PUBLIC_POSTHOG_KEY=your-public-key-here
+NEXT_PUBLIC_POSTHOG_HOST=https://app.posthog.com
+
 # Optional: Skip environment validation during build
 SKIP_ENV_VALIDATION=true
 ```
@@ -83,10 +87,32 @@ pnpm db:seed
 2. View performance metrics in dashboard
 3. Monitor Core Web Vitals
 
-### Error Tracking
+### PostHog Analytics & Error Monitoring
+
+PostHog provides comprehensive analytics and error tracking:
+
+**User Analytics:**
+- Section views and user journey tracking
+- Guestbook form interactions and abandonment
+- Message submission success rates
+- Footer link click tracking
+
+**Error Monitoring:**
+- All API, mutation, and query errors captured automatically
+- Full error context with stack traces
+- Error grouping by type and context
+- URL tracking for error occurrence location
+
+**Accessing PostHog:**
+1. Log in to your [PostHog dashboard](https://app.posthog.com)
+2. Navigate to your project
+3. Use Insights to create custom dashboards
+4. Set up alerts for critical errors
+
+### Vercel Function Logs
 
 1. Configure error reporting in Vercel
-2. Monitor function logs
+2. Monitor function logs for server-side issues
 3. Set up alerts for critical errors
 
 ## Troubleshooting
@@ -125,8 +151,8 @@ pnpm db:seed
 - [ ] Vercel deployment status
 - [ ] Neon database health and compute usage
 - [ ] ImageKit bandwidth and storage usage
+- [ ] PostHog error rates and user analytics
 - [ ] Environment variables validity
 - [ ] JWT authentication functionality
 - [ ] Performance metrics and CDN delivery
 - [ ] Error rates and function logs
-- [ ] User analytics
