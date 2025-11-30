@@ -2,108 +2,51 @@
 
 import { Image, Upload, X } from 'lucide-react'
 import NextImage from 'next/image'
-import { useCallback, useMemo, useRef, useState } from 'react'
-import { useDropzone } from 'react-dropzone'
+import { useRef } from 'react'
 import { Button } from '~/components/ui/button'
 import { CircularProgress } from '~/components/ui/circular-progress'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '~/components/ui/dialog'
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
-import { useUploadPhoto } from '~/hooks/use-photos'
-import { cn, validateFile } from '~/lib/utils'
-
-type UploadFile = {
-  id: string
-  file: File
-  preview: string
-  status: 'pending' | 'uploading' | 'success' | 'error'
-  error?: string
-}
+import { useFileUpload } from '~/hooks/use-file-upload'
+import { cn } from '~/lib/utils'
 
 type UploadsModalProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
+const STATUS_BORDER_COLORS = {
+  pending: 'border-transparent',
+  uploading: 'border-orange-400',
+  success: 'border-green-500',
+  error: 'border-red-500',
+} as const
+
 export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
-  const [files, setFiles] = useState<UploadFile[]>([])
-  const [isUploading, setIsUploading] = useState(false)
   const modalRef = useRef<HTMLDivElement>(null)
-  const uploadMutation = useUploadPhoto()
+  const {
+    files,
+    isUploading,
+    uploadProgress,
+    statusCounts,
+    dropzone,
+    removeFile,
+    clearAllFiles,
+    handleUpload,
+    handleRetry,
+    handleCancel,
+  } = useFileUpload()
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    accept: {
-      'image/jpeg': ['.jpg', '.jpeg'],
-    },
-    multiple: true,
-    onDrop: (acceptedFiles) => {
-      const newFiles: UploadFile[] = acceptedFiles.map((file) => ({
-        id: crypto.randomUUID(),
-        file,
-        preview: URL.createObjectURL(file),
-        status: 'pending',
-      }))
-      setFiles((prev) => [...prev, ...newFiles])
-    },
-  })
-
-  const removeFile = (id: string) => {
-    setFiles((prev) => {
-      const fileToRemove = prev.find((f) => f.id === id)
-      if (fileToRemove?.preview) {
-        URL.revokeObjectURL(fileToRemove.preview)
-      }
-      return prev.filter((file) => file.id !== id)
-    })
-  }
-
-  const clearAllFiles = () => {
-    for (const file of files) {
-      if (file.preview) {
-        URL.revokeObjectURL(file.preview)
-      }
-    }
-    setFiles([])
-  }
-
-  const updateFileStatus = useCallback((id: string, status: UploadFile['status'], error?: string) => {
-    setFiles((prev) => prev.map((file) => (file.id === id ? { ...file, status, error } : file)))
-  }, [])
-
-  const handleUpload = useCallback(async () => {
-    const pendingFiles = files.filter((f) => f.status === 'pending')
-    setIsUploading(true)
-
-    for (const file of pendingFiles) {
-      const validation = validateFile(file.file)
-      if (validation) {
-        updateFileStatus(file.id, 'error', validation)
-        continue
-      }
-
-      updateFileStatus(file.id, 'uploading')
-
-      try {
-        await uploadMutation.mutateAsync(file.file)
-        updateFileStatus(file.id, 'success')
-      } catch (_error) {
-        updateFileStatus(file.id, 'error', 'Erro no upload')
-      }
-    }
-
-    setIsUploading(false)
-  }, [files, uploadMutation, updateFileStatus])
+  const { getRootProps, getInputProps, isDragActive } = dropzone
 
   const handleClose = () => {
     clearAllFiles()
     onOpenChange(false)
   }
 
-  const uploadProgress = useMemo(() => {
-    if (files.length === 0) return 0
-    const completed = files.filter((f) => f.status === 'success').length
-    const failed = files.filter((f) => f.status === 'error').length
-    return Math.min(((completed + failed) / files.length) * 100, 100)
-  }, [files])
+  const showUploadButton = statusCounts.pending > 0 || statusCounts.error > 0
+  const isRetryMode = statusCounts.error > 0 && statusCounts.pending === 0
+  const showCloseText = statusCounts.pending === 0 && statusCounts.error === 0
 
   return (
     <Dialog onOpenChange={handleClose} open={open}>
@@ -132,7 +75,7 @@ export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
             ) : (
               <>
                 <Upload className="mx-auto mb-4 size-12 text-zinc-500" />
-                <p className="text-sm text-zinc-600">Apenas arquivos JPEG, máximo 1MB por arquivo</p>
+                <p className="text-sm text-zinc-600">Apenas arquivos JPEG, maximo 1MB por arquivo</p>
               </>
             )}
           </div>
@@ -142,54 +85,50 @@ export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
               <h3 className="font-medium text-lg">Arquivos Selecionados ({files.length})</h3>
 
               <div className="flex flex-wrap gap-2">
-                {files.map((uploadFile) => {
-                  const borderColor = {
-                    pending: 'border-transparent',
-                    uploading: 'border-orange-400',
-                    success: 'border-green-500',
-                    error: 'border-red-500',
-                  }[uploadFile.status]
-
-                  return (
-                    <Tooltip key={uploadFile.id}>
-                      <TooltipTrigger asChild>
-                        <div className="group relative size-12 flex-shrink-0">
-                          <div className={cn('size-full overflow-hidden rounded border-2', borderColor)}>
-                            {uploadFile.preview ? (
-                              <NextImage
-                                alt={uploadFile.file.name}
-                                className="size-full object-cover"
-                                height={48}
-                                src={uploadFile.preview}
-                                width={48}
-                              />
-                            ) : (
-                              <div className="flex size-full items-center justify-center bg-zinc-100">
-                                <Image className="size-4 text-zinc-500" />
-                              </div>
-                            )}
-                          </div>
-                          {(uploadFile.status === 'pending' || uploadFile.status === 'error') && (
-                            <button
-                              className={cn(
-                                '-right-1 -top-1 absolute flex size-5 items-center justify-center rounded-full bg-zinc-800 text-white opacity-0 transition-opacity hover:bg-zinc-900 group-hover:opacity-100',
-                                isUploading && 'pointer-events-none',
-                              )}
-                              disabled={isUploading}
-                              onClick={() => removeFile(uploadFile.id)}
-                              type="button"
-                            >
-                              <X className="size-3" />
-                            </button>
+                {files.map((uploadFile) => (
+                  <Tooltip key={uploadFile.id}>
+                    <TooltipTrigger asChild>
+                      <div className="group relative size-12 flex-shrink-0">
+                        <div
+                          className={cn(
+                            'size-full overflow-hidden rounded border-2',
+                            STATUS_BORDER_COLORS[uploadFile.status],
+                          )}
+                        >
+                          {uploadFile.preview ? (
+                            <NextImage
+                              alt={uploadFile.file.name}
+                              className="size-full object-cover"
+                              height={48}
+                              src={uploadFile.preview}
+                              width={48}
+                            />
+                          ) : (
+                            <div className="flex size-full items-center justify-center bg-zinc-100">
+                              <Image className="size-4 text-zinc-500" />
+                            </div>
                           )}
                         </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>{uploadFile.file.name}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  )
-                })}
+                        {(uploadFile.status === 'pending' || uploadFile.status === 'error') && (
+                          <button
+                            className={cn(
+                              '-right-1 -top-1 absolute flex size-5 items-center justify-center rounded-full bg-zinc-800 text-white opacity-0 transition-opacity hover:bg-zinc-900 group-hover:opacity-100',
+                              isUploading && 'pointer-events-none',
+                            )}
+                            disabled={isUploading}
+                            onClick={() => removeFile(uploadFile.id)}
+                            type="button"
+                          >
+                            <X className="size-3" />
+                          </button>
+                        )}
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{uploadFile.file.name}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                ))}
               </div>
             </div>
           )}
@@ -197,18 +136,23 @@ export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
 
         {files.length > 0 && (
           <DialogFooter>
-            <Button className="flex-1 sm:flex-initial" intent="admin" onClick={handleClose} variant="outline">
-              {files.every((f) => f.status === 'success' || f.status === 'error') ? 'Fechar' : 'Cancelar'}
+            <Button
+              className="flex-1 sm:flex-initial"
+              intent="admin"
+              onClick={isUploading ? handleCancel : handleClose}
+              variant="outline"
+            >
+              {showCloseText ? 'Fechar' : 'Cancelar'}
             </Button>
-            {!files.every((f) => f.status === 'success' || f.status === 'error') && (
+            {showUploadButton && (
               <Button
                 className="flex-1 sm:w-32 sm:flex-initial"
-                disabled={files.every((f) => f.status !== 'pending')}
+                disabled={isUploading}
                 intent="admin"
-                loading={uploadMutation.isPending}
-                onClick={handleUpload}
+                loading={isUploading}
+                onClick={isRetryMode ? handleRetry : handleUpload}
               >
-                Fazer Upload
+                {isRetryMode ? 'Reenviar' : 'Fazer Upload'}
               </Button>
             )}
           </DialogFooter>
