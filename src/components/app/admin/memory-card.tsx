@@ -1,5 +1,5 @@
 import { Check, Edit2, GripVertical, Trash2, X } from 'lucide-react'
-import Image from 'next/image'
+import NextImage from 'next/image'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { formatDate, formatSize } from '~/lib/utils'
@@ -51,7 +51,7 @@ export function MemoryCard({
         </div>
 
         <div className="relative size-12 flex-shrink-0 overflow-hidden rounded-lg border border-zinc-300 bg-zinc-100 sm:size-16">
-          <Image alt={photo.title || 'Foto'} className="size-full object-cover" fill src={photo.url} />
+          <NextImage alt={photo.title || 'Foto'} className="size-full object-cover" fill src={photo.url} />
         </div>
       </div>
 

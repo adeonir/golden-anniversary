@@ -3,7 +3,7 @@
 import useEmblaCarousel from 'embla-carousel-react'
 import { m as motion } from 'framer-motion'
 import { Camera, ChevronLeft, ChevronRight } from 'lucide-react'
-import Image from 'next/image'
+import NextImage from 'next/image'
 import { useCallback, useEffect, useState } from 'react'
 import { Button } from '~/components/ui/button'
 import { Section } from '~/components/ui/section'
@@ -69,7 +69,7 @@ export function Memories() {
                   photos.map((photo, index) => (
                     <div className="relative min-w-0 flex-[0_0_100%]" key={photo.id}>
                       <div className="relative aspect-[4/3] w-full bg-zinc-100">
-                        <Image
+                        <NextImage
                           alt={photo.title || `Foto ${index + 1}`}
                           blurDataURL={generateBlurDataURL()}
                           className="object-cover"
@@ -137,7 +137,7 @@ export function Memories() {
                     whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}
                     whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
                   >
-                    <Image
+                    <NextImage
                       alt={photo.title || `Foto ${index + 1}`}
                       blurDataURL={generateBlurDataURL()}
                       className="rounded-xl object-cover"

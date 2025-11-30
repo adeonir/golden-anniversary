@@ -14,7 +14,7 @@ import {
 import { arrayMove, rectSortingStrategy, SortableContext, useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { Upload } from 'lucide-react'
-import Image from 'next/image'
+import NextImage from 'next/image'
 import { useEffect, useMemo } from 'react'
 import { Button } from '~/components/ui/button'
 import { useDataState } from '~/hooks/use-data-state'
@@ -164,7 +164,7 @@ export function MemoriesTab() {
               {activeId ? (
                 <div className="flex items-center gap-4 rounded-lg border border-zinc-200 bg-white p-4 shadow-lg">
                   <div className="relative size-16 flex-shrink-0 overflow-hidden rounded-lg border border-zinc-300 bg-zinc-100">
-                    <Image
+                    <NextImage
                       alt="Foto"
                       className="size-full object-cover"
                       fill

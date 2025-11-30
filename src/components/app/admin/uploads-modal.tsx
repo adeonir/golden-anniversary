@@ -1,13 +1,14 @@
 'use client'
 
-import { AlertCircle, CheckCircle, Image as ImageIcon, Trash2, Upload } from 'lucide-react'
-import Image from 'next/image'
+import { Image, Upload, X } from 'lucide-react'
+import NextImage from 'next/image'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Button } from '~/components/ui/button'
+import { CircularProgress } from '~/components/ui/circular-progress'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '~/components/ui/dialog'
+import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
 import { useUploadPhoto } from '~/hooks/use-photos'
-import { useViewportHeight } from '~/hooks/use-viewport-height'
 import { cn, validateFile } from '~/lib/utils'
 
 type UploadFile = {
@@ -25,7 +26,7 @@ type UploadsModalProps = {
 
 export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
   const [files, setFiles] = useState<UploadFile[]>([])
-  const viewportHeight = useViewportHeight()
+  const [isUploading, setIsUploading] = useState(false)
   const modalRef = useRef<HTMLDivElement>(null)
   const uploadMutation = useUploadPhoto()
 
@@ -70,6 +71,7 @@ export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
 
   const handleUpload = useCallback(async () => {
     const pendingFiles = files.filter((f) => f.status === 'pending')
+    setIsUploading(true)
 
     for (const file of pendingFiles) {
       const validation = validateFile(file.file)
@@ -87,6 +89,8 @@ export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
         updateFileStatus(file.id, 'error', 'Erro no upload')
       }
     }
+
+    setIsUploading(false)
   }, [files, uploadMutation, updateFileStatus])
 
   const handleClose = () => {
@@ -94,28 +98,12 @@ export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
     onOpenChange(false)
   }
 
-  const { scrollAreaHeight } = useMemo(() => {
-    const minHeight = 88
-    const itemHeight = 88
-    const gap = 12
-
-    const maxViewportHeight = viewportHeight * 0.9
-    const headerHeight = 120
-    const dragDropHeight = 172
-    const titleHeight = 32
-    const footerHeight = 72
-    const spacing = 48
-
-    const availableHeight = maxViewportHeight - headerHeight - dragDropHeight - titleHeight - footerHeight - spacing
-    const maxHeight = Math.max(availableHeight, minHeight)
-
-    if (files.length === 0) return { scrollAreaHeight: minHeight }
-
-    const contentHeight = files.length * itemHeight + (files.length - 1) * gap
-    const finalHeight = Math.min(Math.max(contentHeight, minHeight), maxHeight)
-
-    return { scrollAreaHeight: finalHeight }
-  }, [files.length, viewportHeight])
+  const uploadProgress = useMemo(() => {
+    if (files.length === 0) return 0
+    const completed = files.filter((f) => f.status === 'success').length
+    const failed = files.filter((f) => f.status === 'error').length
+    return Math.min(((completed + failed) / files.length) * 100, 100)
+  }, [files])
 
   return (
     <Dialog onOpenChange={handleClose} open={open}>
@@ -131,30 +119,77 @@ export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
           <div
             {...getRootProps()}
             className={cn(
-              'cursor-pointer rounded-lg border-2 border-dashed p-8 text-center transition-colors',
-              isDragActive ? 'border-zinc-500 bg-zinc-50' : 'border-zinc-300 hover:border-zinc-400',
+              'relative rounded-lg border-2 border-dashed p-8 text-center transition-colors',
+              isUploading ? 'pointer-events-none border-zinc-300' : 'cursor-pointer',
+              !isUploading && (isDragActive ? 'border-zinc-500 bg-zinc-50' : 'border-zinc-300 hover:border-zinc-400'),
             )}
           >
-            <input {...getInputProps()} />
-            <Upload className="mx-auto mb-4 size-12 text-zinc-500" />
-            <p className="text-sm text-zinc-600">Apenas arquivos JPEG, máximo 1MB por arquivo</p>
+            <input {...getInputProps()} disabled={isUploading} />
+            {isUploading ? (
+              <div className="flex items-center justify-center">
+                <CircularProgress intent="admin" size={80} strokeWidth={8} value={uploadProgress} />
+              </div>
+            ) : (
+              <>
+                <Upload className="mx-auto mb-4 size-12 text-zinc-500" />
+                <p className="text-sm text-zinc-600">Apenas arquivos JPEG, máximo 1MB por arquivo</p>
+              </>
+            )}
           </div>
 
           {files.length > 0 && (
             <div className="flex min-h-0 flex-1 flex-col space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="font-medium text-lg">Arquivos Selecionados ({files.length})</h3>
-                <Button intent="admin" onClick={clearAllFiles} size="sm" variant="outline">
-                  Limpar Tudo
-                </Button>
-              </div>
+              <h3 className="font-medium text-lg">Arquivos Selecionados ({files.length})</h3>
 
-              <div className="min-h-0 overflow-y-auto pr-2" style={{ height: `${scrollAreaHeight}px` }}>
-                <div className="space-y-3">
-                  {files.map((uploadFile) => (
-                    <FileListItem file={uploadFile} key={uploadFile.id} onRemove={() => removeFile(uploadFile.id)} />
-                  ))}
-                </div>
+              <div className="flex flex-wrap gap-2">
+                {files.map((uploadFile) => {
+                  const borderColor = {
+                    pending: 'border-transparent',
+                    uploading: 'border-orange-400',
+                    success: 'border-green-500',
+                    error: 'border-red-500',
+                  }[uploadFile.status]
+
+                  return (
+                    <Tooltip key={uploadFile.id}>
+                      <TooltipTrigger asChild>
+                        <div className="group relative size-12 flex-shrink-0">
+                          <div className={cn('size-full overflow-hidden rounded border-2', borderColor)}>
+                            {uploadFile.preview ? (
+                              <NextImage
+                                alt={uploadFile.file.name}
+                                className="size-full object-cover"
+                                height={48}
+                                src={uploadFile.preview}
+                                width={48}
+                              />
+                            ) : (
+                              <div className="flex size-full items-center justify-center bg-zinc-100">
+                                <Image className="size-4 text-zinc-500" />
+                              </div>
+                            )}
+                          </div>
+                          {(uploadFile.status === 'pending' || uploadFile.status === 'error') && (
+                            <button
+                              className={cn(
+                                '-right-1 -top-1 absolute flex size-5 items-center justify-center rounded-full bg-zinc-800 text-white opacity-0 transition-opacity hover:bg-zinc-900 group-hover:opacity-100',
+                                isUploading && 'pointer-events-none',
+                              )}
+                              disabled={isUploading}
+                              onClick={() => removeFile(uploadFile.id)}
+                              type="button"
+                            >
+                              <X className="size-3" />
+                            </button>
+                          )}
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{uploadFile.file.name}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  )
+                })}
               </div>
             </div>
           )}
@@ -180,53 +215,5 @@ export function UploadsModal({ open, onOpenChange }: UploadsModalProps) {
         )}
       </DialogContent>
     </Dialog>
-  )
-}
-
-type FileListItemProps = {
-  file: UploadFile
-  onRemove: () => void
-}
-
-function FileListItem({ file, onRemove }: FileListItemProps) {
-  const validation = validateFile(file.file)
-  const hasError = validation || file.status === 'error'
-
-  return (
-    <div
-      className={cn(
-        'flex items-center gap-3 rounded-lg border p-3',
-        hasError ? 'border-red-500 bg-red-50' : 'border-zinc-300',
-      )}
-    >
-      <div className="size-12 flex-shrink-0 overflow-hidden rounded border bg-zinc-100">
-        {file.preview ? (
-          <Image alt={file.file.name} className="size-full object-cover" height={48} src={file.preview} width={48} />
-        ) : (
-          <div className="flex size-full items-center justify-center">
-            <ImageIcon className="size-4 text-zinc-500" />
-          </div>
-        )}
-      </div>
-
-      <div className="grid min-w-0 flex-1 grid-rows-2">
-        <div className="flex items-center gap-2">
-          {file.status === 'success' && <CheckCircle className="size-4 flex-shrink-0 text-green-600" />}
-          {(hasError || file.status === 'error') && <AlertCircle className="size-4 flex-shrink-0 text-red-600" />}
-          <span className="truncate font-medium text-sm">{file.file.name}</span>
-          <span className="flex-shrink-0 text-sm text-zinc-600">({(file.file.size / 1024).toFixed(0)} KB)</span>
-        </div>
-
-        {(validation || file.error) && <p className="text-red-600 text-xs">{validation || file.error}</p>}
-
-        {file.status === 'success' && <p className="text-green-600 text-xs">Upload realizado com sucesso!</p>}
-      </div>
-
-      {file.status !== 'success' && (
-        <Button className="size-6 flex-shrink-0 p-0" intent="danger" onClick={onRemove} size="sm">
-          <Trash2 className="size-4" />
-        </Button>
-      )}
-    </div>
   )
 }
