@@ -5,8 +5,11 @@ import { Input } from '~/components/ui/input'
 import { formatDate, formatSize } from '~/lib/utils'
 import type { Photo } from '~/types/photos'
 
+export type MemoryCardVariant = 'list' | 'columns' | 'grid'
+
 export type MemoryCardProps = {
   photo: Photo
+  variant?: MemoryCardVariant
   isEditing: boolean
   editTitle: string
   isDeleting: boolean
@@ -20,7 +23,37 @@ export type MemoryCardProps = {
   dragHandleProps?: Record<string, unknown>
 }
 
-export function MemoryCard({
+function GridCard({ photo, isDeleting, isReordering, onDelete, dragHandleProps }: MemoryCardProps) {
+  return (
+    <div className="group relative flex flex-col gap-2 rounded-lg border border-zinc-200 bg-white p-2">
+      <div className="relative aspect-square w-full overflow-hidden rounded-md bg-zinc-100">
+        <NextImage alt={photo.title || 'Foto'} className="size-full object-cover" fill src={photo.url} />
+        <div className="absolute top-1 right-1">
+          <Button
+            className="size-7 cursor-grab bg-white/80 backdrop-blur-sm active:cursor-grabbing"
+            disabled={isReordering}
+            loading={isReordering}
+            size="icon"
+            variant="outline"
+            {...dragHandleProps}
+          >
+            <GripVertical className="size-4" />
+          </Button>
+        </div>
+      </div>
+      <div className="flex items-center justify-between gap-1">
+        <p className="min-w-0 flex-1 truncate text-xs text-zinc-700" title={photo.title || 'Sem título'}>
+          {photo.title || 'Sem título'}
+        </p>
+        <Button className="size-7 flex-shrink-0" loading={isDeleting} onClick={onDelete} size="icon" variant="outline">
+          <Trash2 className="size-3" />
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+function ListCard({
   photo,
   isEditing,
   editTitle,
@@ -35,8 +68,8 @@ export function MemoryCard({
   dragHandleProps,
 }: MemoryCardProps) {
   return (
-    <div className="group relative flex flex-col gap-2 rounded-lg border border-zinc-200 p-4 sm:flex-row sm:items-center md:gap-4">
-      <div className="flex items-center gap-2 md:gap-4">
+    <div className="group relative flex flex-col gap-4 rounded-lg border border-zinc-200 bg-white p-4 sm:flex-row sm:items-center">
+      <div className="flex items-center gap-4">
         <div className="absolute top-1 right-1 flex-shrink-0 sm:static">
           <Button
             className="cursor-grab active:cursor-grabbing"
@@ -50,12 +83,12 @@ export function MemoryCard({
           </Button>
         </div>
 
-        <div className="relative size-12 flex-shrink-0 overflow-hidden rounded-lg border border-zinc-300 bg-zinc-100 sm:size-16">
+        <div className="relative size-12 flex-shrink-0 overflow-hidden rounded-lg border border-zinc-300 bg-zinc-100">
           <NextImage alt={photo.title || 'Foto'} className="size-full object-cover" fill src={photo.url} />
         </div>
       </div>
 
-      <div className="flex flex-1 items-center gap-2 md:gap-4">
+      <div className="flex flex-1 items-center gap-4">
         <div className="min-w-0 flex-1">
           {isEditing ? (
             <Input
@@ -89,7 +122,7 @@ export function MemoryCard({
         </div>
         <div className="hidden flex-shrink-0 px-4 text-sm text-zinc-600 lg:block">{formatSize(photo.size)}</div>
         <div className="hidden flex-shrink-0 px-4 text-sm text-zinc-600 md:block">{formatDate(photo.createdAt)}</div>
-        <div className="flex flex-shrink-0 gap-1 md:gap-2">
+        <div className="flex flex-shrink-0 gap-2">
           {!isEditing && (
             <>
               <Button loading={isSaving} onClick={onEditStart} size="icon" variant="outline">
@@ -114,4 +147,12 @@ export function MemoryCard({
       </div>
     </div>
   )
+}
+
+export function MemoryCard(props: MemoryCardProps) {
+  if (props.variant === 'grid') {
+    return <GridCard {...props} />
+  }
+
+  return <ListCard {...props} />
 }

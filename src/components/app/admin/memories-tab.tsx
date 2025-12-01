@@ -11,11 +11,17 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core'
-import { arrayMove, rectSortingStrategy, SortableContext, useSortable } from '@dnd-kit/sortable'
+import {
+  arrayMove,
+  rectSortingStrategy,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { Upload } from 'lucide-react'
+import { Columns2, Grid2x2, TextAlignJustify, Upload } from 'lucide-react'
 import NextImage from 'next/image'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Button } from '~/components/ui/button'
 import { useDataState } from '~/hooks/use-data-state'
 import { usePhotoActions } from '~/hooks/use-photo-actions'
@@ -24,7 +30,16 @@ import type { Photo } from '~/types/photos'
 import { MemoryCard, type MemoryCardProps } from './memory-card'
 import { UploadsModal } from './uploads-modal'
 
+type LayoutType = 'list' | 'columns' | 'grid'
+
+const containerStyles: Record<LayoutType, string> = {
+  list: 'grid grid-cols-1 gap-4',
+  columns: 'grid grid-cols-2 gap-4',
+  grid: 'grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6',
+}
+
 export function MemoriesTab() {
+  const [layout, setLayout] = useState<LayoutType>('list')
   const { data: photos = [], isLoading, error } = useMemories()
 
   const updatePhotoMutation = useUpdatePhoto()
@@ -123,10 +138,41 @@ export function MemoriesTab() {
           <h2 className="font-semibold text-2xl text-zinc-900">Memórias</h2>
           <p className="text-zinc-600">Gerencie as fotos das memórias do casal</p>
         </div>
-        <Button className="flex items-center gap-2" intent="admin" onClick={() => setModalOpen(true)}>
-          <Upload />
-          <span className="hidden sm:block">Fazer Upload</span>
-        </Button>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center">
+            <Button
+              className="rounded-r-none"
+              intent="admin"
+              onClick={() => setLayout('list')}
+              size="icon"
+              variant={layout === 'list' ? 'solid' : 'outline'}
+            >
+              <TextAlignJustify />
+            </Button>
+            <Button
+              className="-ml-px rounded-none"
+              intent="admin"
+              onClick={() => setLayout('columns')}
+              size="icon"
+              variant={layout === 'columns' ? 'solid' : 'outline'}
+            >
+              <Columns2 />
+            </Button>
+            <Button
+              className="-ml-px rounded-l-none"
+              intent="admin"
+              onClick={() => setLayout('grid')}
+              size="icon"
+              variant={layout === 'grid' ? 'solid' : 'outline'}
+            >
+              <Grid2x2 />
+            </Button>
+          </div>
+          <Button className="flex items-center gap-2" intent="admin" onClick={() => setModalOpen(true)}>
+            <Upload />
+            <span className="hidden sm:block">Fazer Upload</span>
+          </Button>
+        </div>
       </div>
 
       <div className="scrollbar-thin scrollbar-track-transparent scrollbar-thumb-zinc-400 min-h-0 flex-1 overflow-y-auto pr-2">
@@ -139,8 +185,11 @@ export function MemoriesTab() {
             onDragStart={handleDragStart}
             sensors={sensors}
           >
-            <SortableContext items={localPhotos.map((p) => p.id)} strategy={rectSortingStrategy}>
-              <div className="space-y-2">
+            <SortableContext
+              items={localPhotos.map((p) => p.id)}
+              strategy={layout === 'list' ? verticalListSortingStrategy : rectSortingStrategy}
+            >
+              <div className={containerStyles[layout]}>
                 {localPhotos.map((photo) => (
                   <SortableMemoryCard
                     editTitle={editTitle}
@@ -155,6 +204,7 @@ export function MemoriesTab() {
                     onEditStart={() => handleEditStart(photo)}
                     onEditTitleChange={setEditTitle}
                     photo={photo}
+                    variant={layout}
                   />
                 ))}
               </div>
@@ -162,21 +212,37 @@ export function MemoriesTab() {
 
             <DragOverlay>
               {activeId ? (
-                <div className="flex items-center gap-4 rounded-lg border border-zinc-200 bg-white p-4 shadow-lg">
-                  <div className="relative size-16 flex-shrink-0 overflow-hidden rounded-lg border border-zinc-300 bg-zinc-100">
-                    <NextImage
-                      alt="Foto"
-                      className="size-full object-cover"
-                      fill
-                      src={localPhotos.find((p) => p.id === activeId)?.url || ''}
-                    />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm text-zinc-900">
+                layout === 'grid' ? (
+                  <div className="flex w-[calc((100vw-9.5rem)/3)] flex-col gap-2 rounded-lg border border-zinc-200 bg-white p-2 shadow-lg sm:w-[calc((100vw-10.25rem)/4)] lg:w-[calc((100vw-11rem)/5)] xl:w-[calc((100vw-11.75rem)/6)]">
+                    <div className="relative aspect-square w-full overflow-hidden rounded-md bg-zinc-100">
+                      <NextImage
+                        alt="Foto"
+                        className="size-full object-cover"
+                        fill
+                        src={localPhotos.find((p) => p.id === activeId)?.url || ''}
+                      />
+                    </div>
+                    <p className="truncate text-xs text-zinc-700">
                       {localPhotos.find((p) => p.id === activeId)?.title || 'Sem título'}
                     </p>
                   </div>
-                </div>
+                ) : (
+                  <div className="flex items-center gap-7 rounded-lg border border-zinc-200 bg-white p-4 pl-17 shadow-lg">
+                    <div className="relative size-12 flex-shrink-0 overflow-hidden rounded-lg border border-zinc-300 bg-zinc-100">
+                      <NextImage
+                        alt="Foto"
+                        className="size-full object-cover"
+                        fill
+                        src={localPhotos.find((p) => p.id === activeId)?.url || ''}
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm text-zinc-900">
+                        {localPhotos.find((p) => p.id === activeId)?.title || 'Sem título'}
+                      </p>
+                    </div>
+                  </div>
+                )
               ) : null}
             </DragOverlay>
           </DndContext>
