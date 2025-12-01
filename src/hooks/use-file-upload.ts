@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { useUploadPhoto } from '~/hooks/use-photos'
 import { validateFile } from '~/lib/utils'
@@ -20,11 +20,10 @@ type StatusCounts = {
   error: number
 }
 
-const AUTO_CLEANUP_DELAY = 2000
-
 export function useFileUpload() {
   const [files, setFiles] = useState<UploadFile[]>([])
   const [isUploading, setIsUploading] = useState(false)
+  const [isCanceling, setIsCanceling] = useState(false)
   const uploadInterruptedRef = useRef(false)
   const uploadMutation = useUploadPhoto()
 
@@ -92,6 +91,7 @@ export function useFileUpload() {
     }
 
     setIsUploading(false)
+    setIsCanceling(false)
   }, [files, uploadMutation, updateFileStatus])
 
   const handleRetry = useCallback(() => {
@@ -103,30 +103,8 @@ export function useFileUpload() {
 
   const handleCancel = useCallback(() => {
     uploadInterruptedRef.current = true
-    setIsUploading(false)
-    setFiles((prev) =>
-      prev.map((file) => (file.status === 'uploading' ? { ...file, status: 'error', error: 'Cancelado' } : file)),
-    )
+    setIsCanceling(true)
   }, [])
-
-  useEffect(() => {
-    const timeouts: NodeJS.Timeout[] = []
-
-    for (const file of files) {
-      if (file.status === 'success') {
-        const timeout = setTimeout(() => {
-          removeFile(file.id)
-        }, AUTO_CLEANUP_DELAY)
-        timeouts.push(timeout)
-      }
-    }
-
-    return () => {
-      for (const timeout of timeouts) {
-        clearTimeout(timeout)
-      }
-    }
-  }, [files, removeFile])
 
   const uploadProgress = useMemo(() => {
     if (files.length === 0) return 0
@@ -148,6 +126,7 @@ export function useFileUpload() {
   return {
     files,
     isUploading,
+    isCanceling,
     uploadProgress,
     statusCounts,
     dropzone,

@@ -115,7 +115,7 @@ export function Memories() {
 
           <div
             aria-label="Miniaturas das fotos de memórias"
-            className="scrollbar-thin flex gap-2 overflow-x-auto px-2 py-4 sm:gap-4"
+            className="scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gold-300 flex gap-2 overflow-x-auto px-2 py-4 sm:gap-4"
             role="tablist"
           >
             {photos.length > 0

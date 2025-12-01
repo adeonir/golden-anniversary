@@ -129,7 +129,7 @@ export function MemoriesTab() {
         </Button>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto pr-2">
+      <div className="scrollbar-thin scrollbar-track-transparent scrollbar-thumb-zinc-400 min-h-0 flex-1 overflow-y-auto pr-2">
         {dataStateAlert && <div className="flex items-center justify-center py-8">{dataStateAlert}</div>}
 
         {!dataStateAlert && (
