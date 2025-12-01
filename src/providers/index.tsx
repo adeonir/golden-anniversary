@@ -2,6 +2,7 @@
 
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import type { ReactNode } from 'react'
+import { TooltipProvider } from '~/components/ui/tooltip'
 import { MotionProvider } from './motion-provider'
 import { PostHogProvider } from './posthog-provider'
 import { QueryProvider } from './query-client'
@@ -15,7 +16,9 @@ export function Providers({ children }: ProvidersProps) {
     <QueryProvider>
       <PostHogProvider>
         <MotionProvider>
-          <NuqsAdapter>{children}</NuqsAdapter>
+          <TooltipProvider>
+            <NuqsAdapter>{children}</NuqsAdapter>
+          </TooltipProvider>
         </MotionProvider>
       </PostHogProvider>
     </QueryProvider>

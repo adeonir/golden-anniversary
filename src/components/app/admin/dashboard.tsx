@@ -12,7 +12,7 @@ export function Dashboard() {
   const { activeTab, setActiveTab } = useAdminTabs()
 
   return (
-    <div className="admin-theme flex h-screen flex-col gap-8 overflow-hidden bg-zinc-100 p-8">
+    <div className="admin-theme flex h-screen flex-col gap-8 overflow-hidden bg-zinc-100 p-4 sm:p-8">
       <header className="flex-shrink-0 rounded-lg bg-white px-8 py-6 shadow-lg shadow-zinc-700/10">
         <div className="flex items-center justify-between gap-6">
           <Tabs onValueChange={setActiveTab} value={activeTab}>
@@ -31,7 +31,7 @@ export function Dashboard() {
         </div>
       </header>
 
-      <main className="flex min-h-0 flex-1 rounded-lg bg-white p-8 shadow-lg shadow-zinc-700/15">
+      <main className="flex min-h-0 flex-1 rounded-lg bg-white p-4 shadow-lg shadow-zinc-700/15 sm:p-8">
         <Tabs className="flex min-h-0 flex-1 flex-col" onValueChange={setActiveTab} value={activeTab}>
           <TabsContent value={config.admin.tabs.messages}>
             <MessagesTab />
