@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pnpm build:prod",
+  "buildCommand": "pnpm build",
   "installCommand": "pnpm install --frozen-lockfile",
   "framework": "nextjs",
   "regions": ["iad1"],
