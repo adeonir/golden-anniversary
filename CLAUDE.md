@@ -5,8 +5,8 @@ Commemorative website for Iria e Ari's 50th wedding anniversary.
 
 ## Tech Stack
 
-- **Framework**: Next.js (App Router) + React + TypeScript
-- **Styling**: Tailwind CSS + Shadcn/ui
+- **Framework**: Next.js v15 (App Router) + React v19 + TypeScript v5
+- **Styling**: Tailwind CSS v4 + Shadcn/ui
 - **Database**: Neon PostgreSQL + Drizzle ORM
 - **Auth**: JWT + bcrypt (stateless, httpOnly cookies)
 - **Storage**: ImageKit CDN (with automatic optimizations)
