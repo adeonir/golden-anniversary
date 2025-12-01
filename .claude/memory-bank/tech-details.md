@@ -121,6 +121,7 @@ JWT_SECRET=your-super-secure-jwt-secret-key-at-least-32-chars
 
 # ImageKit
 IMAGEKIT_PRIVATE_KEY=private_your-private-key-here
+IMAGEKIT_FOLDER_PREFIX=stg  # Optional, for staging environment
 NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY=public_your-public-key-here
 NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT=https://ik.imagekit.io/your-id
 
@@ -141,9 +142,14 @@ Same variables with production values + additional Vercel Cron configurations.
 
 ```bash
 # Development
-pnpm dev              # Start dev server (localhost:3000)
-pnpm build            # Build for production
+pnpm dev              # Start dev server with .env.local
+pnpm build            # Build for Vercel CI
+pnpm build:prod       # Local production build (1Password)
 pnpm start            # Start production server
+
+# Deploy
+pnpm deploy:prd       # Deploy to production (vercel --prod)
+pnpm deploy:stg       # Deploy to staging (vercel --target staging)
 
 # Code Quality
 pnpm lint             # Format + lint with Ultracite/BiomeJS
@@ -211,7 +217,7 @@ pnpm db:seed
 ### Database
 
 - Optimized indexes for frequent queries
-- Efficient RLS policies
+- Application-level authorization
 - Connection pooling via Neon
 
 ## Security
@@ -224,10 +230,10 @@ pnpm db:seed
 
 ### Data Protection
 
-- RLS policies on all tables
+- Application-level authorization (no RLS)
 - Input validation with Zod schemas
 - CSRF protection via Next.js
-- Environment variables never exposed on client
+- Environment variables kept server-side only
 
 ### Content Security
 

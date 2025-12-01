@@ -178,59 +178,59 @@ Brief description of changes and context.
 Closes DEV-XX
 ```
 
-## Critical Code Rules
+## Code Rules
 
-### Next.js Specific
+### Next.js
 
-- ❌ NEVER use `<img>` - always `<Image>` from Next.js
-- ❌ NEVER use `<head>` - use App Router metadata API
-- ✅ Always implement blur placeholders for images
-- ✅ Use loading.tsx and error.tsx for special states
+- Use `<Image>` from Next.js instead of `<img>`
+- Use App Router metadata API instead of `<head>`
+- Implement blur placeholders for images
+- Use loading.tsx and error.tsx for special states
 
 ### TypeScript & Code Quality
 
-- ✅ Strict mode always enabled
-- ✅ Validate props with Zod schemas
-- ✅ Prefer `const` over `let`, never `var`
-- ✅ Use arrow functions for consistency
-- ❌ NEVER use `any` type - always type correctly
-- ✅ Organize imports: external → internal → relative
+- Strict mode enabled
+- Validate props with Zod schemas
+- Prefer `const` over `let`
+- Use arrow functions for consistency
+- Type correctly instead of using `any`
+- Organize imports: external, internal, relative
 
 ### React & Performance
 
-- ✅ Lazy loading for heavy components (`lazy()` + `Suspense`)
-- ✅ Memoization when appropriate (`memo`, `useMemo`, `useCallback`)
-- ✅ Unique keys in lists (never use array index)
-- ❌ NEVER define components inside other components
-- ✅ Extract custom hooks for reusable logic
+- Lazy loading for heavy components (`lazy()` + `Suspense`)
+- Memoization when appropriate (`memo`, `useMemo`, `useCallback`)
+- Unique keys in lists (avoid array index as key)
+- Define components at module level, not inside other components
+- Extract custom hooks for reusable logic
 
 ### Accessibility (a11y)
 
-- ✅ Always include meaningful `alt` text for images
-- ✅ Associate labels with inputs (`htmlFor` + `id`)
-- ✅ Use appropriate semantic roles (`button`, `main`, `nav`)
-- ✅ `tabIndex` only when necessary (never positive)
-- ❌ NEVER use `accessKey` attribute
-- ✅ `aria-*` attributes when ARIA is needed
+- Include meaningful `alt` text for images
+- Associate labels with inputs (`htmlFor` + `id`)
+- Use appropriate semantic roles (`button`, `main`, `nav`)
+- Use `tabIndex` only when necessary (avoid positive values)
+- Prefer native elements over `accessKey` attribute
+- Use `aria-*` attributes when ARIA is needed
 
 ### Security & Environment
 
-- ✅ JWT authentication with bcrypt password hashing
-- ✅ Environment variables validated with `@t3-oss/env-nextjs`
-- ❌ NEVER expose secrets on client-side
-- ✅ Input sanitization before database saves
-- ✅ CSRF protection via Next.js (automatic)
+- JWT authentication with bcrypt password hashing
+- Environment variables validated with `@t3-oss/env-nextjs`
+- Keep secrets server-side only
+- Sanitize input before database saves
+- CSRF protection via Next.js (automatic)
 
 ## Quality Validation
 
 ### Pre-commit Checklist
 
-- ✅ `pnpm lint` passes without errors
-- ✅ `pnpm check` passes without errors
-- ✅ Component tested on real mobile device
-- ✅ Contrast validated (≥ 4.5:1)
-- ✅ Keyboard navigation functional
-- ✅ Loading states implemented
+- `pnpm lint` passes without errors
+- `pnpm check` passes without errors
+- Component tested on real mobile device
+- Contrast validated (4.5:1 minimum)
+- Keyboard navigation functional
+- Loading states implemented
 
 ### Recommended Tools
 
@@ -241,8 +241,8 @@ Closes DEV-XX
 
 ### Code Review Standards
 
-- ✅ Follow all CLAUDE.md rules
-- ✅ Consistent design system (colors, typography, spacing)
-- ✅ Error and loading states handled
-- ✅ Responsive design validated
-- ✅ Performance implications considered
+- Follow CLAUDE.md conventions
+- Consistent design system (colors, typography, spacing)
+- Error and loading states handled
+- Responsive design validated
+- Performance implications considered
