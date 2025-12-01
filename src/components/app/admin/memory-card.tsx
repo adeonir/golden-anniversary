@@ -68,27 +68,25 @@ function ListCard({
   dragHandleProps,
 }: MemoryCardProps) {
   return (
-    <div className="group relative flex flex-col gap-4 rounded-lg border border-zinc-200 bg-white p-4 sm:flex-row sm:items-center">
-      <div className="flex items-center gap-4">
-        <div className="absolute top-1 right-1 flex-shrink-0 sm:static">
-          <Button
-            className="cursor-grab active:cursor-grabbing"
-            disabled={isReordering}
-            loading={isReordering}
-            size="icon"
-            variant="outline"
-            {...dragHandleProps}
-          >
-            <GripVertical />
-          </Button>
-        </div>
-
-        <div className="relative size-12 flex-shrink-0 overflow-hidden rounded-lg border border-zinc-300 bg-zinc-100">
-          <NextImage alt={photo.title || 'Foto'} className="size-full object-cover" fill src={photo.url} />
-        </div>
+    <div className="@container group relative flex items-center @md:gap-4 gap-3 rounded-lg border border-zinc-200 bg-white @md:p-4 p-3">
+      <div className="flex-shrink-0">
+        <Button
+          className="@md:size-10 size-8 cursor-grab active:cursor-grabbing"
+          disabled={isReordering}
+          loading={isReordering}
+          size="icon"
+          variant="outline"
+          {...dragHandleProps}
+        >
+          <GripVertical />
+        </Button>
       </div>
 
-      <div className="flex flex-1 items-center gap-4">
+      <div className="relative @md:size-12 size-10 flex-shrink-0 overflow-hidden rounded-lg border border-zinc-300 bg-zinc-100">
+        <NextImage alt={photo.title || 'Foto'} className="size-full object-cover" fill src={photo.url} />
+      </div>
+
+      <div className="flex min-w-0 flex-1 items-center gap-4">
         <div className="min-w-0 flex-1">
           {isEditing ? (
             <Input
@@ -104,36 +102,29 @@ function ListCard({
               value={editTitle}
             />
           ) : (
-            <button
-              className="h-8 w-full cursor-pointer truncate rounded-md border border-transparent px-3 py-1 text-left text-sm text-zinc-900 transition hover:border-gray-300 hover:text-zinc-700"
-              onClick={onEditStart}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault()
-                  onEditStart()
-                }
-              }}
-              title={photo.title || 'Sem título'}
-              type="button"
-            >
-              {photo.title || 'Sem título'}
-            </button>
-          )}
-        </div>
-        <div className="hidden flex-shrink-0 px-4 text-sm text-zinc-600 lg:block">{formatSize(photo.size)}</div>
-        <div className="hidden flex-shrink-0 px-4 text-sm text-zinc-600 md:block">{formatDate(photo.createdAt)}</div>
-        <div className="flex flex-shrink-0 gap-2">
-          {!isEditing && (
             <>
-              <Button loading={isSaving} onClick={onEditStart} size="icon" variant="outline">
-                <Edit2 />
-              </Button>
-              <Button loading={isDeleting} onClick={onDelete} size="icon" variant="outline">
-                <Trash2 />
-              </Button>
+              <button
+                className="@md:block hidden h-8 w-full cursor-pointer truncate rounded-md border border-transparent px-3 py-1 text-left text-sm text-zinc-900 transition hover:border-gray-300 hover:text-zinc-700"
+                onClick={onEditStart}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    onEditStart()
+                  }
+                }}
+                title={photo.title || 'Sem título'}
+                type="button"
+              >
+                {photo.title || 'Sem título'}
+              </button>
+              <p className="@md:hidden truncate text-sm text-zinc-900" title={photo.title || 'Sem título'}>
+                {photo.title || 'Sem título'}
+              </p>
             </>
           )}
-          {isEditing && (
+        </div>
+        <div className="@md:flex hidden flex-shrink-0 @md:gap-2 gap-1">
+          {isEditing ? (
             <>
               <Button loading={isSaving} onClick={onEditSave} size="icon" variant="outline">
                 <Check />
@@ -142,8 +133,24 @@ function ListCard({
                 <X />
               </Button>
             </>
+          ) : (
+            <Button onClick={onEditStart} size="icon" variant="outline">
+              <Edit2 />
+            </Button>
           )}
         </div>
+        <div className="@5xl:block hidden flex-shrink-0 px-4 text-sm text-zinc-600">{formatSize(photo.size)}</div>
+        <div className="@3xl:block hidden flex-shrink-0 px-4 text-sm text-zinc-600">{formatDate(photo.createdAt)}</div>
+        <Button
+          className="@md:size-10 size-8"
+          disabled={isEditing}
+          loading={isDeleting}
+          onClick={onDelete}
+          size="icon"
+          variant="outline"
+        >
+          <Trash2 />
+        </Button>
       </div>
     </div>
   )

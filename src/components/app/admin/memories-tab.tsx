@@ -26,6 +26,7 @@ import { Button } from '~/components/ui/button'
 import { useDataState } from '~/hooks/use-data-state'
 import { usePhotoActions } from '~/hooks/use-photo-actions'
 import { useDeletePhoto, useMemories, useReorderPhotos, useUpdatePhoto } from '~/hooks/use-photos'
+import { cn } from '~/lib/utils'
 import type { Photo } from '~/types/photos'
 import { MemoryCard, type MemoryCardProps } from './memory-card'
 import { UploadsModal } from './uploads-modal'
@@ -35,7 +36,7 @@ type LayoutType = 'list' | 'columns' | 'grid'
 const containerStyles: Record<LayoutType, string> = {
   list: 'grid grid-cols-1 gap-4',
   columns: 'grid grid-cols-2 gap-4',
-  grid: 'grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6',
+  grid: 'grid grid-cols-2 gap-3 xs:grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6',
 }
 
 export function MemoriesTab() {
@@ -68,6 +69,21 @@ export function MemoriesTab() {
       setLocalPhotos(photos)
     }
   }, [photos, setLocalPhotos])
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(min-width: 640px)')
+
+    const handleChange = (e: MediaQueryListEvent | MediaQueryList) => {
+      if (!e.matches && layout === 'columns') {
+        setLayout('list')
+      }
+    }
+
+    handleChange(mediaQuery)
+    mediaQuery.addEventListener('change', handleChange)
+
+    return () => mediaQuery.removeEventListener('change', handleChange)
+  }, [layout])
 
   const debouncedReorder = useMemo(() => {
     let timeoutId: NodeJS.Timeout
@@ -133,12 +149,12 @@ export function MemoriesTab() {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-6">
-      <div className="flex flex-shrink-0 items-center justify-between gap-6">
+      <div className="flex flex-shrink-0 flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="font-semibold text-2xl text-zinc-900">Memórias</h2>
           <p className="text-zinc-600">Gerencie as fotos das memórias do casal</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-end gap-2">
           <div className="flex items-center">
             <Button
               className="rounded-r-none"
@@ -150,7 +166,7 @@ export function MemoriesTab() {
               <TextAlignJustify />
             </Button>
             <Button
-              className="-ml-px rounded-none"
+              className="-ml-px hidden rounded-none sm:flex"
               intent="admin"
               onClick={() => setLayout('columns')}
               size="icon"
@@ -170,7 +186,6 @@ export function MemoriesTab() {
           </div>
           <Button className="flex items-center gap-2" intent="admin" onClick={() => setModalOpen(true)}>
             <Upload />
-            <span className="hidden sm:block">Fazer Upload</span>
           </Button>
         </div>
       </div>
@@ -213,7 +228,12 @@ export function MemoriesTab() {
             <DragOverlay>
               {activeId ? (
                 layout === 'grid' ? (
-                  <div className="flex w-[calc((100vw-9.5rem)/3)] flex-col gap-2 rounded-lg border border-zinc-200 bg-white p-2 shadow-lg sm:w-[calc((100vw-10.25rem)/4)] lg:w-[calc((100vw-11rem)/5)] xl:w-[calc((100vw-11.75rem)/6)]">
+                  <div
+                    className={cn(
+                      'flex-col gap-2 rounded-lg border border-zinc-200 bg-white p-2 shadow-lg',
+                      'flex w-[calc((100vw-6rem)/2)] xs:w-[calc((100vw-6.5rem)/3)] sm:w-[calc((100vw-11.25rem)/4)] lg:w-[calc((100vw-11.75rem)/5)] xl:w-[calc((100vw-12.5rem)/6)]',
+                    )}
+                  >
                     <div className="relative aspect-square w-full overflow-hidden rounded-md bg-zinc-100">
                       <NextImage
                         alt="Foto"
