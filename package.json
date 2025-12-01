@@ -3,19 +3,20 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "op": "op run --env-file=.env.local --",
-    "dev": "pnpm op next dev --turbopack",
-    "build": "pnpm op next build",
-    "build:prod": "next build",
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "build:prod": "pnpm op run --env-file=.env.production -- next build",
     "start": "next start",
     "lint": "ultracite fix",
     "check": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "db:push": "pnpm op drizzle-kit push",
-    "db:studio": "pnpm op drizzle-kit studio",
-    "db:generate": "pnpm op drizzle-kit generate",
-    "db:seed": "pnpm op tsx src/lib/database/seed.ts"
+    "deploy:prd": "vercel --prod",
+    "deploy:stg": "vercel --target staging",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "db:generate": "drizzle-kit generate",
+    "db:seed": "node --env-file=.env --import tsx src/lib/database/seed.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "6.3.1",

@@ -19,11 +19,14 @@ Commemorative website for Iria e Ari's 50th wedding anniversary.
 ## Development Commands
 
 - `pnpm dev` - Start development server
-- `pnpm build` - Build for production
+- `pnpm build` - Build for Vercel CI
+- `pnpm build:prod` - Local production build (1Password)
 - `pnpm lint` - Format and lint code
 - `pnpm check` - TypeScript type checking
 - `pnpm test` - Run tests
 - `pnpm test:watch` - Run tests in watch mode
+
+See [Environments](#environments) section for deploy scripts.
 
 ## Architecture Pattern
 
@@ -86,8 +89,29 @@ This project follows MVVM architecture:
 - `IMAGEKIT_PUBLIC_KEY` - ImageKit public key
 - `IMAGEKIT_PRIVATE_KEY` - ImageKit private key
 - `IMAGEKIT_URL_ENDPOINT` - ImageKit URL endpoint
+- `IMAGEKIT_FOLDER_PREFIX` - ImageKit folder prefix (optional, used for staging)
 - `NEXT_PUBLIC_POSTHOG_KEY` - PostHog project API key
 - `NEXT_PUBLIC_POSTHOG_HOST` - PostHog host URL (default: https://app.posthog.com)
+
+## Environments
+
+| Ambiente | Branch | Neon Branch | Dominio | ImageKit Prefix |
+|----------|--------|-------------|---------|-----------------|
+| Production | main | main | bodas-iria-ai.com.br | (vazio) |
+| Staging | staging | dev | golden-anniversary.vercel.app | stg |
+
+### Local Development
+
+- `.env.local` - Hardcoded env vars for local development
+- `.env.production` - 1Password references for production builds
+
+### Scripts
+
+- `pnpm dev` - Dev server with `.env.local`
+- `pnpm build` - Build for Vercel CI (uses environment vars)
+- `pnpm build:prod` - Local production build with 1Password
+- `pnpm deploy:prd` - Deploy to production (`vercel --prod`)
+- `pnpm deploy:stg` - Deploy to staging (`vercel --target staging`)
 
 ## Testing Infrastructure
 
@@ -195,12 +219,20 @@ Closes DEV-XX
 
 1. Analyze existing patterns in the codebase
 2. Consider edge cases and error scenarios
-3. Follow the rules below strictly
+3. Follow project conventions
 4. Validate accessibility requirements
 
-## Important Instruction Reminders
+## Guidelines
 
+<code_guidelines>
 Do what has been asked; nothing more, nothing less.
-NEVER create files unless they're absolutely necessary for achieving your goal.
-ALWAYS prefer editing an existing file to creating a new one.
-NEVER proactively create documentation files (\*.md) or README files. Only create documentation files if explicitly requested by the User.
+Prefer editing existing files over creating new ones.
+Only create documentation files when explicitly requested.
+</code_guidelines>
+
+<avoid_over_engineering>
+Keep solutions simple and focused on the current task.
+Avoid creating unnecessary abstractions, helpers, or utilities for one-time operations.
+Three similar lines of code is better than a premature abstraction.
+Do not add features, refactoring, or "improvements" beyond what was asked.
+</avoid_over_engineering>

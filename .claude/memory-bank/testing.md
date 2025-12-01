@@ -3,14 +3,16 @@
 ## Overview
 
 - **Frameworks**: Vitest + React Testing Library + jsdom
-- **Database testing**: PGlite (in-memory) aligned with Drizzle docs
-- **Mocking**: Mocks for external dependencies
-- **Type safety**: TypeScript with strict checking
+- **Database testing**: PGlite (in-memory PostgreSQL)
+- **Mocking**: External dependencies mocked
+- **Type safety**: TypeScript strict mode
 
 ### Commands
 
-- `pnpm test`
-- `pnpm test:watch`
+```bash
+pnpm test        # Run tests once
+pnpm test:watch  # Run tests in watch mode
+```
 
 ## Test Architecture
 
